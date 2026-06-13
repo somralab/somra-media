@@ -1,0 +1,40 @@
+---
+description: Somra branch adlandırma ve commit kuralları (Conventional Commits + DCO)
+alwaysApply: true
+---
+
+# Branch & Commit Kuralları
+
+## Branch adlandırma
+Biçim: `<type>/<kısa-açıklama-kebab>` (gerekirse issue/sprint eki).
+
+```
+feat/library-scan
+fix/transcode-session-leak
+chore/ci-coverage-gate
+docs/i18n-guide
+```
+- `main` korumalı; doğrudan push yok, force-push yok.
+- Tip seti: `feat`, `fix`, `chore`, `refactor`, `test`, `docs`, `perf`, `build`, `ci`.
+
+## Commit mesajları (Conventional Commits)
+Biçim: `<type>(<scope>): <konu>` — İngilizce, emir kipi, küçük harf, nokta yok.
+
+```
+feat(library): add incremental scan with fs watcher
+fix(auth): revoke refresh token on logout
+test(streaming): cover transcode decision engine
+```
+- Küçük, odaklı commit. Konu satırı ≤ ~72 karakter; "neden"i gövdede açıkla.
+
+## DCO sign-off (zorunlu)
+Her commit imzalı olmalı (CLA yok, DCO var):
+
+```bash
+git commit -s -m "feat(metadata): add tmdb provider"
+```
+- `-s`, `Signed-off-by:` satırını ekler. İmzasız commit CI'da reddedilir.
+
+## Genel
+- Sırları/`.env` benzeri kimlik dosyalarını **commit etme**.
+- Hooks'u atlama (`--no-verify` vb.) yok; `git config` değiştirme.

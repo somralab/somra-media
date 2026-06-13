@@ -1,0 +1,40 @@
+---
+description: Somra kod yazma standartları (Go + React/TS, i18n, test/coverage)
+alwaysApply: true
+---
+
+# Kod Yazma Standartları
+
+Kaynak kod, yorum ve commit mesajları **İngilizce**. Detay: [`AGENTS.md`](../../AGENTS.md),
+[`plan/definition-of-done.md`](../../plan/definition-of-done.md), [`plan/tech-stack.md`](../../plan/tech-stack.md).
+
+## Genel
+- Kararlı teknolojiyi değiştirme (chi, modernc.org/sqlite, goose, TanStack Query, Tailwind...). Değişiklik = Tech Lead onayı + doküman güncellemesi.
+- Modül sınırlarına uy ([`plan/architecture.md`](../../plan/architecture.md) §3). Build CGO'suz kalmalı.
+- Yorum yalnızca niyet/ödünleşim/kısıt açıklar; ne yaptığını anlatan yorum yazma.
+
+## Go
+- `gofmt`/`goimports` + `golangci-lint` temiz. Hataları `%w` ile sarmala, `context.Context` taşı, global durumdan kaçın.
+
+```go
+// ❌ BAD
+if err != nil { return err }
+// ✅ GOOD
+if err != nil { return fmt.Errorf("scan library %q: %w", lib.ID, err) }
+```
+
+## React / TypeScript
+- `strict` mod, tipli API katmanı (OpenAPI'den üretilir), bileşen/hook ayrımı, erişilebilirlik. ESLint + Prettier temiz.
+
+## i18n (bağlayıcı)
+- Kullanıcıya görünen metin **asla** hardcoded olmaz; `domain.context.key` ile çözülür. Her özellik `en-US` + `tr-TR` ile gelir.
+
+```tsx
+// ❌ BAD
+<button>Kaydet</button>
+// ✅ GOOD
+<button>{t('common.actions.save')}</button>
+```
+
+## Test & coverage
+- İş mantığı için birim test zorunlu. Eşikler: çekirdek ≥%80, kritik modüller ≥%90, frontend bileşen ≥%70, kritik akışlarda e2e. Bitirmeden `make lint test i18n-check coverage` yeşil olmalı.

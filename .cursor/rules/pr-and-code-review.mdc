@@ -1,0 +1,41 @@
+---
+description: Somra PR açma ve code review standartları
+alwaysApply: true
+---
+
+# PR & Code Review
+
+## PR açarken
+- **Küçük ve odaklı** tut (tek mantıksal değişiklik). Büyük işi parçala.
+- Açıklamada ilgili görevi ve **kabul kriterini** referansla ([`plan/`](../../plan/) sprint dosyaları).
+- Şablon:
+
+```md
+## Ne / Neden
+<değişiklik ve gerekçe>
+
+## İlgili görev
+plan/sprint-XX-.../NN-...-tasks.md → <epik/görev>
+
+## Test
+<unit/integration/e2e + coverage notu>
+
+## Kontrol
+- [ ] DoD karşılandı  - [ ] i18n (en-US + tr-TR)  - [ ] CI yeşil
+```
+
+## Birleştirme (merge) ön koşulları
+- Tüm CI kapıları yeşil: `lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build`.
+- En az **1 onay**; mimariyi etkileyen değişiklikte **Tech Lead onayı** zorunlu.
+- [`plan/definition-of-done.md`](../../plan/definition-of-done.md) §1 karşılanmış olmalı.
+
+## Reviewer kontrol listesi
+- Kapsam: değişiklik brief'e/sprint hedefine uygun mu? (kapsam dışına çıkmıyor mu — [`plan/project-brief.md`](../../plan/project-brief.md) §7)
+- Doğruluk + test yeterliliği (eşikler: çekirdek ≥%80, kritik ≥%90).
+- i18n: hardcoded metin yok, iki dil tam.
+- Güvenlik: girdi doğrulama, yetki kontrolü, sır sızıntısı yok, path traversal/SSRF.
+- Kod stili ([`code-standards.mdc`](./code-standards.mdc)) ve modül sınırları.
+
+## Davranış
+- Yapıcı, somut geri bildirim; "nit:" ile küçük öneriyi işaretle.
+- Reddedilen/başarısız CI'da **amend değil yeni commit**; review sonrası zorla geçme yok.
