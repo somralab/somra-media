@@ -1,0 +1,36 @@
+{
+  "section": {
+    "title": "Subtitles",
+    "empty": "No subtitles available.",
+    "missing": "Missing preferred languages: {{languages}}"
+  },
+  "actions": {
+    "search": "Search subtitles",
+    "download": "Download",
+    "upload": "Upload subtitle",
+    "refresh": "Refresh"
+  },
+  "search": {
+    "title": "Search subtitles",
+    "language": "Language",
+    "query": "Search query",
+    "noResults": "No subtitles found.",
+    "score": "Match score: {{score}}%"
+  },
+  "upload": {
+    "title": "Upload subtitle file",
+    "language": "Language code",
+    "file": "Subtitle file (.srt)",
+    "success": "Subtitle uploaded.",
+    "failed": "Upload failed."
+  },
+  "download": {
+    "success": "Subtitle downloaded.",
+    "failed": "Download failed."
+  },
+  "source": {
+    "embedded": "Embedded",
+    "external": "Downloaded",
+    "uploaded": "Uploaded"
+  }
+}

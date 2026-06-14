@@ -1,0 +1,53 @@
+{
+  "page": {
+    "title": "Ayarlar",
+    "subtitle": "Somra sunucu davranışını ve tercihlerini yapılandırın.",
+    "advanced": "Gelişmiş ayarlar",
+    "simple": "Basit mod",
+    "saved": "Ayarlar kaydedildi.",
+    "saveFailed": "Ayarlar kaydedilemedi."
+  },
+  "categories": {
+    "general": "Genel",
+    "library": "Kütüphane",
+    "playback": "Oynatma",
+    "subtitles": "Altyazılar",
+    "users": "Kullanıcılar"
+  },
+  "general": {
+    "defaultLocale": {
+      "label": "Sistem varsayılan dili",
+      "description": "Kullanıcı tercihi yoksa kullanılır."
+    }
+  },
+  "library": {
+    "scanCron": {
+      "label": "Kütüphane tarama zamanlaması",
+      "description": "Otomatik kütüphane taramaları için cron ifadesi."
+    }
+  },
+  "playback": {
+    "maxConcurrentTranscodes": {
+      "label": "Eşzamanlı dönüştürme limiti",
+      "description": "Aynı anda kaç dönüştürme oturumu çalışabilir."
+    }
+  },
+  "subtitles": {
+    "autoDownload": {
+      "label": "Eksik altyazıları otomatik indir",
+      "description": "Tercih edilen diller için altyazıları otomatik getir."
+    },
+    "preferredLanguages": {
+      "label": "Tercih edilen altyazı dilleri",
+      "description": "ISO 639-1 kodları, virgülle ayrılmış (ör. en, tr)."
+    },
+    "apiKey": {
+      "label": "OpenSubtitles API anahtarı",
+      "description": "Harici altyazı araması için gerekli. opensubtitles.com'dan alın."
+    }
+  },
+  "users": {
+    "manageLink": "Kullanıcıları yönet",
+    "description": "Yönetici panelinden kullanıcı hesapları oluşturun ve yönetin."
+  }
+}

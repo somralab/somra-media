@@ -1,0 +1,72 @@
+{
+  "wizard": {
+    "title": "Welcome to Somra",
+    "subtitle": "Set up your media server in a few quick steps.",
+    "next": "Continue",
+    "back": "Back",
+    "finish": "Finish setup",
+    "skip": "Skip for now"
+  },
+  "steps": {
+    "language": "Language",
+    "admin": "Admin account",
+    "library": "Library",
+    "defaults": "Smart defaults",
+    "scan": "First scan",
+    "complete": "Done"
+  },
+  "language": {
+    "title": "Choose your language",
+    "description": "This becomes the system default until users set their own preference.",
+    "systemDefault": "System default language"
+  },
+  "admin": {
+    "title": "Create admin account",
+    "description": "This account manages libraries, settings, and users."
+  },
+  "library": {
+    "title": "Add your first library",
+    "description": "Point Somra at a folder containing your movies or TV shows.",
+    "name": "Library name",
+    "path": "Media folder path",
+    "kind": "Content type",
+    "kinds": {
+      "movie": "Movies",
+      "tv": "TV shows",
+      "music": "Music"
+    }
+  },
+  "defaults": {
+    "title": "Recommended settings",
+    "description": "Somra detected your hardware and suggests optimized defaults.",
+    "apply": "Apply recommendations",
+    "cpuCores": "{{count}} CPU cores detected",
+    "memory": "{{gb}} GB RAM",
+    "gpu": "GPU acceleration available",
+    "noGpu": "No GPU detected (software transcode)",
+    "transcodeConcurrency": "Max concurrent transcodes: {{count}}",
+    "scanSchedule": "Nightly library scan at 3:00 AM"
+  },
+  "scan": {
+    "title": "Scanning your library",
+    "description": "Somra is indexing your media. This may take a few minutes.",
+    "progress": "{{done}} of {{total}} files",
+    "waiting": "Waiting for scan to start…",
+    "complete": "Scan complete"
+  },
+  "complete": {
+    "title": "You're all set!",
+    "description": "Somra is ready. Start browsing your library or adjust settings anytime.",
+    "goHome": "Go to home",
+    "goLibraries": "Browse libraries"
+  },
+  "recommendation": {
+    "recommended": "Recommended",
+    "applied": "Applied"
+  },
+  "errors": {
+    "stepFailed": "Could not save this step. Try again.",
+    "libraryFailed": "Could not create the library.",
+    "defaultsFailed": "Could not apply recommendations."
+  }
+}

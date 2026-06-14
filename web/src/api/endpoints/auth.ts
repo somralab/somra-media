@@ -9,6 +9,8 @@ export interface TokenResponse {
 
 export interface SetupStatus {
   setupRequired: boolean;
+  completed?: boolean;
+  phase?: string;
 }
 
 export interface Profile {

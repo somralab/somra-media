@@ -45,6 +45,12 @@ tags:
     description: Home shelves, search, and browse discovery.
   - name: streaming
     description: Playback, transcode sessions, and HLS manifests.
+  - name: settings
+    description: Central settings and smart defaults.
+  - name: onboarding
+    description: First-run setup wizard state machine.
+  - name: subtitles
+    description: Subtitle search, download, and management.
 
 paths:
   /health:
@@ -131,6 +137,25 @@ paths:
               schema:
                 type: string
 
+  /system/detect:
+    get:
+      tags: [system]
+      summary: Detect system hardware and validate storage paths
+      operationId: detectSystem
+      parameters:
+        - name: paths
+          in: query
+          description: Comma-separated paths to validate (optional; defaults to configured data/cache dirs)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: System profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemProfile"
+
   /setup/status:
     get:
       tags: [auth]
@@ -142,11 +167,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required: [setupRequired]
-                properties:
-                  setupRequired:
-                    type: boolean
+                $ref: "#/components/schemas/SetupStatusResponse"
 
   /setup/admin:
     post:
@@ -166,6 +187,228 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TokenResponse"
+
+  /onboarding/status:
+    get:
+      tags: [onboarding]
+      summary: Onboarding wizard state
+      operationId: getOnboardingStatus
+      responses:
+        "200":
+          description: Onboarding state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OnboardingState"
+
+  /onboarding/step:
+    post:
+      tags: [onboarding]
+      summary: Advance or update an onboarding step
+      operationId: advanceOnboardingStep
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OnboardingStepRequest"
+      responses:
+        "200":
+          description: Updated onboarding state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OnboardingState"
+
+  /onboarding/complete:
+    post:
+      tags: [onboarding]
+      summary: Mark onboarding as completed
+      operationId: completeOnboarding
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Onboarding completed
+
+  /settings:
+    get:
+      tags: [settings]
+      summary: Get all settings grouped by category
+      operationId: getSettings
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Settings snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SettingsSnapshot"
+
+  /settings/{category}:
+    patch:
+      tags: [settings]
+      summary: Update settings in a category
+      operationId: patchSettingsCategory
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [general, library, playback, subtitles, streaming]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsCategoryPatch"
+      responses:
+        "200":
+          description: Updated category settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SettingsCategory"
+
+  /subtitles/search:
+    get:
+      tags: [subtitles]
+      summary: Search external subtitle providers
+      operationId: searchSubtitles
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: mediaItemId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: language
+          in: query
+          schema:
+            type: string
+        - name: query
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [results]
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SubtitleSearchResult"
+    post:
+      tags: [subtitles]
+      summary: Search external subtitle providers (POST body)
+      operationId: searchSubtitlesPost
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubtitleSearchRequest"
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [results]
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SubtitleSearchResult"
+
+  /subtitles/download:
+    post:
+      tags: [subtitles]
+      summary: Download a subtitle from a provider
+      operationId: downloadSubtitle
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubtitleDownloadRequest"
+      responses:
+        "201":
+          description: Subtitle downloaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedSubtitle"
+
+  /subtitles/upload:
+    post:
+      tags: [subtitles]
+      summary: Upload a subtitle file manually
+      operationId: uploadSubtitle
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [mediaItemId, file]
+              properties:
+                mediaItemId:
+                  type: integer
+                  format: int64
+                language:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Subtitle uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedSubtitle"
+
+  /media-items/{itemId}/subtitles:
+    get:
+      tags: [subtitles]
+      summary: List subtitles for a media item
+      operationId: listMediaSubtitles
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/itemId"
+      responses:
+        "200":
+          description: Subtitle tracks
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [subtitles]
+                properties:
+                  subtitles:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ManagedSubtitle"
 
   /auth/login:
     post:
@@ -1340,6 +1583,176 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SubtitleTrack"
+
+    SystemProfile:
+      type: object
+      required: [cpuCores, memoryBytes, gpuPresent, paths]
+      properties:
+        cpuCores:
+          type: integer
+        memoryBytes:
+          type: integer
+          format: int64
+        gpuPresent:
+          type: boolean
+        paths:
+          type: array
+          items:
+            $ref: "#/components/schemas/PathValidation"
+
+    PathValidation:
+      type: object
+      required: [path, readable, writable]
+      properties:
+        path:
+          type: string
+        readable:
+          type: boolean
+        writable:
+          type: boolean
+
+    SmartDefaults:
+      type: object
+      required: [maxConcurrentTranscodes, scanCron]
+      properties:
+        maxConcurrentTranscodes:
+          type: integer
+        scanCron:
+          type: string
+        defaultLocale:
+          type: string
+          enum: [en-US, tr-TR]
+
+    SetupStatusResponse:
+      type: object
+      required: [setupRequired, completed, phase]
+      properties:
+        setupRequired:
+          type: boolean
+        completed:
+          type: boolean
+        phase:
+          $ref: "#/components/schemas/OnboardingPhase"
+
+    OnboardingPhase:
+      type: string
+      enum: [language, admin, library, defaults, scan, complete]
+
+    OnboardingState:
+      type: object
+      required: [phase, completed, setupRequired]
+      properties:
+        phase:
+          $ref: "#/components/schemas/OnboardingPhase"
+        completed:
+          type: boolean
+        setupRequired:
+          type: boolean
+        smartDefaults:
+          $ref: "#/components/schemas/SmartDefaults"
+
+    OnboardingStepRequest:
+      type: object
+      required: [phase]
+      properties:
+        phase:
+          $ref: "#/components/schemas/OnboardingPhase"
+        locale:
+          type: string
+          enum: [en-US, tr-TR]
+        applyDefaults:
+          type: boolean
+        libraryId:
+          type: integer
+          format: int64
+
+    SettingsSnapshot:
+      type: object
+      properties:
+        general:
+          $ref: "#/components/schemas/SettingsCategory"
+        library:
+          $ref: "#/components/schemas/SettingsCategory"
+        playback:
+          $ref: "#/components/schemas/SettingsCategory"
+        subtitles:
+          $ref: "#/components/schemas/SettingsCategory"
+        streaming:
+          $ref: "#/components/schemas/SettingsCategory"
+
+    SettingsCategory:
+      type: object
+      additionalProperties: true
+
+    SettingsCategoryPatch:
+      type: object
+      additionalProperties: true
+
+    SubtitleSearchRequest:
+      type: object
+      required: [mediaItemId]
+      properties:
+        mediaItemId:
+          type: integer
+          format: int64
+        language:
+          type: string
+        query:
+          type: string
+
+    SubtitleSearchResult:
+      type: object
+      required: [provider, externalId, language, score]
+      properties:
+        provider:
+          type: string
+        externalId:
+          type: string
+        language:
+          type: string
+        releaseName:
+          type: string
+        score:
+          type: number
+        downloadCount:
+          type: integer
+
+    SubtitleDownloadRequest:
+      type: object
+      required: [mediaItemId, provider, externalId]
+      properties:
+        mediaItemId:
+          type: integer
+          format: int64
+        provider:
+          type: string
+        externalId:
+          type: string
+        language:
+          type: string
+
+    ManagedSubtitle:
+      type: object
+      required: [id, mediaItemId, language, source]
+      properties:
+        id:
+          type: integer
+          format: int64
+        mediaItemId:
+          type: integer
+          format: int64
+        language:
+          type: string
+        source:
+          type: string
+          enum: [embedded, external, uploaded]
+        path:
+          type: string
+        provider:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
 
     SetupAdminRequest:
       type: object

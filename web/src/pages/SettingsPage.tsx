@@ -1,48 +1,44 @@
-import { useMemo, type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
-
-function useLocaleDemo(locale: string): {
-  today: string;
-  now: string;
-  number: string;
-} {
-  return useMemo(() => {
-    const date = new Date();
-    return {
-      today: new Intl.DateTimeFormat(locale, {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      }).format(date),
-      now: new Intl.DateTimeFormat(locale, {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      }).format(date),
-      number: new Intl.NumberFormat(locale).format(1234567.89),
-    };
-  }, [locale]);
-}
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { useSettings, usePatchSettings } from '@/api/hooks/useSettings';
 
 export default function SettingsPage(): ReactNode {
-  const { t, i18n } = useTranslation();
-  const demo = useLocaleDemo(i18n.resolvedLanguage ?? 'en-US');
+  const { t } = useTranslation('settings');
+  const { t: tc } = useTranslation();
+  const { data: settings, isLoading } = useSettings();
+  const [advanced, setAdvanced] = useState(false);
+  const patchGeneral = usePatchSettings('general');
+  const patchLibrary = usePatchSettings('library');
+  const patchPlayback = usePatchSettings('playback');
+  const patchSubtitles = usePatchSettings('subtitles');
+
+  const general = settings?.general as Record<string, string> | undefined;
+  const library = settings?.library as Record<string, string> | undefined;
+  const playback = settings?.playback as Record<string, number> | undefined;
+  const subtitles = settings?.subtitles as Record<string, unknown> | undefined;
 
   return (
     <section className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold">{t('settings.title')}</h1>
-        <p className="text-sm text-muted">{t('settings.subtitle')}</p>
+      <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">{t('page.title')}</h1>
+          <p className="text-sm text-muted">{t('page.subtitle')}</p>
+        </div>
+        <Button variant="ghost" size="sm" onClick={() => setAdvanced((v) => !v)}>
+          {advanced ? t('page.simple') : t('page.advanced')}
+        </Button>
       </header>
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('settings.language.label')}</CardTitle>
-          <CardDescription>{t('settings.language.description')}</CardDescription>
+          <CardTitle>{tc('settings.language.label')}</CardTitle>
+          <CardDescription>{tc('settings.language.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <LanguageSwitcher />
@@ -51,33 +47,129 @@ export default function SettingsPage(): ReactNode {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('settings.theme.label')}</CardTitle>
-          <CardDescription>{t('settings.theme.description')}</CardDescription>
+          <CardTitle>{tc('settings.theme.label')}</CardTitle>
+          <CardDescription>{tc('settings.theme.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ThemeSwitcher />
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('settings.demo.title')}</CardTitle>
-          <CardDescription>{t('settings.demo.description')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <dl
-            className="grid grid-cols-[max-content,1fr] gap-x-4 gap-y-2 text-sm"
-            data-testid="settings-demo"
-          >
-            <dt className="text-muted">{t('settings.demo.todayLabel')}</dt>
-            <dd>{demo.today}</dd>
-            <dt className="text-muted">{t('settings.demo.now')}</dt>
-            <dd>{demo.now}</dd>
-            <dt className="text-muted">{t('settings.demo.numberLabel')}</dt>
-            <dd>{demo.number}</dd>
-          </dl>
-        </CardContent>
-      </Card>
+      {!isLoading && settings ? (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('categories.general')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <label className="block space-y-1 text-sm">
+                <span>{t('general.defaultLocale.label')}</span>
+                <select
+                  className="w-full rounded-md border border-border bg-surface px-3 py-2"
+                  value={general?.defaultLocale ?? 'en-US'}
+                  onChange={(e) => patchGeneral.mutate({ defaultLocale: e.target.value })}
+                >
+                  <option value="en-US">en-US</option>
+                  <option value="tr-TR">tr-TR</option>
+                </select>
+              </label>
+              <p className="text-xs text-muted">{t('general.defaultLocale.description')}</p>
+            </CardContent>
+          </Card>
+
+          {advanced ? (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('categories.library')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <label className="block space-y-1 text-sm">
+                    <span>{t('library.scanCron.label')}</span>
+                    <Input
+                      defaultValue={library?.scanCron ?? '0 3 * * *'}
+                      onBlur={(e) => patchLibrary.mutate({ scanCron: e.target.value })}
+                    />
+                  </label>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('categories.playback')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <label className="block space-y-1 text-sm">
+                    <span>{t('playback.maxConcurrentTranscodes.label')}</span>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={8}
+                      defaultValue={playback?.maxConcurrentTranscodes ?? 2}
+                      onBlur={(e) =>
+                        patchPlayback.mutate({
+                          maxConcurrentTranscodes: Number(e.target.value),
+                        })
+                      }
+                    />
+                  </label>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('categories.subtitles')}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      defaultChecked={Boolean(subtitles?.autoDownload)}
+                      onChange={(e) => patchSubtitles.mutate({ autoDownload: e.target.checked })}
+                    />
+                    {t('subtitles.autoDownload.label')}
+                  </label>
+                  <label className="block space-y-1 text-sm">
+                    <span>{t('subtitles.preferredLanguages.label')}</span>
+                    <Input
+                      defaultValue={
+                        Array.isArray(subtitles?.preferredLanguages)
+                          ? (subtitles?.preferredLanguages as string[]).join(', ')
+                          : 'en, tr'
+                      }
+                      onBlur={(e) =>
+                        patchSubtitles.mutate({
+                          preferredLanguages: e.target.value.split(',').map((s) => s.trim()),
+                        })
+                      }
+                    />
+                  </label>
+                  <label className="block space-y-1 text-sm">
+                    <span>{t('subtitles.apiKey.label')}</span>
+                    <Input
+                      type="password"
+                      placeholder={subtitles?.apiKeySet ? '••••••••' : ''}
+                      onBlur={(e) => {
+                        if (e.target.value) patchSubtitles.mutate({ apiKey: e.target.value });
+                      }}
+                    />
+                  </label>
+                </CardContent>
+              </Card>
+            </>
+          ) : null}
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('categories.users')}</CardTitle>
+              <CardDescription>{t('users.description')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/admin/users" className="text-sm text-primary hover:underline">
+                {t('users.manageLink')}
+              </Link>
+            </CardContent>
+          </Card>
+        </>
+      ) : null}
     </section>
   );
 }

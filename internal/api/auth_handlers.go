@@ -10,6 +10,7 @@ import (
 
 	"github.com/somralab/somra-media/internal/auth"
 	platformerrors "github.com/somralab/somra-media/internal/platform/errors"
+	"github.com/somralab/somra-media/internal/settings"
 )
 
 const refreshTokenCookie = "somra_refresh_token"
@@ -18,6 +19,7 @@ const refreshTokenCookie = "somra_refresh_token"
 type AuthHandlers struct {
 	Service      *auth.Service
 	SecureCookie bool
+	Onboarding   *settings.Onboarding
 }
 
 type loginRequest struct {
@@ -65,6 +67,19 @@ func (h *AuthHandlers) requireAuth() *AuthMiddleware {
 }
 
 func (h *AuthHandlers) setupStatus(w http.ResponseWriter, r *http.Request) {
+	if h.Onboarding != nil {
+		state, err := h.Onboarding.Status(r.Context())
+		if err != nil {
+			writeError(w, r, platformerrors.Wrap(err, http.StatusInternalServerError, platformerrors.CodeInternal, "auth.setup.status_failed"))
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{
+			"setupRequired": state.SetupRequired,
+			"completed":     state.Completed,
+			"phase":         state.Phase,
+		})
+		return
+	}
 	required, err := h.Service.SetupRequired(r.Context())
 	if err != nil {
 		writeError(w, r, platformerrors.Wrap(err, http.StatusInternalServerError, platformerrors.CodeInternal, "auth.setup.status_failed"))
@@ -93,6 +108,9 @@ func (h *AuthHandlers) setupAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.setRefreshCookie(w, pair.RefreshToken)
+	if h.Onboarding != nil {
+		_ = h.Onboarding.AfterAdminCreated(r.Context())
+	}
 	writeJSON(w, http.StatusCreated, tokenResponse{
 		AccessToken: pair.AccessToken,
 		ExpiresAt:   pair.ExpiresAt,

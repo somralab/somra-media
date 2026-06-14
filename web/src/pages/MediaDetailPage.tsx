@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { ErrorState } from '@/components/browse/ErrorState';
 import { PosterSkeleton } from '@/components/browse/Skeleton';
+import { SubtitleSection } from '@/components/subtitles/SubtitleSection';
 import { useFavoriteToggle, useMediaDetail, useWatchlistToggle } from '@/api/hooks/useBrowse';
 
 export default function MediaDetailPage(): ReactNode {
@@ -96,6 +97,8 @@ export default function MediaDetailPage(): ReactNode {
           </div>
         </div>
       </div>
+
+      <SubtitleSection itemId={itemId} />
 
       {detail.cast.length > 0 && (
         <Card>

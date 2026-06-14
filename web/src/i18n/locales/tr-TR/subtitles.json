@@ -1,0 +1,36 @@
+{
+  "section": {
+    "title": "Altyazılar",
+    "empty": "Altyazı yok.",
+    "missing": "Eksik tercih edilen diller: {{languages}}"
+  },
+  "actions": {
+    "search": "Altyazı ara",
+    "download": "İndir",
+    "upload": "Altyazı yükle",
+    "refresh": "Yenile"
+  },
+  "search": {
+    "title": "Altyazı ara",
+    "language": "Dil",
+    "query": "Arama sorgusu",
+    "noResults": "Altyazı bulunamadı.",
+    "score": "Eşleşme skoru: %{{score}}"
+  },
+  "upload": {
+    "title": "Altyazı dosyası yükle",
+    "language": "Dil kodu",
+    "file": "Altyazı dosyası (.srt)",
+    "success": "Altyazı yüklendi.",
+    "failed": "Yükleme başarısız."
+  },
+  "download": {
+    "success": "Altyazı indirildi.",
+    "failed": "İndirme başarısız."
+  },
+  "source": {
+    "embedded": "Gömülü",
+    "external": "İndirilen",
+    "uploaded": "Yüklenen"
+  }
+}

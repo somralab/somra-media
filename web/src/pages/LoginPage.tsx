@@ -1,6 +1,6 @@
 import { type FormEvent, type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getSetupStatus, login, setupAdmin, updateProfile } from '@/api/endpoints/auth';
 import { setAuthSession } from '@/stores/auth';
@@ -44,6 +44,12 @@ export default function LoginPage(): ReactNode {
 
   if (setupQuery.isLoading) {
     return <p className="p-6 text-muted">{t('loading')}</p>;
+  }
+
+  const phase = setupQuery.data?.phase;
+  const onboardingDone = setupQuery.data?.completed === true || phase === 'complete';
+  if (!onboardingDone) {
+    return <Navigate to="/setup/wizard" replace />;
   }
 
   return (

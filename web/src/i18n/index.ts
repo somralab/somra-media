@@ -12,6 +12,9 @@ import enDiscover from './locales/en-US/discover.json';
 import enBrowse from './locales/en-US/browse.json';
 import enSearch from './locales/en-US/search.json';
 import enDetail from './locales/en-US/detail.json';
+import enOnboarding from './locales/en-US/onboarding.json';
+import enSettings from './locales/en-US/settings.json';
+import enSubtitles from './locales/en-US/subtitles.json';
 import trCommon from './locales/tr-TR/common.json';
 import trStatus from './locales/tr-TR/status.json';
 import trLibrary from './locales/tr-TR/library.json';
@@ -22,6 +25,9 @@ import trDiscover from './locales/tr-TR/discover.json';
 import trBrowse from './locales/tr-TR/browse.json';
 import trSearch from './locales/tr-TR/search.json';
 import trDetail from './locales/tr-TR/detail.json';
+import trOnboarding from './locales/tr-TR/onboarding.json';
+import trSettings from './locales/tr-TR/settings.json';
+import trSubtitles from './locales/tr-TR/subtitles.json';
 
 export const SUPPORTED_LOCALES = ['en-US', 'tr-TR'] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
@@ -39,6 +45,9 @@ export const NAMESPACES = [
   'browse',
   'search',
   'detail',
+  'onboarding',
+  'settings',
+  'subtitles',
 ] as const;
 
 export const resources = {
@@ -53,6 +62,9 @@ export const resources = {
     browse: enBrowse,
     search: enSearch,
     detail: enDetail,
+    onboarding: enOnboarding,
+    settings: enSettings,
+    subtitles: enSubtitles,
   },
   'tr-TR': {
     common: trCommon,
@@ -65,6 +77,9 @@ export const resources = {
     browse: trBrowse,
     search: trSearch,
     detail: trDetail,
+    onboarding: trOnboarding,
+    settings: trSettings,
+    subtitles: trSubtitles,
   },
 } as const;
 

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from '@/pages/LoginPage';
 import ProfilePage from '@/pages/ProfilePage';
 import AdminUsersPage from '@/pages/AdminUsersPage';
@@ -27,7 +27,11 @@ describe('auth pages', () => {
   });
 
   it('renders login form when setup is complete', async () => {
-    mockedAuth.getSetupStatus.mockResolvedValue({ setupRequired: false });
+    mockedAuth.getSetupStatus.mockResolvedValue({
+      setupRequired: false,
+      completed: true,
+      phase: 'complete',
+    });
 
     render(
       <TestProviders>
@@ -42,25 +46,33 @@ describe('auth pages', () => {
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
   });
 
-  it('renders setup form when setup is required', async () => {
-    mockedAuth.getSetupStatus.mockResolvedValue({ setupRequired: true });
+  it('redirects to wizard when onboarding is incomplete', async () => {
+    mockedAuth.getSetupStatus.mockResolvedValue({
+      setupRequired: true,
+      completed: false,
+      phase: 'language',
+    });
 
     render(
       <TestProviders>
-        <MemoryRouter>
-          <LoginPage />
+        <MemoryRouter initialEntries={['/login']}>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/setup/wizard" element={<div>Setup wizard</div>} />
+          </Routes>
         </MemoryRouter>
       </TestProviders>,
     );
 
-    expect(
-      await screen.findByRole('heading', { name: /create admin account/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /create admin/i })).toBeInTheDocument();
+    expect(await screen.findByText('Setup wizard')).toBeInTheDocument();
   });
 
   it('submits login credentials', async () => {
-    mockedAuth.getSetupStatus.mockResolvedValue({ setupRequired: false });
+    mockedAuth.getSetupStatus.mockResolvedValue({
+      setupRequired: false,
+      completed: true,
+      phase: 'complete',
+    });
     mockedAuth.login.mockResolvedValue({
       accessToken: 'tok',
       expiresAt: new Date().toISOString(),

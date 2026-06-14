@@ -16,6 +16,7 @@ import (
 
 	"github.com/somralab/somra-media/internal/auth"
 	"github.com/somralab/somra-media/internal/platform/config"
+	"github.com/somralab/somra-media/internal/settings"
 )
 
 // Options configures the router. All fields are optional; sensible defaults
@@ -80,6 +81,21 @@ type Options struct {
 
 	// StreamingHandlers mounts playback/streaming routes (protected).
 	StreamingHandlers *StreamingHandlers
+
+	// SystemHandlers mounts system detection routes (public).
+	SystemHandlers *SystemHandlers
+
+	// SettingsHandlers mounts central settings API (admin).
+	SettingsHandlers *SettingsHandlers
+
+	// OnboardingHandlers mounts wizard state endpoints.
+	OnboardingHandlers *OnboardingHandlers
+
+	// SubtitleHandlers mounts subtitle management endpoints.
+	SubtitleHandlers *SubtitleHandlers
+
+	// Onboarding, when set, is notified after first admin creation.
+	Onboarding *settings.Onboarding
 }
 
 // New returns a chi router with the canonical middleware chain mounted at
@@ -115,6 +131,12 @@ func New(opts Options) http.Handler {
 
 		if opts.AuthHandlers != nil {
 			opts.AuthHandlers.Mount(api)
+		}
+		if opts.SystemHandlers != nil {
+			opts.SystemHandlers.Mount(api)
+		}
+		if opts.OnboardingHandlers != nil {
+			opts.OnboardingHandlers.Mount(api)
 		}
 
 		if opts.AuthMiddleware != nil {
@@ -162,6 +184,15 @@ func mountProtectedRoutes(r chi.Router, opts Options) {
 	}
 	if opts.StreamingHandlers != nil {
 		opts.StreamingHandlers.Mount(r)
+	}
+	if opts.SettingsHandlers != nil {
+		opts.SettingsHandlers.Mount(r)
+	}
+	if opts.OnboardingHandlers != nil {
+		opts.OnboardingHandlers.MountProtected(r)
+	}
+	if opts.SubtitleHandlers != nil {
+		opts.SubtitleHandlers.Mount(r)
 	}
 }
 

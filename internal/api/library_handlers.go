@@ -12,12 +12,14 @@ import (
 	"github.com/somralab/somra-media/internal/library"
 	"github.com/somralab/somra-media/internal/platform/db"
 	platformerrors "github.com/somralab/somra-media/internal/platform/errors"
+	"github.com/somralab/somra-media/internal/settings"
 )
 
 // LibraryHandlers serves library CRUD and scan endpoints.
 type LibraryHandlers struct {
-	Service *library.Service
-	Locale  func(*http.Request) string
+	Service    *library.Service
+	Locale     func(*http.Request) string
+	Onboarding *settings.Onboarding
 }
 
 type libraryRequest struct {
@@ -99,6 +101,9 @@ func (h *LibraryHandlers) create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		writeError(w, r, platformerrors.Wrap(err, http.StatusBadRequest, platformerrors.CodeValidation, "library.create.failed"))
 		return
+	}
+	if h.Onboarding != nil {
+		_ = h.Onboarding.AfterLibraryCreated(r.Context())
 	}
 	writeJSON(w, http.StatusCreated, toLibraryResponse(lib))
 }
