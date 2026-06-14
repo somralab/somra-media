@@ -27,17 +27,17 @@ type ProcessManagerConfig struct {
 
 // NewProcessManager returns a manager with concurrency cap.
 func NewProcessManager(cfg ProcessManagerConfig) *ProcessManager {
-	max := cfg.MaxConcurrent
-	if max <= 0 {
-		max = 2
+	limit := cfg.MaxConcurrent
+	if limit <= 0 {
+		limit = 2
 	}
 	bin := cfg.FFmpegBin
 	if bin == "" {
 		bin = "ffmpeg"
 	}
 	return &ProcessManager{
-		maxConcurrent: max,
-		sem:           make(chan struct{}, max),
+		maxConcurrent: limit,
+		sem:           make(chan struct{}, limit),
 		procs:         make(map[string]*exec.Cmd),
 		ffmpegBin:     bin,
 	}

@@ -36,7 +36,6 @@ type Service struct {
 	metrics *Metrics
 	logger  *slog.Logger
 
-	mu      sync.Mutex
 	queue   []queuedJob
 	queueMu sync.Mutex
 }

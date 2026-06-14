@@ -11,8 +11,8 @@ func WriteMasterPlaylist(variants []VariantInfo) string {
 	b.WriteString("#EXTM3U\n")
 	b.WriteString("#EXT-X-VERSION:7\n")
 	for _, v := range variants {
-		b.WriteString(fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%dx%d,NAME=\"%s\"\n",
-			v.Bandwidth, v.Width, v.Height, v.Name))
+		fmt.Fprintf(&b, "#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%dx%d,NAME=\"%s\"\n",
+			v.Bandwidth, v.Width, v.Height, v.Name)
 		b.WriteString(v.MediaPlaylist + "\n")
 	}
 	return b.String()
@@ -35,9 +35,9 @@ func WriteMediaPlaylist(targetDuration int, initURI string, segments []SegmentRe
 	b.WriteString("#EXT-X-PLAYLIST-TYPE:VOD\n")
 	b.WriteString("#EXT-X-TARGETDURATION:" + fmt.Sprintf("%d", targetDuration) + "\n")
 	b.WriteString("#EXT-X-MEDIA-SEQUENCE:0\n")
-	b.WriteString(fmt.Sprintf("#EXT-X-MAP:URI=\"%s\"\n", initURI))
+	fmt.Fprintf(&b, "#EXT-X-MAP:URI=\"%s\"\n", initURI)
 	for _, seg := range segments {
-		b.WriteString(fmt.Sprintf("#EXTINF:%.3f,\n", seg.DurationSec))
+		fmt.Fprintf(&b, "#EXTINF:%.3f,\n", seg.DurationSec)
 		b.WriteString(seg.URI + "\n")
 	}
 	b.WriteString("#EXT-X-ENDLIST\n")
