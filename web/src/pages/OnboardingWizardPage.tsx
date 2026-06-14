@@ -106,6 +106,9 @@ export default function OnboardingWizardPage(): ReactNode {
   const memoryGb = profile?.memoryBytes
     ? (profile.memoryBytes / (1024 * 1024 * 1024)).toFixed(1)
     : '?';
+  const availableAccelerators =
+    profile?.accelerators?.filter((a) => a.available).map((a) => a.id.toUpperCase()) ?? [];
+  const smartDefaults = statusQuery.data?.smartDefaults;
 
   return (
     <WizardShell currentStep={phase}>
@@ -202,11 +205,34 @@ export default function OnboardingWizardPage(): ReactNode {
               />
               <RecommendationCard
                 title={profile.gpuPresent ? t('defaults.gpu') : t('defaults.noGpu')}
-                description={t('defaults.transcodeConcurrency', {
-                  count: statusQuery.data?.smartDefaults?.maxConcurrentTranscodes ?? 2,
-                })}
+                description={
+                  smartDefaults?.recommendedAccelerator
+                    ? t('defaults.hwRecommendation', {
+                        accelerator: smartDefaults.recommendedAccelerator.toUpperCase(),
+                        mode: smartDefaults.hwMode ?? 'auto',
+                      })
+                    : t('defaults.hwOff')
+                }
                 applied={defaultsApplied}
               />
+              {availableAccelerators.length > 0 ? (
+                <RecommendationCard
+                  title={t('defaults.acceleratorsDetected', {
+                    list: availableAccelerators.join(', '),
+                  })}
+                  description={t('defaults.transcodeConcurrency', {
+                    count: smartDefaults?.maxConcurrentTranscodes ?? 2,
+                  })}
+                  applied={defaultsApplied}
+                />
+              ) : (
+                <RecommendationCard
+                  title={t('defaults.transcodeConcurrency', {
+                    count: smartDefaults?.maxConcurrentTranscodes ?? 2,
+                  })}
+                  applied={defaultsApplied}
+                />
+              )}
               <RecommendationCard title={t('defaults.scanSchedule')} applied={defaultsApplied} />
             </>
           ) : null}

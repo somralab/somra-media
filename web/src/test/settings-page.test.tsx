@@ -14,7 +14,7 @@ vi.mock('@/api/hooks/useSettings', () => ({
     data: {
       general: { defaultLocale: 'en-US' },
       library: { scanCron: '0 3 * * *' },
-      playback: { maxConcurrentTranscodes: 2 },
+      playback: { maxConcurrentTranscodes: 2, hwMode: 'auto', hwAccelerator: 'auto', maxHWTranscodes: 2 },
       subtitles: { autoDownload: false, preferredLanguages: ['en'], apiKeySet: false },
     },
     isLoading: false,
@@ -61,6 +61,14 @@ describe('<SettingsPage />', () => {
 
     fireEvent.change(screen.getByDisplayValue('en-US'), { target: { value: 'tr-TR' } });
     expect(patchMutate).toHaveBeenCalledWith({ defaultLocale: 'tr-TR' });
+  });
+
+  it('shows HW acceleration controls in advanced mode', async () => {
+    await i18n.changeLanguage('en-US');
+    renderSettings();
+    fireEvent.click(screen.getByRole('button', { name: /advanced/i }));
+    expect(screen.getByText(/hardware acceleration/i)).toBeInTheDocument();
+    expect(screen.getByText(/acceleration mode/i)).toBeInTheDocument();
   });
 
   it('renders users management link', async () => {

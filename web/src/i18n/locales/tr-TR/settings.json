@@ -30,6 +30,34 @@
     "maxConcurrentTranscodes": {
       "label": "Eşzamanlı dönüştürme limiti",
       "description": "Aynı anda kaç dönüştürme oturumu çalışabilir."
+    },
+    "hwAcceleration": {
+      "title": "Donanım hızlandırma",
+      "description": "Mümkün olduğunda GPU kodlayıcıları kullanır. Yazılım geri düşüşü her zaman etkindir."
+    },
+    "hwMode": {
+      "label": "Hızlandırma modu",
+      "description": "Otomatik GPU'yu kullanır; Kapalı yalnızca CPU; Zorla GPU'yu tercih eder.",
+      "options": {
+        "auto": "Otomatik",
+        "off": "Kapalı (yalnızca CPU)",
+        "force": "Donanımı zorla"
+      }
+    },
+    "hwAccelerator": {
+      "label": "Tercih edilen hızlandırıcı",
+      "description": "Otomatik en iyi tespit edilen kodlayıcıyı seçer (Intel QSV öncelikli).",
+      "options": {
+        "auto": "Otomatik",
+        "qsv": "Intel Quick Sync (QSV)",
+        "nvenc": "NVIDIA NVENC",
+        "vaapi": "VAAPI",
+        "amf": "AMD AMF"
+      }
+    },
+    "maxHWTranscodes": {
+      "label": "Eşzamanlı HW dönüştürme limiti",
+      "description": "Eşzamanlı GPU kodlama oturumlarını sınırlar."
     }
   },
   "subtitles": {

@@ -30,6 +30,34 @@
     "maxConcurrentTranscodes": {
       "label": "Max concurrent transcodes",
       "description": "How many transcode sessions can run at once."
+    },
+    "hwAcceleration": {
+      "title": "Hardware acceleration",
+      "description": "Use GPU encoders when available. Software fallback is always enabled."
+    },
+    "hwMode": {
+      "label": "Acceleration mode",
+      "description": "Auto uses GPU when detected; Off forces CPU; Force prefers GPU.",
+      "options": {
+        "auto": "Automatic",
+        "off": "Off (CPU only)",
+        "force": "Force hardware"
+      }
+    },
+    "hwAccelerator": {
+      "label": "Preferred accelerator",
+      "description": "Auto picks the best detected encoder (Intel QSV priority).",
+      "options": {
+        "auto": "Automatic",
+        "qsv": "Intel Quick Sync (QSV)",
+        "nvenc": "NVIDIA NVENC",
+        "vaapi": "VAAPI",
+        "amf": "AMD AMF"
+      }
+    },
+    "maxHWTranscodes": {
+      "label": "Max concurrent HW transcodes",
+      "description": "Limits simultaneous GPU encode sessions."
     }
   },
   "subtitles": {

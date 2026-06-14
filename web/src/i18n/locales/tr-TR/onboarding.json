@@ -44,6 +44,9 @@
     "memory": "{{gb}} GB RAM",
     "gpu": "GPU hızlandırma mevcut",
     "noGpu": "GPU tespit edilmedi (yazılım dönüştürme)",
+    "hwRecommendation": "Önerilen: {{accelerator}} ({{mode}} modu)",
+    "hwOff": "Donanım hızlandırma devre dışı",
+    "acceleratorsDetected": "Tespit edilen: {{list}}",
     "transcodeConcurrency": "Eşzamanlı dönüştürme: {{count}}",
     "scanSchedule": "Her gece saat 03:00'te kütüphane taraması"
   },
