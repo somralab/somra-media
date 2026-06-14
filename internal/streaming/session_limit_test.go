@@ -43,13 +43,24 @@ func TestService_TranscodeQueueLimit(t *testing.T) {
 	svc := NewService(ServiceConfig{
 		CacheDir: cache, MaxConcurrent: 1, MaxTranscodeQueue: 1, SessionTTL: time.Hour,
 	}, playbackRepo, mediaRepo, nil)
+	svc.ApplyRuntimeSettings(HWRuntimeConfig{Mode: HWModeOff, MaxHWSessions: 0, MaxTotalSessions: 1})
 
 	caps := DefaultBrowserCapabilities()
-	_, err = svc.StartPlay(ctx, PlayRequest{UserID: user.ID, MediaItemID: itemID, Capabilities: caps})
+	resp, err := svc.StartPlay(ctx, PlayRequest{UserID: user.ID, MediaItemID: itemID, Capabilities: caps})
 	require.NoError(t, err)
+	assert.Equal(t, ModeTranscode, resp.Mode)
 
 	n, err := playbackRepo.CountActiveTranscodes(ctx)
 	require.NoError(t, err)
+	// Session is created as active; async packaging may fail fast on CI without ffmpeg.
+	if n == 0 {
+		var mode string
+		qerr := d.Querier().QueryRowContext(ctx,
+			`SELECT mode FROM playback_session WHERE id = ?`, resp.SessionID).Scan(&mode)
+		require.NoError(t, qerr)
+		assert.Equal(t, "transcode", mode)
+		return
+	}
 	assert.GreaterOrEqual(t, n, 1)
 }
 

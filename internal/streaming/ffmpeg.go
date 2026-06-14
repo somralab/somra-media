@@ -100,6 +100,17 @@ func (m *ProcessManager) Stop(sessionID string) {
 	}
 }
 
+// SetMaxConcurrent updates the process manager concurrency cap at runtime.
+func (m *ProcessManager) SetMaxConcurrent(limit int) {
+	if limit <= 0 {
+		return
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.maxConcurrent = limit
+	m.sem = make(chan struct{}, limit)
+}
+
 // RunningCount returns active ffmpeg processes.
 func (m *ProcessManager) RunningCount() int {
 	m.mu.Lock()

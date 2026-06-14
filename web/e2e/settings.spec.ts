@@ -22,6 +22,18 @@ test.describe('settings regression', () => {
       await expect(page.getByText(/library|kütüphane/i).first()).toBeVisible();
     }
   });
+
+  test('HW acceleration settings in advanced mode', async ({ page }) => {
+    await login(page);
+    await page.goto('/settings');
+    const advanced = page.getByRole('button', { name: /advanced|gelişmiş/i });
+    if (await advanced.isVisible()) {
+      await advanced.click();
+      await expect(
+        page.getByText(/hardware acceleration|donanım hızlandırma/i).first(),
+      ).toBeVisible();
+    }
+  });
 });
 
 test.describe('settings API', () => {

@@ -68,12 +68,20 @@ RUN --mount=type=cache,id=gomodcache,target=/go/pkg/mod \
 # ---------------------------------------------------------------------------
 FROM alpine:3.21 AS runtime
 
+# ffmpeg HW stack: libva + Intel media driver + Mesa VAAPI for AMD.
+# NVIDIA encode requires host driver passthrough (see deploy/docker-compose.nvidia.yml).
 RUN apk add --no-cache \
       ffmpeg \
+      ffmpeg-libs \
+      intel-media-driver \
+      libva \
+      mesa-va-drivers \
       tini \
       ca-certificates \
       tzdata \
-      curl
+      curl && \
+    ffmpeg -hide_banner -encoders 2>/dev/null | grep -qE 'h264_(qsv|vaapi|nvenc|amf)' || \
+    (echo "WARN: no h264 HW encoders in ffmpeg build — software transcode only" >&2)
 
 ARG SOMRA_UID=1000
 ARG SOMRA_GID=1000

@@ -21,6 +21,7 @@ type ServiceConfig struct {
 	SessionTTL        time.Duration
 	IdleTimeout       time.Duration
 	MaxConcurrent     int
+	MaxHWConcurrent   int
 	MaxTranscodeQueue int
 	FFmpegBin         string
 	FFprobeBin        string
@@ -35,6 +36,10 @@ type Service struct {
 	procMgr *ProcessManager
 	metrics *Metrics
 	logger  *slog.Logger
+
+	hwMu     sync.RWMutex
+	hwConfig HWRuntimeConfig
+	hwActive int
 
 	queue   []queuedJob
 	queueMu sync.Mutex
@@ -56,6 +61,9 @@ func NewService(cfg ServiceConfig, repo *db.PlaybackRepo, media *db.MediaRepo, l
 	if cfg.MaxConcurrent <= 0 {
 		cfg.MaxConcurrent = 2
 	}
+	if cfg.MaxHWConcurrent <= 0 {
+		cfg.MaxHWConcurrent = 2
+	}
 	if cfg.MaxTranscodeQueue <= 0 {
 		cfg.MaxTranscodeQueue = 8
 	}
@@ -70,7 +78,67 @@ func NewService(cfg ServiceConfig, repo *db.PlaybackRepo, media *db.MediaRepo, l
 		procMgr: NewProcessManager(ProcessManagerConfig{MaxConcurrent: cfg.MaxConcurrent, FFmpegBin: cfg.FFmpegBin}),
 		metrics: NewMetrics(),
 		logger:  logger,
+		hwConfig: HWRuntimeConfig{
+			Mode:             HWModeAuto,
+			MaxHWSessions:    cfg.MaxHWConcurrent,
+			MaxTotalSessions: cfg.MaxConcurrent,
+			VAAPIDevice:      vaapiDevice(),
+		},
 	}
+}
+
+// ApplyRuntimeSettings syncs streaming limits from persisted settings.
+func (s *Service) ApplyRuntimeSettings(cfg HWRuntimeConfig) {
+	s.hwMu.Lock()
+	defer s.hwMu.Unlock()
+	if cfg.MaxTotalSessions > 0 {
+		s.cfg.MaxConcurrent = cfg.MaxTotalSessions
+		s.procMgr.SetMaxConcurrent(cfg.MaxTotalSessions)
+	}
+	if cfg.MaxHWSessions > 0 {
+		s.hwConfig.MaxHWSessions = cfg.MaxHWSessions
+	}
+	if cfg.Mode != "" {
+		s.hwConfig.Mode = cfg.Mode
+	}
+	if cfg.Preferred != "" {
+		s.hwConfig.Preferred = cfg.Preferred
+	}
+	if len(cfg.Available) > 0 {
+		s.hwConfig.Available = append([]Accelerator(nil), cfg.Available...)
+	}
+	if cfg.VAAPIDevice != "" {
+		s.hwConfig.VAAPIDevice = cfg.VAAPIDevice
+	}
+	s.hwConfig.MaxTotalSessions = s.cfg.MaxConcurrent
+}
+
+func (s *Service) currentHWConfig() HWRuntimeConfig {
+	s.hwMu.RLock()
+	defer s.hwMu.RUnlock()
+	return s.hwConfig
+}
+
+func (s *Service) activeHWCount() int {
+	s.hwMu.RLock()
+	defer s.hwMu.RUnlock()
+	return s.hwActive
+}
+
+func (s *Service) incHWActive() {
+	s.hwMu.Lock()
+	s.hwActive++
+	s.hwMu.Unlock()
+	s.metrics.incHWActive()
+}
+
+func (s *Service) decHWActive() {
+	s.hwMu.Lock()
+	if s.hwActive > 0 {
+		s.hwActive--
+	}
+	s.hwMu.Unlock()
+	s.metrics.decHWActive()
 }
 
 // Metrics returns service telemetry.
@@ -166,19 +234,22 @@ func (s *Service) StartPlay(ctx context.Context, req PlayRequest) (PlayResponse,
 			return err
 		}
 		s.metrics.incStarts()
+		hwCfg := s.currentHWConfig()
+		tpath := SelectTranscodePath(hwCfg, probe, s.activeHWCount())
 		opts := PackagerOptions{
 			SourcePath: file.Path, OutputDir: cachePath, Mode: decision.Mode,
 			StartPositionMs: req.StartPositionMs, Tiers: tiers,
 			AudioStreamIndex: req.AudioStreamIndex, SubtitleStreamIndex: req.SubtitleStreamIndex,
+			TranscodePath: tpath, HWConfig: hwCfg,
 		}
-		if err := StartPackaging(runCtx, s.procMgr, opts); err != nil {
+		if err := s.startTranscodeWithFallback(runCtx, sessionID, opts, tpath); err != nil {
 			s.metrics.incErrors()
 			return err
 		}
 		if err := s.repo.UpdateStatus(runCtx, sessionID, db.PlaybackActive, ""); err != nil {
 			return err
 		}
-		return WaitForManifest(cachePath, 30*time.Second)
+		return nil
 	}
 
 	if status == db.PlaybackQueued {
@@ -201,6 +272,44 @@ func osLinkSource(_ context.Context, src, cacheDir string) error {
 		return nil
 	}
 	return osSymlinkOrCopy(src, dst)
+}
+
+func (s *Service) startTranscodeWithFallback(ctx context.Context, sessionID string, opts PackagerOptions, tpath TranscodePath) error {
+	if tpath.UseHW {
+		s.metrics.incHWStarts()
+		s.incHWActive()
+		defer s.decHWActive()
+		s.logger.Info("streaming hw transcode start",
+			slog.String("session", sessionID),
+			slog.String("hw_accelerator", string(tpath.Accelerator)),
+			slog.String("hw_encoder", tpath.VideoEncoder),
+			slog.String("selection", tpath.SelectionNote),
+		)
+		if err := StartPackaging(ctx, s.procMgr, opts); err == nil {
+			if werr := WaitForManifest(opts.OutputDir, 30*time.Second); werr == nil {
+				return nil
+			}
+		} else {
+			s.metrics.incHWErrors()
+			s.logger.Warn("streaming hw transcode failed",
+				slog.String("session", sessionID),
+				slog.String("hw_accelerator", string(tpath.Accelerator)),
+				slog.Bool("hw_fallback", true),
+			)
+		}
+		s.metrics.incHWFallbacks()
+	}
+
+	swPath := TranscodePath{UseHW: false, VideoEncoder: "libx264", SelectionNote: "sw_fallback"}
+	opts.TranscodePath = swPath
+	s.logger.Info("streaming sw fallback transcode",
+		slog.String("session", sessionID),
+		slog.Bool("hw_fallback", true),
+	)
+	if err := StartPackaging(ctx, s.procMgr, opts); err != nil {
+		return err
+	}
+	return WaitForManifest(opts.OutputDir, 30*time.Second)
 }
 
 // StopSession terminates a session and removes cache.

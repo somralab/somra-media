@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -14,8 +15,9 @@ import (
 
 // SystemHandlers serves system detection endpoints.
 type SystemHandlers struct {
-	DataDir  string
-	CacheDir string
+	DataDir   string
+	CacheDir  string
+	FFmpegBin string
 }
 
 // Mount registers public system routes.
@@ -28,13 +30,14 @@ func (h *SystemHandlers) detect(w http.ResponseWriter, r *http.Request) {
 	if raw := r.URL.Query().Get("paths"); raw != "" {
 		paths = strings.Split(raw, ",")
 	}
-	profile := settings.DetectSystem(paths)
+	profile := settings.DetectSystemWithFFmpeg(paths, h.FFmpegBin)
 	writeJSON(w, http.StatusOK, profile)
 }
 
 // SettingsHandlers serves central settings API.
 type SettingsHandlers struct {
-	Service *settings.Service
+	Service   *settings.Service
+	OnPatched func(ctx context.Context, category string) error
 }
 
 func (h *SettingsHandlers) Mount(r chi.Router) {
@@ -64,6 +67,12 @@ func (h *SettingsHandlers) patchCategory(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		writeError(w, r, platformerrors.Wrap(err, http.StatusBadRequest, platformerrors.CodeValidation, "settings.patch.failed"))
 		return
+	}
+	if h.OnPatched != nil {
+		if syncErr := h.OnPatched(r.Context(), category); syncErr != nil {
+			writeError(w, r, platformerrors.Wrap(syncErr, http.StatusInternalServerError, platformerrors.CodeInternal, "settings.sync.failed"))
+			return
+		}
 	}
 	writeJSON(w, http.StatusOK, out)
 }

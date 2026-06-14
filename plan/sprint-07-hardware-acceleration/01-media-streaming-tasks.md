@@ -14,17 +14,17 @@
 ## Epikler ve Görevler
 
 ### Epik A: Hızlandırıcı tespiti
-- [ ] A1 — Mevcut GPU/encoder tespiti (Intel QSV, NVIDIA NVENC/NVDEC, AMD/VAAPI/AMF) | Kabul: kullanılabilir hızlandırıcılar listelenir.
-- [ ] A2 — Yetenek/desteklenen kodek matrisi (HW decode/encode) | Kabul: doğru yetenek raporu.
+- [x] A1 — Mevcut GPU/encoder tespiti (Intel QSV, NVIDIA NVENC/NVDEC, AMD/VAAPI/AMF) | Kabul: kullanılabilir hızlandırıcılar listelenir.
+- [x] A2 — Yetenek/desteklenen kodek matrisi (HW decode/encode) | Kabul: doğru yetenek raporu.
 
 ### Epik B: HW transcode pipeline
-- [ ] B1 — ffmpeg HW hızlandırma parametre üretimi (her platform için) | Kabul: HW transcode çalışır.
-- [ ] B2 — HW decode + (gerekiyorsa) HW encode tam zincir | Kabul: CPU yükü belirgin düşer.
-- [ ] B3 — HW→SW geri düşüş (fallback) | Kabul: HW başarısızsa CPU'ya düşer, oynatma kesilmez.
+- [x] B1 — ffmpeg HW hızlandırma parametre üretimi (her platform için) | Kabul: HW transcode çalışır.
+- [x] B2 — HW decode + (gerekiyorsa) HW encode tam zincir | Kabul: CPU yükü belirgin düşer.
+- [x] B3 — HW→SW geri düşüş (fallback) | Kabul: HW başarısızsa CPU'ya düşer, oynatma kesilmez.
 
 ### Epik C: Otomatik seçim
-- [ ] C1 — Donanım + medyaya göre en uygun yol seçim motoru | Kabul: en verimli yol otomatik seçilir.
-- [ ] C2 — Eşzamanlı HW oturum limiti (donanım sınırına göre) | Kabul: limit aşılmaz.
+- [x] C1 — Donanım + medyaya göre en uygun yol seçim motoru | Kabul: en verimli yol otomatik seçilir.
+- [x] C2 — Eşzamanlı HW oturum limiti (donanım sınırına göre) | Kabul: limit aşılmaz.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - En az bir hızlandırıcı (öncelik: Intel QSV) ile HW transcode çalışır; otomatik seçim + fallback aktif.

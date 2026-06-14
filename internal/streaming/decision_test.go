@@ -123,6 +123,7 @@ func TestBuildFFmpegArgs(t *testing.T) {
 	args := BuildFFmpegArgs(PackagerOptions{
 		SourcePath: "/media/movie.mkv", OutputDir: "/cache/s1",
 		Mode: ModeTranscode, Tiers: BuildLadder(1920, 1080),
+		TranscodePath: TranscodePath{UseHW: false, VideoEncoder: "libx264"},
 	})
 	assert.Contains(t, args, "-c:v")
 	assert.Contains(t, args, "libx264")

@@ -1100,7 +1100,18 @@ export interface components {
             /** Format: int64 */
             memoryBytes: number;
             gpuPresent: boolean;
+            /** @enum {string} */
+            recommendedAccelerator?: "qsv" | "nvenc" | "vaapi" | "amf";
+            accelerators: components["schemas"]["AcceleratorInfo"][];
             paths: components["schemas"]["PathValidation"][];
+        };
+        AcceleratorInfo: {
+            /** @enum {string} */
+            id: "qsv" | "nvenc" | "vaapi" | "amf";
+            available: boolean;
+            devicePresent: boolean;
+            encodeCodecs: string[];
+            decodeCodecs: string[];
         };
         PathValidation: {
             path: string;
@@ -1109,6 +1120,11 @@ export interface components {
         };
         SmartDefaults: {
             maxConcurrentTranscodes: number;
+            maxHWTranscodes?: number;
+            /** @enum {string} */
+            hwMode?: "auto" | "off" | "force";
+            /** @enum {string} */
+            recommendedAccelerator?: "qsv" | "nvenc" | "vaapi" | "amf";
             scanCron: string;
             /** @enum {string} */
             defaultLocale?: "en-US" | "tr-TR";

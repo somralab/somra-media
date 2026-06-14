@@ -44,6 +44,9 @@
     "memory": "{{gb}} GB RAM",
     "gpu": "GPU acceleration available",
     "noGpu": "No GPU detected (software transcode)",
+    "hwRecommendation": "Recommended: {{accelerator}} ({{mode}} mode)",
+    "hwOff": "Hardware acceleration disabled",
+    "acceleratorsDetected": "Detected: {{list}}",
     "transcodeConcurrency": "Max concurrent transcodes: {{count}}",
     "scanSchedule": "Nightly library scan at 3:00 AM"
   },

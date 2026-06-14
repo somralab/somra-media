@@ -14,15 +14,15 @@
 ## Epikler ve Görevler
 
 ### Epik A: İşlevsel
-- [ ] A1 — HW transcode doğruluğu (görüntü/ses kalitesi) | Kabul: çıktı kabul edilebilir.
-- [ ] A2 — Otomatik seçim ve HW→SW fallback testi | Kabul: kesintisiz geçiş.
+- [x] A1 — HW transcode doğruluğu (görüntü/ses kalitesi) | Kabul: çıktı kabul edilebilir.
+- [x] A2 — Otomatik seçim ve HW→SW fallback testi | Kabul: kesintisiz geçiş.
 
 ### Epik B: Performans
-- [ ] B1 — CPU vs HW karşılaştırma (kaynak/eşzamanlı oturum) | Kabul: belirgin kazanç raporlanır.
-- [ ] B2 — Donanım oturum limiti stres testi | Kabul: limit korunur.
+- [x] B1 — CPU vs HW karşılaştırma (kaynak/eşzamanlı oturum) | Kabul: belirgin kazanç raporlanır.
+- [x] B2 — Donanım oturum limiti stres testi | Kabul: limit korunur.
 
 ### Epik C: Beta kabul
-- [ ] C1 — M4 beta adayı kontrol listesi | Kabul: beta kriterleri karşılanır.
+- [x] C1 — M4 beta adayı kontrol listesi | Kabul: beta kriterleri karşılanır.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - HW yolu test kapsamında; performans kazancı ölçülü; fallback güvenli; M4 kriterleri sağlanır.

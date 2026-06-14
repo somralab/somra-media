@@ -18,18 +18,29 @@ type PathValidation struct {
 
 // SystemProfile is the hardware + storage snapshot returned by detection.
 type SystemProfile struct {
-	CPUCores    int              `json:"cpuCores"`
-	MemoryBytes int64            `json:"memoryBytes"`
-	GPUPresent  bool             `json:"gpuPresent"`
-	Paths       []PathValidation `json:"paths"`
+	CPUCores               int               `json:"cpuCores"`
+	MemoryBytes            int64             `json:"memoryBytes"`
+	GPUPresent             bool              `json:"gpuPresent"`
+	Accelerators           []AcceleratorInfo `json:"accelerators"`
+	RecommendedAccelerator AcceleratorID     `json:"recommendedAccelerator,omitempty"`
+	Paths                  []PathValidation  `json:"paths"`
 }
 
 // DetectSystem gathers CPU, memory, GPU presence, and validates paths.
 func DetectSystem(paths []string) SystemProfile {
+	return DetectSystemWithFFmpeg(paths, "")
+}
+
+// DetectSystemWithFFmpeg gathers hardware profile using the given ffmpeg binary.
+func DetectSystemWithFFmpeg(paths []string, ffmpegBin string) SystemProfile {
+	accelerators := ProbeAccelerators(ffmpegBin)
+	recommended := RecommendAccelerator(accelerators)
 	profile := SystemProfile{
-		CPUCores:    runtime.NumCPU(),
-		MemoryBytes: detectMemoryBytes(),
-		GPUPresent:  detectGPU(),
+		CPUCores:               runtime.NumCPU(),
+		MemoryBytes:            detectMemoryBytes(),
+		GPUPresent:             detectGPU() || recommended != "",
+		Accelerators:           accelerators,
+		RecommendedAccelerator: recommended,
 	}
 	for _, p := range paths {
 		if strings.TrimSpace(p) == "" {

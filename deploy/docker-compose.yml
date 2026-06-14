@@ -14,6 +14,11 @@
 # locally from the repo; ghcr.io/somralab/somra-media:dev is the local tag only.
 # CI/releases publish to GHCR — use `make docker` for a standalone image build.
 #
+# GPU passthrough (optional overlays):
+#   VAAPI/QSV:  -f deploy/docker-compose.vaapi.yml
+#   NVIDIA:     -f deploy/docker-compose.nvidia.yml
+# See docs/gpu-setup.md for host prerequisites and verification steps.
+#
 # Once the container is healthy, visit http://localhost:8080 — the SPA is
 # served from `/web/static` inside the image and the API lives under
 # `/api/v1`.

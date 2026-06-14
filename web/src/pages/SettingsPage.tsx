@@ -20,7 +20,7 @@ export default function SettingsPage(): ReactNode {
 
   const general = settings?.general as Record<string, string> | undefined;
   const library = settings?.library as Record<string, string> | undefined;
-  const playback = settings?.playback as Record<string, number> | undefined;
+  const playback = settings?.playback as Record<string, string | number> | undefined;
   const subtitles = settings?.subtitles as Record<string, unknown> | undefined;
 
   return (
@@ -97,7 +97,7 @@ export default function SettingsPage(): ReactNode {
                 <CardHeader>
                   <CardTitle>{t('categories.playback')}</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
                   <label className="block space-y-1 text-sm">
                     <span>{t('playback.maxConcurrentTranscodes.label')}</span>
                     <Input
@@ -112,6 +112,50 @@ export default function SettingsPage(): ReactNode {
                       }
                     />
                   </label>
+                  <div className="space-y-2 border-t border-border pt-4">
+                    <h3 className="text-sm font-medium">{t('playback.hwAcceleration.title')}</h3>
+                    <p className="text-xs text-muted">{t('playback.hwAcceleration.description')}</p>
+                    <label className="block space-y-1 text-sm">
+                      <span>{t('playback.hwMode.label')}</span>
+                      <select
+                        className="w-full rounded-md border border-border bg-surface px-3 py-2"
+                        defaultValue={(playback?.hwMode as string) ?? 'auto'}
+                        onChange={(e) => patchPlayback.mutate({ hwMode: e.target.value })}
+                      >
+                        <option value="auto">{t('playback.hwMode.options.auto')}</option>
+                        <option value="off">{t('playback.hwMode.options.off')}</option>
+                        <option value="force">{t('playback.hwMode.options.force')}</option>
+                      </select>
+                    </label>
+                    <label className="block space-y-1 text-sm">
+                      <span>{t('playback.hwAccelerator.label')}</span>
+                      <select
+                        className="w-full rounded-md border border-border bg-surface px-3 py-2"
+                        defaultValue={(playback?.hwAccelerator as string) ?? 'auto'}
+                        onChange={(e) => patchPlayback.mutate({ hwAccelerator: e.target.value })}
+                      >
+                        <option value="auto">{t('playback.hwAccelerator.options.auto')}</option>
+                        <option value="qsv">{t('playback.hwAccelerator.options.qsv')}</option>
+                        <option value="nvenc">{t('playback.hwAccelerator.options.nvenc')}</option>
+                        <option value="vaapi">{t('playback.hwAccelerator.options.vaapi')}</option>
+                        <option value="amf">{t('playback.hwAccelerator.options.amf')}</option>
+                      </select>
+                    </label>
+                    <label className="block space-y-1 text-sm">
+                      <span>{t('playback.maxHWTranscodes.label')}</span>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={4}
+                        defaultValue={(playback?.maxHWTranscodes as number) ?? 2}
+                        onBlur={(e) =>
+                          patchPlayback.mutate({
+                            maxHWTranscodes: Number(e.target.value),
+                          })
+                        }
+                      />
+                    </label>
+                  </div>
                 </CardContent>
               </Card>
               <Card>
