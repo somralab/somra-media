@@ -1,0 +1,13 @@
+{
+  "quality": {
+    "label": "Quality",
+    "auto": "Auto"
+  },
+  "shortcuts": {
+    "hint": "Space: play/pause · ←/→: seek · F: fullscreen"
+  },
+  "errors": {
+    "unsupported": "This browser cannot play this stream.",
+    "playback": "Playback failed. Refresh and try again."
+  }
+}

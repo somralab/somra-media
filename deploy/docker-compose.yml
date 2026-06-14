@@ -31,6 +31,7 @@ services:
     environment:
       SOMRA_HTTP_ADDR: ":8080"
       SOMRA_DATA_DIR: /data
+      SOMRA_CACHE_DIR: /cache
       SOMRA_WEB_DIR: /web/static
       SOMRA_LOG_LEVEL: info
       SOMRA_LOG_FORMAT: json

@@ -14,22 +14,22 @@
 ## Epikler ve Görevler
 
 ### Epik A: Oynatma kararı
-- [ ] A1 — İstemci yetenek (capability) profili alımı (desteklenen kodek/konteyner) | Kabul: istemci profili ile eşleştirme.
-- [ ] A2 — Direct play / direct stream / transcode karar motoru | Kabul: gereksiz transcode yapılmaz.
+- [x] A1 — İstemci yetenek (capability) profili alımı (desteklenen kodek/konteyner) | Kabul: istemci profili ile eşleştirme.
+- [x] A2 — Direct play / direct stream / transcode karar motoru | Kabul: gereksiz transcode yapılmaz.
 
 ### Epik B: Transcode pipeline (yazılım)
-- [ ] B1 — ffmpeg süreç yönetimi (başlat/izle/sonlandır, kaynak sınırı) | Kabul: artık (zombie) süreç kalmaz.
-- [ ] B2 — CMAF (fMP4) segment üretimi + HLS manifesti (birincil); DASH manifesti aynı segmentlerden opsiyonel | Kabul: tarayıcıda hls.js ile oynatılabilir çıktı. Bkz. [`../tech-stack.md`](../tech-stack.md) §2.
-- [ ] B3 — Adaptif bitrate (çoklu kalite kademesi) | Kabul: kademeler üretilir, geçiş çalışır.
-- [ ] B4 — Transcode oturum yönetimi + segment önbelleği/temizliği | Kabul: disk şişmez, oturum kapanınca temizlenir.
+- [x] B1 — ffmpeg süreç yönetimi (başlat/izle/sonlandır, kaynak sınırı) | Kabul: artık (zombie) süreç kalmaz.
+- [x] B2 — CMAF (fMP4) segment üretimi + HLS manifesti (birincil); DASH manifesti aynı segmentlerden opsiyonel | Kabul: tarayıcıda hls.js ile oynatılabilir çıktı. Bkz. [`../tech-stack.md`](../tech-stack.md) §2.
+- [x] B3 — Adaptif bitrate (çoklu kalite kademesi) | Kabul: kademeler üretilir, geçiş çalışır.
+- [x] B4 — Transcode oturum yönetimi + segment önbelleği/temizliği | Kabul: disk şişmez, oturum kapanınca temizlenir.
 
 ### Epik C: Ses & altyazı
-- [ ] C1 — Ses kanalı/dil seçimi + gerekirse downmix | Kabul: çoklu ses akışı seçilebilir.
-- [ ] C2 — Altyazı işleme (gömülü çıkarma, harici dosya, gerekirse burn-in) | Kabul: altyazı görüntülenir.
+- [x] C1 — Ses kanalı/dil seçimi + gerekirse downmix | Kabul: çoklu ses akışı seçilebilir.
+- [x] C2 — Altyazı işleme (gömülü çıkarma, harici dosya, gerekirse burn-in) | Kabul: altyazı görüntülenir.
 
 ### Epik D: Streaming uçları
-- [ ] D1 — Streaming API uçları (manifest, segment, oturum) + yetki kontrolü | Kabul: yetkisiz akış engellenir.
-- [ ] D2 — Seek/arama ve devam (resume) desteği | Kabul: ileri/geri sarma çalışır.
+- [x] D1 — Streaming API uçları (manifest, segment, oturum) + yetki kontrolü | Kabul: yetkisiz akış engellenir.
+- [x] D2 — Seek/arama ve devam (resume) desteği | Kabul: ileri/geri sarma çalışır.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Bir medya dosyası tarayıcıda (direct play veya CPU transcode ile) baştan sona oynatılır.

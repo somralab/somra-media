@@ -13,15 +13,15 @@
 ## Epikler ve Görevler
 
 ### Epik A: Oynatma API'si
-- [ ] A1 — "Oynat" endpoint'i: yetki + oynatma kararı + oturum başlatma | Kabul: uçtan uca akış başlar.
-- [ ] A2 — İzleme ilerleme güncelleme (periyodik ping) | Kabul: resume verisi güncellenir.
+- [x] A1 — "Oynat" endpoint'i: yetki + oynatma kararı + oturum başlatma | Kabul: uçtan uca akış başlar.
+- [x] A2 — İzleme ilerleme güncelleme (periyodik ping) | Kabul: resume verisi güncellenir.
 
 ### Epik B: Oturum & kaynak yönetimi
-- [ ] B1 — Eşzamanlı transcode oturum limiti + kuyruğa alma | Kabul: aşırı yük engellenir.
-- [ ] B2 — Boşta kalan oturum sonlandırma | Kabul: kaynak sızıntısı yok.
+- [x] B1 — Eşzamanlı transcode oturum limiti + kuyruğa alma | Kabul: aşırı yük engellenir.
+- [x] B2 — Boşta kalan oturum sonlandırma | Kabul: kaynak sızıntısı yok.
 
 ### Epik C: Telemetri
-- [ ] C1 — Oynatma/transcode metrikleri (oturum sayısı, hata oranı) | Kabul: temel metrik toplanır.
+- [x] C1 — Oynatma/transcode metrikleri (oturum sayısı, hata oranı) | Kabul: temel metrik toplanır.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Oynatma API'si yetki + izleme durumu + oturum yönetimiyle çalışır.

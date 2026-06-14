@@ -90,6 +90,8 @@ func run() error {
 		return fmt.Errorf("bootstrap auth: %w", err)
 	}
 
+	streamBundle := bootstrap.WireStreaming(components, cfg, logger)
+
 	localeFn := func(r *http.Request) string {
 		if loc, ok := api.AcceptLanguageFromContext(r.Context()); ok && loc != "" {
 			return loc
@@ -102,7 +104,7 @@ func run() error {
 
 	authMW := &api.AuthMiddleware{Service: authBundle.Service}
 
-	handler := api.New(api.Options{
+	apiOpts := api.Options{
 		Logger: logger,
 		Build: api.BuildInfo{
 			Version: version,
@@ -138,7 +140,17 @@ func run() error {
 			Metadata: libBundle.Metadata,
 			Locale:   localeFn,
 		},
-	})
+	}
+	if streamBundle != nil && streamBundle.Service != nil {
+		apiOpts.StreamingHandlers = &api.StreamingHandlers{
+			Streaming: streamBundle.Service,
+			Media:     db.NewMediaRepo(components.DB.Querier()),
+			Library:   db.NewLibraryRepo(components.DB.Querier()),
+			Playback:  db.NewPlaybackRepo(components.DB.Querier()),
+			CacheRoot: cfg.Data.CacheDir,
+		}
+	}
+	handler := api.New(apiOpts)
 
 	srv := &http.Server{
 		Addr:              cfg.HTTP.Addr,

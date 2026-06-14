@@ -74,6 +74,9 @@ type Options struct {
 
 	// WatchHandlers mounts watch state / favorites / watchlist (protected).
 	WatchHandlers *WatchHandlers
+
+	// StreamingHandlers mounts playback/streaming routes (protected).
+	StreamingHandlers *StreamingHandlers
 }
 
 // New returns a chi router with the canonical middleware chain mounted at
@@ -150,6 +153,9 @@ func mountProtectedRoutes(r chi.Router, opts Options) {
 	}
 	if opts.MediaHandlers != nil {
 		opts.MediaHandlers.Mount(r)
+	}
+	if opts.StreamingHandlers != nil {
+		opts.StreamingHandlers.Mount(r)
 	}
 }
 

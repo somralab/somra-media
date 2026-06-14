@@ -43,3 +43,30 @@ other = "Initial setup has already been completed."
 
 ["auth.password.weak"]
 other = "Password does not meet security requirements."
+
+["streaming.play.invalid_item"]
+other = "Invalid media item."
+
+["streaming.play.failed"]
+other = "Could not start playback."
+
+["streaming.sessions.list_failed"]
+other = "Could not list playback sessions."
+
+["streaming.session.not_found"]
+other = "Playback session not found."
+
+["streaming.segment.invalid_path"]
+other = "Invalid segment path."
+
+["streaming.segment.not_found"]
+other = "Segment not found."
+
+["streaming.source.not_found"]
+other = "Media source not found."
+
+["streaming.source.invalid"]
+other = "Could not validate media source."
+
+["streaming.source.forbidden"]
+other = "Media source access denied."

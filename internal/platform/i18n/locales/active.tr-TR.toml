@@ -42,3 +42,30 @@ other = "İlk kurulum zaten tamamlanmış."
 
 ["auth.password.weak"]
 other = "Parola güvenlik gereksinimlerini karşılamıyor."
+
+["streaming.play.invalid_item"]
+other = "Geçersiz medya öğesi."
+
+["streaming.play.failed"]
+other = "Oynatma başlatılamadı."
+
+["streaming.sessions.list_failed"]
+other = "Oynatma oturumları listelenemedi."
+
+["streaming.session.not_found"]
+other = "Oynatma oturumu bulunamadı."
+
+["streaming.segment.invalid_path"]
+other = "Geçersiz segment yolu."
+
+["streaming.segment.not_found"]
+other = "Segment bulunamadı."
+
+["streaming.source.not_found"]
+other = "Medya kaynağı bulunamadı."
+
+["streaming.source.invalid"]
+other = "Medya kaynağı doğrulanamadı."
+
+["streaming.source.forbidden"]
+other = "Medya kaynağına erişim reddedildi."

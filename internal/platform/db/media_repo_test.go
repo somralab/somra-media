@@ -57,6 +57,11 @@ func TestMediaRepo_FullLifecycle(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, int64(2000), gotFile.SizeBytes)
 
+	byID, err := mediaRepo.GetFileByID(ctx, fileID)
+	require.NoError(t, err)
+	assert.Equal(t, fileID, byID.ID)
+	assert.Equal(t, "/tmp/inception.mkv", byID.Path)
+
 	require.NoError(t, mediaRepo.UpsertTechnical(ctx, fileID, 7200000, "matroska", "h264", 1920, 1080, "aac", 2, 1, `{}`))
 
 	items, err := mediaRepo.ListItemsByLibrary(ctx, lib.ID, "en-US", 10, 0)

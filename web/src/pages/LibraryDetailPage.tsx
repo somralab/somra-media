@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -16,6 +16,7 @@ import { subscribeScanProgress, type ScanProgressEvent } from '@/api/scanEvents'
 export default function LibraryDetailPage(): ReactNode {
   const { t } = useTranslation('library');
   const params = useParams();
+  const navigate = useNavigate();
   const libraryId = Number(params.id ?? 0);
   const { data: library } = useLibrary(libraryId);
   const { data: scans } = useScanHistory(libraryId);
@@ -123,6 +124,16 @@ export default function LibraryDetailPage(): ReactNode {
                   <div className="text-xs text-muted">
                     {t(`matchStatus.${item.matchStatus}`, { defaultValue: item.matchStatus })}
                   </div>
+                  <Button
+                    className="mt-2"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      void navigate(`/libraries/${libraryId}/items/${item.id}/play`);
+                    }}
+                  >
+                    {t('play.button', { ns: 'streaming' })}
+                  </Button>
                 </div>
               </button>
             ))}

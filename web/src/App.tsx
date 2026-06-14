@@ -12,6 +12,7 @@ const StatusPage = lazy(() => import('@/pages/StatusPage'));
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
 const LibraryPage = lazy(() => import('@/pages/LibraryPage'));
 const LibraryDetailPage = lazy(() => import('@/pages/LibraryDetailPage'));
+const PlayerPage = lazy(() => import('@/pages/PlayerPage'));
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
@@ -98,6 +99,14 @@ export default function App(): ReactNode {
               element={
                 <ProtectedRoute>
                   <LibraryDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/libraries/:libraryId/items/:itemId/play"
+              element={
+                <ProtectedRoute>
+                  <PlayerPage />
                 </ProtectedRoute>
               }
             />

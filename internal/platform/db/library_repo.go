@@ -184,6 +184,11 @@ func (r *LibraryRepo) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
+// ListPaths returns root paths for a library.
+func (r *LibraryRepo) ListPaths(ctx context.Context, libraryID int64) ([]string, error) {
+	return r.listPaths(ctx, libraryID)
+}
+
 func (r *LibraryRepo) listPaths(ctx context.Context, libraryID int64) ([]string, error) {
 	rows, err := r.q.QueryContext(ctx, `
 		SELECT path FROM library_path WHERE library_id = ? ORDER BY id

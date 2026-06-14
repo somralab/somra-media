@@ -1,0 +1,13 @@
+{
+  "quality": {
+    "label": "Kalite",
+    "auto": "Otomatik"
+  },
+  "shortcuts": {
+    "hint": "Boşluk: oynat/duraklat · ←/→: sar · F: tam ekran"
+  },
+  "errors": {
+    "unsupported": "Bu tarayıcı akışı oynatamıyor.",
+    "playback": "Oynatma başarısız. Yenileyip tekrar deneyin."
+  }
+}
