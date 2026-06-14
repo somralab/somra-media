@@ -104,13 +104,13 @@ func (c *SMTPChannel) sendSTARTTLS(addr, to string, msg []byte) error {
 	if err != nil {
 		return fmt.Errorf("notifications/smtp: dial: %w", err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	client, err := smtp.NewClient(conn, c.host)
 	if err != nil {
 		return fmt.Errorf("notifications/smtp: client: %w", err)
 	}
-	defer client.Close()
+	defer func() { _ = client.Close() }()
 
 	if ok, _ := client.Extension("STARTTLS"); ok {
 		if err := client.StartTLS(&tls.Config{ServerName: c.host, MinVersion: tls.VersionTLS12}); err != nil {

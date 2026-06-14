@@ -3,8 +3,9 @@ package notifications
 import (
 	"fmt"
 
-	"github.com/somralab/somra-media/internal/platform/i18n"
 	"golang.org/x/text/language"
+
+	"github.com/somralab/somra-media/internal/platform/i18n"
 )
 
 const fallbackLocale = "en-US"
