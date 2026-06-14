@@ -9,12 +9,7 @@ import type { PosterCardItem } from '@/components/browse/PosterCard';
 import { EmptyState } from '@/components/browse/EmptyState';
 import { ErrorState } from '@/components/browse/ErrorState';
 import { PosterSkeleton } from '@/components/browse/Skeleton';
-import {
-  useAutoMatch,
-  useLibrary,
-  useScanHistory,
-  useTriggerScan,
-} from '@/api/hooks/useLibraries';
+import { useAutoMatch, useLibrary, useScanHistory, useTriggerScan } from '@/api/hooks/useLibraries';
 import { useBrowseItems } from '@/api/hooks/useBrowse';
 import type { BrowseFilters } from '@/api/endpoints/browse';
 import { subscribeScanProgress, type ScanProgressEvent } from '@/api/scanEvents';
@@ -33,7 +28,9 @@ export default function LibraryDetailPage(): ReactNode {
   const [sort, setSort] = useState<'title' | 'year' | 'created_at'>('title');
   const [genre, setGenre] = useState('');
   const [year, setYear] = useState('');
-  const [watchStatus, setWatchStatus] = useState<'all' | 'unwatched' | 'in_progress' | 'completed'>('all');
+  const [watchStatus, setWatchStatus] = useState<'all' | 'unwatched' | 'in_progress' | 'completed'>(
+    'all',
+  );
 
   const filters = useMemo<BrowseFilters>(() => {
     const f: BrowseFilters = { limit: 500, sort, watchStatus };
@@ -99,7 +96,11 @@ export default function LibraryDetailPage(): ReactNode {
         >
           {t('detail.scanIncremental', { ns: 'library' })}
         </Button>
-        <Button variant="secondary" onClick={() => autoMatch.mutate()} disabled={autoMatch.isPending}>
+        <Button
+          variant="secondary"
+          onClick={() => autoMatch.mutate()}
+          disabled={autoMatch.isPending}
+        >
           {t('detail.autoMatch', { ns: 'library' })}
         </Button>
       </div>
@@ -132,11 +133,20 @@ export default function LibraryDetailPage(): ReactNode {
         </label>
         <label className="flex flex-col gap-1 text-sm">
           <span>{t('filters.genre')}</span>
-          <Input value={genre} onChange={(e) => setGenre(e.target.value)} placeholder={t('filters.genrePlaceholder')} />
+          <Input
+            value={genre}
+            onChange={(e) => setGenre(e.target.value)}
+            placeholder={t('filters.genrePlaceholder')}
+          />
         </label>
         <label className="flex flex-col gap-1 text-sm">
           <span>{t('filters.year')}</span>
-          <Input value={year} onChange={(e) => setYear(e.target.value)} type="number" placeholder="2024" />
+          <Input
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            type="number"
+            placeholder="2024"
+          />
         </label>
         <label className="flex flex-col gap-1 text-sm">
           <span>{t('filters.watchStatus')}</span>
@@ -201,7 +211,6 @@ export default function LibraryDetailPage(): ReactNode {
           </ul>
         </CardContent>
       </Card>
-
     </section>
   );
 }

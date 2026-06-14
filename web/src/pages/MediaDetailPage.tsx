@@ -5,11 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { ErrorState } from '@/components/browse/ErrorState';
 import { PosterSkeleton } from '@/components/browse/Skeleton';
-import {
-  useFavoriteToggle,
-  useMediaDetail,
-  useWatchlistToggle,
-} from '@/api/hooks/useBrowse';
+import { useFavoriteToggle, useMediaDetail, useWatchlistToggle } from '@/api/hooks/useBrowse';
 
 export default function MediaDetailPage(): ReactNode {
   const { t } = useTranslation('detail');
@@ -69,7 +65,9 @@ export default function MediaDetailPage(): ReactNode {
             </div>
           </header>
 
-          {detail.overview ? <p className="text-sm leading-relaxed text-text">{detail.overview}</p> : null}
+          {detail.overview ? (
+            <p className="text-sm leading-relaxed text-text">{detail.overview}</p>
+          ) : null}
 
           <div className="flex flex-wrap gap-2">
             <Button
@@ -130,7 +128,10 @@ export default function MediaDetailPage(): ReactNode {
                 </h3>
                 <ul className="flex flex-col gap-1 text-sm">
                   {season.episodes.map((ep) => (
-                    <li key={ep.id} className="flex items-center justify-between rounded border border-border px-3 py-2">
+                    <li
+                      key={ep.id}
+                      className="flex items-center justify-between rounded border border-border px-3 py-2"
+                    >
                       <span>
                         {t('seasons.episode', { number: ep.episodeNumber })}
                         {ep.title ? ` — ${ep.title}` : ''}

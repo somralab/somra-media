@@ -90,7 +90,10 @@ export function getDiscoverHome(signal?: AbortSignal): Promise<DiscoverHome> {
 
 export function searchMedia(q: string, limit = 20, signal?: AbortSignal): Promise<SearchResponse> {
   const params = new URLSearchParams({ q, limit: String(limit) });
-  return apiClient.fetch<SearchResponse>(`/search?${params}`, signal !== undefined ? { signal } : {});
+  return apiClient.fetch<SearchResponse>(
+    `/search?${params}`,
+    signal !== undefined ? { signal } : {},
+  );
 }
 
 export function listMediaItemsPaginated(

@@ -23,7 +23,7 @@ export function MediaRow({ titleKey, items, titleNs = 'discover' }: MediaRowProp
       </h2>
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto pb-2 scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex gap-4 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         role="list"
       >
         {items.map((item) => (

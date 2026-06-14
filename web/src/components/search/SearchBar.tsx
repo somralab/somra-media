@@ -40,7 +40,11 @@ export function SearchBar({
   }
 
   return (
-    <form onSubmit={handleSubmit} className={cn('relative w-full max-w-xl', className)} role="search">
+    <form
+      onSubmit={handleSubmit}
+      className={cn('relative w-full max-w-xl', className)}
+      role="search"
+    >
       <Input
         type="search"
         value={local}
