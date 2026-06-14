@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/somralab/somra-media/internal/auth"
 	"github.com/somralab/somra-media/internal/jobs"
 	"github.com/somralab/somra-media/internal/library"
 	"github.com/somralab/somra-media/internal/platform/db"
@@ -36,14 +37,37 @@ type libraryResponse struct {
 
 func (h *LibraryHandlers) Mount(r chi.Router) {
 	r.Route("/libraries", func(r chi.Router) {
+		r.With(RequirePermission(auth.PermLibraryRead)).Get("/", h.list)
+		r.With(RequirePermission(auth.PermLibraryWrite)).Post("/", h.create)
+		r.Route("/{libraryID}", func(r chi.Router) {
+			r.With(RequirePermission(auth.PermLibraryRead)).Get("/", h.get)
+			r.With(RequirePermission(auth.PermLibraryWrite)).Put("/", h.update)
+			r.With(RequirePermission(auth.PermLibraryWrite)).Delete("/", h.delete)
+			r.With(RequirePermission(auth.PermLibraryWrite)).Post("/scan", h.triggerScan)
+			r.With(RequirePermission(auth.PermLibraryRead)).Get("/scans", h.listScans)
+		})
+	})
+}
+
+// MountRead registers read-only library routes without RBAC (tests).
+func (h *LibraryHandlers) MountRead(r chi.Router) {
+	r.Route("/libraries", func(r chi.Router) {
 		r.Get("/", h.list)
-		r.Post("/", h.create)
 		r.Route("/{libraryID}", func(r chi.Router) {
 			r.Get("/", h.get)
+			r.Get("/scans", h.listScans)
+		})
+	})
+}
+
+// MountWrite registers mutating library routes without RBAC (tests).
+func (h *LibraryHandlers) MountWrite(r chi.Router) {
+	r.Route("/libraries", func(r chi.Router) {
+		r.Post("/", h.create)
+		r.Route("/{libraryID}", func(r chi.Router) {
 			r.Put("/", h.update)
 			r.Delete("/", h.delete)
 			r.Post("/scan", h.triggerScan)
-			r.Get("/scans", h.listScans)
 		})
 	})
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/somralab/somra-media/internal/auth"
 	"github.com/somralab/somra-media/internal/metadata"
 	"github.com/somralab/somra-media/internal/platform/db"
 	platformerrors "github.com/somralab/somra-media/internal/platform/errors"
@@ -24,11 +25,11 @@ type rematchRequest struct {
 }
 
 func (h *MediaHandlers) Mount(r chi.Router) {
-	r.Get("/libraries/{libraryID}/items", h.listItems)
-	r.Get("/media-items/{itemID}", h.getItem)
-	r.Get("/media-items/{itemID}/match-candidates", h.matchCandidates)
-	r.Post("/media-items/{itemID}/rematch", h.rematch)
-	r.Post("/libraries/{libraryID}/match", h.autoMatch)
+	r.With(RequirePermission(auth.PermLibraryRead)).Get("/libraries/{libraryID}/items", h.listItems)
+	r.With(RequirePermission(auth.PermLibraryRead)).Get("/media-items/{itemID}", h.getItem)
+	r.With(RequirePermission(auth.PermLibraryRead)).Get("/media-items/{itemID}/match-candidates", h.matchCandidates)
+	r.With(RequirePermission(auth.PermLibraryWrite)).Post("/media-items/{itemID}/rematch", h.rematch)
+	r.With(RequirePermission(auth.PermLibraryWrite)).Post("/libraries/{libraryID}/match", h.autoMatch)
 }
 
 func (h *MediaHandlers) listItems(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +47,30 @@ func (h *MediaHandlers) listItems(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, platformerrors.Wrap(err, http.StatusInternalServerError, platformerrors.CodeInternal, "media.list.failed"))
 		return
 	}
+	items = filterByParental(r, items)
 	writeJSON(w, http.StatusOK, items)
+}
+
+func filterByParental(r *http.Request, items []db.MediaItem) []db.MediaItem {
+	ac, ok := auth.FromContext(r.Context())
+	if !ok {
+		return items
+	}
+	maxRating := ac.Profile.MaxContentRating
+	if !ac.Profile.IsChild && maxRating == nil {
+		return items
+	}
+	if ac.Profile.IsChild && maxRating == nil {
+		g := "PG"
+		maxRating = &g
+	}
+	filtered := make([]db.MediaItem, 0, len(items))
+	for _, item := range items {
+		if auth.RatingAllowed(maxRating, item.ContentRating) {
+			filtered = append(filtered, item)
+		}
+	}
+	return filtered
 }
 
 func (h *MediaHandlers) getItem(w http.ResponseWriter, r *http.Request) {
@@ -63,6 +87,17 @@ func (h *MediaHandlers) getItem(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		writeError(w, r, platformerrors.Wrap(err, http.StatusNotFound, platformerrors.CodeNotFound, "media.notFound"))
 		return
+	}
+	if ac, ok := auth.FromContext(r.Context()); ok {
+		maxRating := ac.Profile.MaxContentRating
+		if ac.Profile.IsChild && maxRating == nil {
+			g := "PG"
+			maxRating = &g
+		}
+		if !auth.RatingAllowed(maxRating, item.ContentRating) {
+			writeError(w, r, platformerrors.New(http.StatusNotFound, platformerrors.CodeNotFound, "media.notFound"))
+			return
+		}
 	}
 	writeJSON(w, http.StatusOK, item)
 }

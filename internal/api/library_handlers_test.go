@@ -33,10 +33,10 @@ func TestLibraryHandlers_CRUD(t *testing.T) {
 	reg.Register(&metadata.MockProvider{})
 	meta := &metadata.Service{DB: &metadata.DBStore{DB: d}, Registry: reg, Matcher: &metadata.Matcher{Registry: reg}}
 
-	h := New(Options{
+	h := testRouterWithAuth(New(Options{
 		LibraryHandlers: &LibraryHandlers{Service: svc},
 		MediaHandlers:   &MediaHandlers{DB: d, Metadata: meta},
-	})
+	}))
 
 	body, _ := json.Marshal(map[string]any{
 		"name": "Films", "kind": "movie", "paths": []string{dir}, "watchEnabled": false,
@@ -120,4 +120,8 @@ func openTestDB(t *testing.T) *db.DB {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = d.Close() })
 	return d
+}
+
+func testRouterWithAuth(h http.Handler) http.Handler {
+	return testAuthMiddleware(h)
 }

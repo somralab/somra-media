@@ -14,18 +14,18 @@
 ## Epikler ve Görevler
 
 ### Epik A: Kimlik doğrulama
-- [ ] A1 — Kullanıcı kaydı/giriş, parola hash (güçlü algoritma), oturum/token yönetimi | Kabul: güvenli akış, test edilir.
-- [ ] A2 — Oturum yenileme/çıkış, çoklu cihaz oturumu | Kabul: oturumlar yönetilebilir.
-- [ ] A3 — İlk kurulumda admin oluşturma akışı | Kabul: Sprint 06 onboarding ile uyumlu.
+- [x] A1 — Kullanıcı kaydı/giriş, parola hash (güçlü algoritma), oturum/token yönetimi | Kabul: güvenli akış, test edilir.
+- [x] A2 — Oturum yenileme/çıkış, çoklu cihaz oturumu | Kabul: oturumlar yönetilebilir.
+- [x] A3 — İlk kurulumda admin oluşturma akışı | Kabul: Sprint 06 onboarding ile uyumlu.
 
 ### Epik B: RBAC ve profiller
-- [ ] B1 — Rol/yetki modeli (admin, kullanıcı, çocuk) + yetki kontrol middleware'i | Kabul: korumalı uçlar yetkiye göre filtreler.
-- [ ] B2 — Kullanıcı profilleri (avatar, dil tercihi `tr-TR`/`en-US`, **arayüz teması** `cinematic`/`aurora`/`noir`/`minimal`, tercihler) | Kabul: profil CRUD; dil tercihi dil pazarlığında en yüksek önceliklidir; tema tercihi kalıcı saklanır (varsayılan `cinematic`). Bkz. [`../i18n-localization.md`](../i18n-localization.md) §3.
-- [ ] B3 — Ebeveyn kontrolü: yaş derecesi (rating) sınırı, içerik kısıtı | Kabul: kısıtlı içerik çocuk profilinde gizlenir.
+- [x] B1 — Rol/yetki modeli (admin, kullanıcı, çocuk) + yetki kontrol middleware'i | Kabul: korumalı uçlar yetkiye göre filtreler.
+- [x] B2 — Kullanıcı profilleri (avatar, dil tercihi `tr-TR`/`en-US`, **arayüz teması** `cinematic`/`aurora`/`noir`/`minimal`, tercihler) | Kabul: profil CRUD; dil tercihi dil pazarlığında en yüksek önceliklidir; tema tercihi kalıcı saklanır (varsayılan `cinematic`). Bkz. [`../i18n-localization.md`](../i18n-localization.md) §3.
+- [x] B3 — Ebeveyn kontrolü: yaş derecesi (rating) sınırı, içerik kısıtı | Kabul: kısıtlı içerik çocuk profilinde gizlenir.
 
 ### Epik C: İzleme durumu
-- [ ] C1 — İzleme ilerleme/devam (resume) ve "izlendi" durumu | Kabul: kaldığı yerden devam.
-- [ ] C2 — Kullanıcı bazlı favoriler/izleme listesi | Kabul: CRUD + filtre.
+- [x] C1 — İzleme ilerleme/devam (resume) ve "izlendi" durumu | Kabul: kaldığı yerden devam.
+- [x] C2 — Kullanıcı bazlı favoriler/izleme listesi | Kabul: CRUD + filtre.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Çoklu kullanıcı giriş yapar; roller ve ebeveyn kısıtları uygulanır; izleme durumu tutulur.

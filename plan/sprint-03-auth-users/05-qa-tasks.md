@@ -13,15 +13,15 @@
 ## Epikler ve Görevler
 
 ### Epik A: İşlevsel testler
-- [ ] A1 — Giriş/çıkış/yenileme e2e akışı | Kabul: kritik yollar geçer.
-- [ ] A2 — RBAC matris testi (her rol için erişim doğrulama) | Kabul: yetki ihlali yok.
-- [ ] A3 — Ebeveyn kontrolü testi (çocuk profili kısıtları) | Kabul: kısıtlı içerik görünmez.
+- [x] A1 — Giriş/çıkış/yenileme e2e akışı | Kabul: kritik yollar geçer.
+- [x] A2 — RBAC matris testi (her rol için erişim doğrulama) | Kabul: yetki ihlali yok.
+- [x] A3 — Ebeveyn kontrolü testi (çocuk profili kısıtları) | Kabul: kısıtlı içerik görünmez.
 
 ### Epik B: İzleme durumu
-- [ ] B1 — Devam etme (resume) ve izlendi durumu testi | Kabul: doğru pozisyon korunur.
+- [x] B1 — Devam etme (resume) ve izlendi durumu testi | Kabul: doğru pozisyon korunur.
 
 ### Epik C: Güvenlik kabul testleri
-- [ ] C1 — Brute-force/rate-limit ve yetkisiz erişim testleri | Kabul: korumalar tetiklenir.
+- [x] C1 — Brute-force/rate-limit ve yetkisiz erişim testleri | Kabul: korumalar tetiklenir.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Kimlik/RBAC/ebeveyn akışları test kapsamında; kritik/güvenlik hatası yok.

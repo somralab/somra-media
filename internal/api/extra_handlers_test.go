@@ -36,12 +36,12 @@ func TestMediaHandlers_ListAndMatch(t *testing.T) {
 	reg.Register(metadata.TestProvider{})
 	meta := &metadata.Service{DB: &metadata.DBStore{DB: d}, Registry: reg, Matcher: &metadata.Matcher{Registry: reg}}
 
-	h := New(Options{
+	h := testRouterWithAuth(New(Options{
 		MediaHandlers: &MediaHandlers{
 			DB: d, Metadata: meta,
 			Locale: func(*http.Request) string { return "tr-TR" },
 		},
-	})
+	}))
 
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/libraries/"+jsonNumber(lib.ID)+"/items", nil)
 	rec := httptest.NewRecorder()

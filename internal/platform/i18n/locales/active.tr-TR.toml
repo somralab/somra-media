@@ -21,3 +21,24 @@ other = "Çok fazla istek, lütfen yavaşlayın."
 
 ["errors.validation.required"]
 other = "{{.Field}} alanı zorunludur."
+
+["auth.errors.unauthorized"]
+other = "Kimlik doğrulama gerekli."
+
+["auth.errors.forbidden"]
+other = "Bu işlem için yetkiniz yok."
+
+["auth.errors.internal"]
+other = "Kimlik doğrulama hatası oluştu."
+
+["auth.login.invalid_credentials"]
+other = "Geçersiz kullanıcı adı veya parola."
+
+["auth.login.locked"]
+other = "Çok fazla başarısız deneme. Daha sonra tekrar deneyin."
+
+["auth.setup.already_complete"]
+other = "İlk kurulum zaten tamamlanmış."
+
+["auth.password.weak"]
+other = "Parola güvenlik gereksinimlerini karşılamıyor."

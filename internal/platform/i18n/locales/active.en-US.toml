@@ -22,3 +22,24 @@ other = "Too many requests, please slow down."
 
 ["errors.validation.required"]
 other = "Field {{.Field}} is required."
+
+["auth.errors.unauthorized"]
+other = "Authentication is required."
+
+["auth.errors.forbidden"]
+other = "You do not have permission."
+
+["auth.errors.internal"]
+other = "An authentication error occurred."
+
+["auth.login.invalid_credentials"]
+other = "Invalid username or password."
+
+["auth.login.locked"]
+other = "Too many failed attempts. Try again later."
+
+["auth.setup.already_complete"]
+other = "Initial setup has already been completed."
+
+["auth.password.weak"]
+other = "Password does not meet security requirements."

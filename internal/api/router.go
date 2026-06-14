@@ -14,6 +14,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 
+	"github.com/somralab/somra-media/internal/auth"
 	"github.com/somralab/somra-media/internal/platform/config"
 )
 
@@ -58,6 +59,21 @@ type Options struct {
 
 	// MediaHandlers, when non-nil, mounts media/metadata routes.
 	MediaHandlers *MediaHandlers
+
+	// AuthHandlers, when non-nil, mounts auth/setup routes (public subset).
+	AuthHandlers *AuthHandlers
+
+	// AuthMiddleware validates bearer tokens on protected routes.
+	AuthMiddleware *AuthMiddleware
+
+	// UserHandlers mounts admin user CRUD (protected).
+	UserHandlers *UserHandlers
+
+	// ProfileHandlers mounts profile CRUD (protected).
+	ProfileHandlers *ProfileHandlers
+
+	// WatchHandlers mounts watch state / favorites / watchlist (protected).
+	WatchHandlers *WatchHandlers
 }
 
 // New returns a chi router with the canonical middleware chain mounted at
@@ -90,11 +106,19 @@ func New(opts Options) http.Handler {
 		api.Get("/health", healthHandler(opts.Now, opts.HealthCheck, opts.HealthAggregator))
 		api.Get("/version", versionHandler(opts.Build, opts.Now))
 		api.Get("/events/stream", sseEventsHandler(opts.SSEHeartbeat, opts.EventBus))
-		if opts.LibraryHandlers != nil {
-			opts.LibraryHandlers.Mount(api)
+
+		if opts.AuthHandlers != nil {
+			opts.AuthHandlers.Mount(api)
 		}
-		if opts.MediaHandlers != nil {
-			opts.MediaHandlers.Mount(api)
+
+		if opts.AuthMiddleware != nil {
+			api.Group(func(protected chi.Router) {
+				protected.Use(opts.AuthMiddleware.Middleware)
+				protected.Use(ProfileLocaleMiddleware)
+				mountProtectedRoutes(protected, opts)
+			})
+		} else {
+			mountProtectedRoutes(api, opts)
 		}
 	})
 
@@ -103,6 +127,30 @@ func New(opts Options) http.Handler {
 	}
 
 	return r
+}
+
+func mountProtectedRoutes(r chi.Router, opts Options) {
+	if opts.ProfileHandlers != nil {
+		r.Group(func(r chi.Router) {
+			r.Use(RequirePermission(auth.PermProfileEdit))
+			opts.ProfileHandlers.Mount(r)
+		})
+	}
+	if opts.WatchHandlers != nil {
+		opts.WatchHandlers.Mount(r)
+	}
+	if opts.UserHandlers != nil {
+		r.Group(func(r chi.Router) {
+			r.Use(RequirePermission(auth.PermUsersManage))
+			opts.UserHandlers.Mount(r)
+		})
+	}
+	if opts.LibraryHandlers != nil {
+		opts.LibraryHandlers.Mount(r)
+	}
+	if opts.MediaHandlers != nil {
+		opts.MediaHandlers.Mount(r)
+	}
 }
 
 // mountSPA serves the built React SPA from dir. It serves static assets
@@ -173,7 +221,7 @@ func corsMiddleware(cfg config.CORSConfig) func(http.Handler) http.Handler {
 		AllowedMethods:   cfg.AllowedMethods,
 		AllowedHeaders:   cfg.AllowedHeaders,
 		ExposedHeaders:   []string{requestIDHeader},
-		AllowCredentials: false,
+		AllowCredentials: true,
 		MaxAge:           int(cfg.MaxAge.Seconds()),
 	}
 	return cors.Handler(options)

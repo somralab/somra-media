@@ -5,27 +5,31 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import enCommon from './locales/en-US/common.json';
 import enStatus from './locales/en-US/status.json';
 import enLibrary from './locales/en-US/library.json';
+import enAuth from './locales/en-US/auth.json';
 import trCommon from './locales/tr-TR/common.json';
 import trStatus from './locales/tr-TR/status.json';
 import trLibrary from './locales/tr-TR/library.json';
+import trAuth from './locales/tr-TR/auth.json';
 
 export const SUPPORTED_LOCALES = ['en-US', 'tr-TR'] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export const FALLBACK_LOCALE: SupportedLocale = 'en-US';
 export const DEFAULT_NAMESPACE = 'common';
-export const NAMESPACES = ['common', 'status', 'library'] as const;
+export const NAMESPACES = ['common', 'status', 'library', 'auth'] as const;
 
 export const resources = {
   'en-US': {
     common: enCommon,
     status: enStatus,
     library: enLibrary,
+    auth: enAuth,
   },
   'tr-TR': {
     common: trCommon,
     status: trStatus,
     library: trLibrary,
+    auth: trAuth,
   },
 } as const;
 
