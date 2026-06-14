@@ -2,7 +2,9 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -94,6 +96,71 @@ func TestSettingsAndOnboardingHandlers(t *testing.T) {
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestSettingsPatchOnPatchedCallback(t *testing.T) {
+	d := openTestDB(t)
+	svc := newTestAuthService(t, d)
+	settingsSvc := settings.NewService(db.NewSettingsRepo(d.Querier()))
+	called := false
+	h := testRouterWithAuth(New(Options{
+		AuthHandlers: &AuthHandlers{Service: svc},
+		SettingsHandlers: &SettingsHandlers{
+			Service: settingsSvc,
+			OnPatched: func(_ context.Context, category string) error {
+				if category == settings.CategoryPlayback {
+					called = true
+				}
+				return nil
+			},
+		},
+	}))
+
+	setupBody, _ := json.Marshal(map[string]string{"username": "admin2", "password": "AdminPass1"})
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/setup/admin", bytes.NewReader(setupBody))
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+	token := map[string]any{}
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &token))
+
+	patchBody, _ := json.Marshal(map[string]any{"hwMode": "off"})
+	req = httptest.NewRequest(http.MethodPatch, "/api/v1/settings/playback", bytes.NewReader(patchBody))
+	req.Header.Set("Authorization", "Bearer "+token["accessToken"].(string))
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+	assert.True(t, called)
+}
+
+func TestSettingsPatchOnPatchedError(t *testing.T) {
+	d := openTestDB(t)
+	svc := newTestAuthService(t, d)
+	settingsSvc := settings.NewService(db.NewSettingsRepo(d.Querier()))
+	h := testRouterWithAuth(New(Options{
+		AuthHandlers: &AuthHandlers{Service: svc},
+		SettingsHandlers: &SettingsHandlers{
+			Service: settingsSvc,
+			OnPatched: func(_ context.Context, _ string) error {
+				return errors.New("sync failed")
+			},
+		},
+	}))
+
+	setupBody, _ := json.Marshal(map[string]string{"username": "admin3", "password": "AdminPass1"})
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/setup/admin", bytes.NewReader(setupBody))
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+	token := map[string]any{}
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &token))
+
+	patchBody, _ := json.Marshal(map[string]any{"hwMode": "auto"})
+	req = httptest.NewRequest(http.MethodPatch, "/api/v1/settings/playback", bytes.NewReader(patchBody))
+	req.Header.Set("Authorization", "Bearer "+token["accessToken"].(string))
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
 }
 
 func TestSettingsServiceIntegration(t *testing.T) {
