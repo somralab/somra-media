@@ -41,6 +41,8 @@ tags:
     description: Media library definition and scanning.
   - name: media
     description: Media items and metadata matching.
+  - name: streaming
+    description: Playback, transcode sessions, and HLS manifests.
 
 paths:
   /health:
@@ -468,6 +470,98 @@ paths:
         "204":
           description: Rematched
 
+  /media-items/{itemId}/play:
+    parameters:
+      - $ref: "#/components/parameters/itemId"
+    post:
+      tags: [streaming]
+      summary: Start playback session
+      operationId: startPlayback
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlayRequest"
+      responses:
+        "200":
+          description: Playback session started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlayResponse"
+
+  /streaming/sessions:
+    get:
+      tags: [streaming]
+      summary: List active playback sessions
+      operationId: listPlaybackSessions
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Active sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlaybackSessionSummary"
+
+  /streaming/sessions/{sessionId}:
+    parameters:
+      - $ref: "#/components/parameters/sessionId"
+    delete:
+      tags: [streaming]
+      summary: Stop playback session
+      operationId: stopPlaybackSession
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Session stopped
+
+  /streaming/sessions/{sessionId}/master.m3u8:
+    parameters:
+      - $ref: "#/components/parameters/sessionId"
+    get:
+      tags: [streaming]
+      summary: HLS master manifest
+      operationId: getMasterManifest
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Master playlist
+          content:
+            application/vnd.apple.mpegurl:
+              schema:
+                type: string
+
+  /streaming/sessions/{sessionId}/{file}:
+    parameters:
+      - $ref: "#/components/parameters/sessionId"
+      - name: file
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags: [streaming]
+      summary: HLS segment or init file
+      operationId: getStreamSegment
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Segment bytes
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
 components:
   securitySchemes:
     bearerAuth:
@@ -723,6 +817,117 @@ components:
         externalId:
           type: string
 
+    ClientCapabilities:
+      type: object
+      properties:
+        videoCodecs:
+          type: array
+          items:
+            type: string
+        audioCodecs:
+          type: array
+          items:
+            type: string
+        containers:
+          type: array
+          items:
+            type: string
+        maxBitrate:
+          type: integer
+          format: int64
+        supportsHdr:
+          type: boolean
+        supportsHevc:
+          type: boolean
+        maxAudioChannels:
+          type: integer
+
+    PlayRequest:
+      type: object
+      properties:
+        capabilities:
+          $ref: "#/components/schemas/ClientCapabilities"
+        audioStreamIndex:
+          type: integer
+          nullable: true
+        subtitleStreamIndex:
+          type: integer
+          nullable: true
+        startPositionMs:
+          type: integer
+          format: int64
+
+    PlayResponse:
+      type: object
+      required: [sessionId, mode, manifestUrl, expiresAt]
+      properties:
+        sessionId:
+          type: string
+        mode:
+          type: string
+          enum: [direct_play, direct_stream, transcode]
+        manifestUrl:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        reason:
+          type: string
+
+    PlaybackSessionSummary:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        mediaItemId:
+          type: integer
+          format: int64
+        mode:
+          type: string
+        status:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+
+    AudioTrack:
+      type: object
+      properties:
+        index:
+          type: integer
+        language:
+          type: string
+        codec:
+          type: string
+        channels:
+          type: integer
+
+    SubtitleTrack:
+      type: object
+      properties:
+        index:
+          type: integer
+        language:
+          type: string
+        codec:
+          type: string
+
+    StreamInfo:
+      type: object
+      properties:
+        mode:
+          type: string
+        manifestUrl:
+          type: string
+        audioTracks:
+          type: array
+          items:
+            $ref: "#/components/schemas/AudioTrack"
+        subtitleTracks:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubtitleTrack"
+
     SetupAdminRequest:
       type: object
       required: [username, password]
@@ -842,3 +1047,9 @@ components:
       schema:
         type: integer
         format: int64
+    sessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema:
+        type: string

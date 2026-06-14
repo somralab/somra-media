@@ -37,6 +37,7 @@ CRITICAL_PACKAGES=(
   "github.com/somralab/somra-media/internal/platform/errors"
   "github.com/somralab/somra-media/internal/platform/i18n"
   "github.com/somralab/somra-media/internal/platform/diagnostics"
+  "github.com/somralab/somra-media/internal/streaming"
 )
 
 # Entry-point binaries we intentionally exclude from the coverage gate. Their

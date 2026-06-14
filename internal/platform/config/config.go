@@ -16,13 +16,14 @@ import (
 // Fields are grouped per concern (HTTP, logging, CORS, data, shutdown) so that
 // later packets (DB, jobs, streaming) extend rather than mutate the contract.
 type Config struct {
-	HTTP     HTTPConfig
-	Log      LogConfig
-	CORS     CORSConfig
-	Data     DataConfig
-	Web      WebConfig
-	Auth     AuthConfig
-	Shutdown ShutdownConfig
+	HTTP      HTTPConfig
+	Log       LogConfig
+	CORS      CORSConfig
+	Data      DataConfig
+	Web       WebConfig
+	Auth      AuthConfig
+	Streaming StreamingConfig
+	Shutdown  ShutdownConfig
 }
 
 // HTTPConfig describes the API gateway listener.
@@ -61,7 +62,18 @@ type CORSConfig struct {
 // DataConfig points at the on-disk data directory (SQLite, caches). Used by
 // later packets; declared here so all configuration lives in one struct.
 type DataConfig struct {
-	Dir string
+	Dir      string
+	CacheDir string
+}
+
+// StreamingConfig controls transcode session limits and idle cleanup.
+type StreamingConfig struct {
+	MaxConcurrentTranscodes int
+	MaxTranscodeQueue       int
+	SessionTTL              time.Duration
+	IdleTimeout             time.Duration
+	FFmpegBin               string
+	FFprobeBin              string
 }
 
 // WebConfig points at an optional directory of pre-built SPA assets that the
@@ -107,7 +119,16 @@ func Default() Config {
 			MaxAge:         5 * time.Minute,
 		},
 		Data: DataConfig{
-			Dir: "./data",
+			Dir:      "./data",
+			CacheDir: "./cache",
+		},
+		Streaming: StreamingConfig{
+			MaxConcurrentTranscodes: 2,
+			MaxTranscodeQueue:       8,
+			SessionTTL:              4 * time.Hour,
+			IdleTimeout:             15 * time.Minute,
+			FFmpegBin:               "ffmpeg",
+			FFprobeBin:              "ffprobe",
 		},
 		Web: WebConfig{
 			Dir: "",
@@ -166,6 +187,32 @@ func loadFrom(lookup func(string) (string, bool)) (Config, error) {
 
 	if v, ok := lookup("SOMRA_DATA_DIR"); ok {
 		cfg.Data.Dir = v
+	}
+	if v, ok := lookup("SOMRA_CACHE_DIR"); ok {
+		cfg.Data.CacheDir = v
+	}
+
+	if v, ok := lookup("SOMRA_STREAMING_MAX_CONCURRENT"); ok {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 {
+			cfg.Streaming.MaxConcurrentTranscodes = n
+		}
+	}
+	if v, ok := lookup("SOMRA_STREAMING_MAX_QUEUE"); ok {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 {
+			cfg.Streaming.MaxTranscodeQueue = n
+		}
+	}
+	if err := durationFromEnv(lookup, "SOMRA_STREAMING_SESSION_TTL", &cfg.Streaming.SessionTTL); err != nil {
+		return Config{}, err
+	}
+	if err := durationFromEnv(lookup, "SOMRA_STREAMING_IDLE_TIMEOUT", &cfg.Streaming.IdleTimeout); err != nil {
+		return Config{}, err
+	}
+	if v, ok := lookup("SOMRA_FFMPEG_BIN"); ok {
+		cfg.Streaming.FFmpegBin = v
+	}
+	if v, ok := lookup("SOMRA_FFPROBE_BIN"); ok {
+		cfg.Streaming.FFprobeBin = v
 	}
 
 	if v, ok := lookup("SOMRA_WEB_DIR"); ok {

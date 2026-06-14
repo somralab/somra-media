@@ -1,0 +1,13 @@
+{
+  "play": {
+    "button": "Oynat"
+  },
+  "mode": {
+    "direct_play": "Doğrudan oynatma",
+    "direct_stream": "Doğrudan akış",
+    "transcode": "Dönüştürme"
+  },
+  "errors": {
+    "start_failed": "Oynatma başlatılamadı. Tekrar deneyin."
+  }
+}

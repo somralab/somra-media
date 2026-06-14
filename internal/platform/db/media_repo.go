@@ -258,6 +258,115 @@ func (r *MediaRepo) UpsertArtwork(ctx context.Context, itemID int64, kind, sourc
 	return nil
 }
 
+// GetFileByID returns a media file row by id.
+func (r *MediaRepo) GetFileByID(ctx context.Context, fileID int64) (MediaFile, error) {
+	var f MediaFile
+	var itemID, epID sql.NullInt64
+	var hash, title sql.NullString
+	var year, season, episode sql.NullInt64
+	err := r.q.QueryRowContext(ctx, `
+		SELECT id, library_id, media_item_id, episode_id, path, file_name,
+		       size_bytes, mtime_ns, content_hash,
+		       parsed_title, parsed_year, parsed_season, parsed_episode
+		FROM media_file WHERE id = ?
+	`, fileID).Scan(
+		&f.ID, &f.LibraryID, &itemID, &epID, &f.Path, &f.FileName,
+		&f.SizeBytes, &f.MtimeNs, &hash,
+		&title, &year, &season, &episode,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return MediaFile{}, fmt.Errorf("db media file %d: %w", fileID, ErrMediaItemNotFound)
+	}
+	if err != nil {
+		return MediaFile{}, fmt.Errorf("db media file %d: %w", fileID, err)
+	}
+	f.MediaItemID = nullInt64Ptr(itemID)
+	f.EpisodeID = nullInt64Ptr(epID)
+	f.ContentHash = hash.String
+	f.ParsedTitle = title.String
+	f.ParsedYear = nullIntPtr(year)
+	f.ParsedSeason = nullIntPtr(season)
+	f.ParsedEpisode = nullIntPtr(episode)
+	return f, nil
+}
+
+// MediaTechnical holds probed technical metadata for a file.
+type MediaTechnical struct {
+	MediaFileID   int64
+	DurationMs    int64
+	Container     string
+	VideoCodec    string
+	VideoWidth    int
+	VideoHeight   int
+	AudioCodec    string
+	AudioChannels int
+	SubtitleCount int
+}
+
+// GetPrimaryFileByItemID returns the first file linked to a media item.
+func (r *MediaRepo) GetPrimaryFileByItemID(ctx context.Context, itemID int64) (MediaFile, error) {
+	var f MediaFile
+	var itemIDCol, epID sql.NullInt64
+	var hash, title sql.NullString
+	var year, season, episode sql.NullInt64
+	err := r.q.QueryRowContext(ctx, `
+		SELECT id, library_id, media_item_id, episode_id, path, file_name,
+		       size_bytes, mtime_ns, content_hash,
+		       parsed_title, parsed_year, parsed_season, parsed_episode
+		FROM media_file WHERE media_item_id = ?
+		ORDER BY id ASC LIMIT 1
+	`, itemID).Scan(
+		&f.ID, &f.LibraryID, &itemIDCol, &epID, &f.Path, &f.FileName,
+		&f.SizeBytes, &f.MtimeNs, &hash,
+		&title, &year, &season, &episode,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return MediaFile{}, fmt.Errorf("db media primary file %d: %w", itemID, ErrMediaItemNotFound)
+	}
+	if err != nil {
+		return MediaFile{}, fmt.Errorf("db media primary file %d: %w", itemID, err)
+	}
+	f.MediaItemID = nullInt64Ptr(itemIDCol)
+	f.EpisodeID = nullInt64Ptr(epID)
+	f.ContentHash = hash.String
+	f.ParsedTitle = title.String
+	f.ParsedYear = nullIntPtr(year)
+	f.ParsedSeason = nullIntPtr(season)
+	f.ParsedEpisode = nullIntPtr(episode)
+	return f, nil
+}
+
+// GetTechnicalByFileID returns probed metadata for a file.
+func (r *MediaRepo) GetTechnicalByFileID(ctx context.Context, fileID int64) (MediaTechnical, error) {
+	var t MediaTechnical
+	var container, videoCodec, audioCodec sql.NullString
+	var width, height, channels, subCount sql.NullInt64
+	var duration sql.NullInt64
+	err := r.q.QueryRowContext(ctx, `
+		SELECT media_file_id, duration_ms, container, video_codec, video_width, video_height,
+		       audio_codec, audio_channels, subtitle_count
+		FROM media_technical WHERE media_file_id = ?
+	`, fileID).Scan(
+		&t.MediaFileID, &duration, &container, &videoCodec, &width, &height,
+		&audioCodec, &channels, &subCount,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return MediaTechnical{}, fmt.Errorf("db media technical %d: %w", fileID, ErrMediaItemNotFound)
+	}
+	if err != nil {
+		return MediaTechnical{}, fmt.Errorf("db media technical %d: %w", fileID, err)
+	}
+	t.DurationMs = duration.Int64
+	t.Container = container.String
+	t.VideoCodec = videoCodec.String
+	t.VideoWidth = int(width.Int64)
+	t.VideoHeight = int(height.Int64)
+	t.AudioCodec = audioCodec.String
+	t.AudioChannels = int(channels.Int64)
+	t.SubtitleCount = int(subCount.Int64)
+	return t, nil
+}
+
 // UpsertTechnical stores ffprobe output for a file.
 func (r *MediaRepo) UpsertTechnical(ctx context.Context, fileID int64, durationMs int64, container, videoCodec string, width, height int, audioCodec string, channels, subtitleCount int, rawJSON string) error {
 	_, err := r.q.ExecContext(ctx, `

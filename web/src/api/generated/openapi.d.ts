@@ -357,6 +357,100 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/media-items/{itemId}/play": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itemId: components["parameters"]["itemId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start playback session */
+        post: operations["startPlayback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/streaming/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List active playback sessions */
+        get: operations["listPlaybackSessions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/streaming/sessions/{sessionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: components["parameters"]["sessionId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Stop playback session */
+        delete: operations["stopPlaybackSession"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/streaming/sessions/{sessionId}/master.m3u8": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: components["parameters"]["sessionId"];
+            };
+            cookie?: never;
+        };
+        /** HLS master manifest */
+        get: operations["getMasterManifest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/streaming/sessions/{sessionId}/{file}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: components["parameters"]["sessionId"];
+                file: string;
+            };
+            cookie?: never;
+        };
+        /** HLS segment or init file */
+        get: operations["getStreamSegment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -538,6 +632,58 @@ export interface components {
             provider: string;
             externalId: string;
         };
+        ClientCapabilities: {
+            videoCodecs?: string[];
+            audioCodecs?: string[];
+            containers?: string[];
+            /** Format: int64 */
+            maxBitrate?: number;
+            supportsHdr?: boolean;
+            supportsHevc?: boolean;
+            maxAudioChannels?: number;
+        };
+        PlayRequest: {
+            capabilities?: components["schemas"]["ClientCapabilities"];
+            audioStreamIndex?: number | null;
+            subtitleStreamIndex?: number | null;
+            /** Format: int64 */
+            startPositionMs?: number;
+        };
+        PlayResponse: {
+            sessionId: string;
+            /** @enum {string} */
+            mode: "direct_play" | "direct_stream" | "transcode";
+            manifestUrl: string;
+            /** Format: date-time */
+            expiresAt: string;
+            reason?: string;
+        };
+        PlaybackSessionSummary: {
+            sessionId?: string;
+            /** Format: int64 */
+            mediaItemId?: number;
+            mode?: string;
+            status?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+        };
+        AudioTrack: {
+            index?: number;
+            language?: string;
+            codec?: string;
+            channels?: number;
+        };
+        SubtitleTrack: {
+            index?: number;
+            language?: string;
+            codec?: string;
+        };
+        StreamInfo: {
+            mode?: string;
+            manifestUrl?: string;
+            audioTracks?: components["schemas"]["AudioTrack"][];
+            subtitleTracks?: components["schemas"]["SubtitleTrack"][];
+        };
         SetupAdminRequest: {
             username: string;
             password: string;
@@ -592,6 +738,7 @@ export interface components {
     parameters: {
         libraryId: number;
         itemId: number;
+        sessionId: string;
     };
     requestBodies: never;
     headers: never;
@@ -1135,6 +1282,117 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    startPlayback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itemId: components["parameters"]["itemId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PlayRequest"];
+            };
+        };
+        responses: {
+            /** @description Playback session started */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlayResponse"];
+                };
+            };
+        };
+    };
+    listPlaybackSessions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Active sessions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlaybackSessionSummary"][];
+                };
+            };
+        };
+    };
+    stopPlaybackSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: components["parameters"]["sessionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Session stopped */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getMasterManifest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: components["parameters"]["sessionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Master playlist */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.apple.mpegurl": string;
+                };
+            };
+        };
+    };
+    getStreamSegment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: components["parameters"]["sessionId"];
+                file: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Segment bytes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
             };
         };
     };

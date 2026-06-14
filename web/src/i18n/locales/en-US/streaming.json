@@ -1,0 +1,13 @@
+{
+  "play": {
+    "button": "Play"
+  },
+  "mode": {
+    "direct_play": "Direct play",
+    "direct_stream": "Direct stream",
+    "transcode": "Transcode"
+  },
+  "errors": {
+    "start_failed": "Could not start playback. Try again."
+  }
+}

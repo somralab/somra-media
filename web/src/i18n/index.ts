@@ -6,17 +6,21 @@ import enCommon from './locales/en-US/common.json';
 import enStatus from './locales/en-US/status.json';
 import enLibrary from './locales/en-US/library.json';
 import enAuth from './locales/en-US/auth.json';
+import enStreaming from './locales/en-US/streaming.json';
+import enPlayer from './locales/en-US/player.json';
 import trCommon from './locales/tr-TR/common.json';
 import trStatus from './locales/tr-TR/status.json';
 import trLibrary from './locales/tr-TR/library.json';
 import trAuth from './locales/tr-TR/auth.json';
+import trStreaming from './locales/tr-TR/streaming.json';
+import trPlayer from './locales/tr-TR/player.json';
 
 export const SUPPORTED_LOCALES = ['en-US', 'tr-TR'] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export const FALLBACK_LOCALE: SupportedLocale = 'en-US';
 export const DEFAULT_NAMESPACE = 'common';
-export const NAMESPACES = ['common', 'status', 'library', 'auth'] as const;
+export const NAMESPACES = ['common', 'status', 'library', 'auth', 'streaming', 'player'] as const;
 
 export const resources = {
   'en-US': {
@@ -24,12 +28,16 @@ export const resources = {
     status: enStatus,
     library: enLibrary,
     auth: enAuth,
+    streaming: enStreaming,
+    player: enPlayer,
   },
   'tr-TR': {
     common: trCommon,
     status: trStatus,
     library: trLibrary,
     auth: trAuth,
+    streaming: trStreaming,
+    player: trPlayer,
   },
 } as const;
 

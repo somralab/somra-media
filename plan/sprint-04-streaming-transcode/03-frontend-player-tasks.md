@@ -14,16 +14,16 @@
 ## Epikler ve Görevler
 
 ### Epik A: Oynatıcı çekirdeği
-- [ ] A1 — hls.js entegrasyonu + manifest yükleme | Kabul: video oynar.
-- [ ] A2 — Oynat/duraklat/seek/ses kontrolü + klavye kısayolları | Kabul: temel kontroller çalışır.
-- [ ] A3 — Tam ekran + responsive davranış | Kabul: masaüstü/mobil tarayıcıda düzgün.
+- [x] A1 — hls.js entegrasyonu + manifest yükleme | Kabul: video oynar.
+- [x] A2 — Oynat/duraklat/seek/ses kontrolü + klavye kısayolları | Kabul: temel kontroller çalışır.
+- [x] A3 — Tam ekran + responsive davranış | Kabul: masaüstü/mobil tarayıcıda düzgün.
 
 ### Epik B: Akış seçenekleri
-- [ ] B1 — Kalite (ABR) seçimi (otomatik + manuel) | Kabul: kademe değişimi sorunsuz.
-- [ ] B2 — Ses dili ve altyazı seçimi UI'si | Kabul: backend akışlarına bağlı.
+- [x] B1 — Kalite (ABR) seçimi (otomatik + manuel) | Kabul: kademe değişimi sorunsuz.
+- [x] B2 — Ses dili ve altyazı seçimi UI'si | Kabul: backend akışlarına bağlı.
 
 ### Epik C: Devam etme
-- [ ] C1 — Resume (kaldığı yerden) + periyodik ilerleme bildirimi | Kabul: doğru pozisyon.
+- [x] C1 — Resume (kaldığı yerden) + periyodik ilerleme bildirimi | Kabul: doğru pozisyon.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Kullanıcı tarayıcıda video izler; kalite/ses/altyazı seçer; kaldığı yerden devam eder.
