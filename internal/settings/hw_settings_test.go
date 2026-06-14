@@ -17,7 +17,7 @@ func TestToStreamingHWConfig(t *testing.T) {
 		MaxHWTranscodes:         2,
 		HWMode:                  HWModeAuto,
 		HWAccelerator:           "auto",
-		AvailableAccelerators:     []AcceleratorID{AcceleratorQSV, AcceleratorNVENC},
+		AvailableAccelerators:   []AcceleratorID{AcceleratorQSV, AcceleratorNVENC},
 	}
 	hw := cfg.ToStreamingHWConfig()
 	assert.Equal(t, streaming.HWModeAuto, hw.Mode)

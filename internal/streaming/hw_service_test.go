@@ -13,7 +13,7 @@ func TestApplyRuntimeSettings(t *testing.T) {
 	svc := NewService(ServiceConfig{CacheDir: t.TempDir(), MaxConcurrent: 2}, nil, nil, nil)
 	svc.ApplyRuntimeSettings(HWRuntimeConfig{
 		Mode: HWModeForce, Preferred: AccelQSV,
-		Available: []Accelerator{AccelQSV, AccelNVENC},
+		Available:     []Accelerator{AccelQSV, AccelNVENC},
 		MaxHWSessions: 3, MaxTotalSessions: 4, VAAPIDevice: "/dev/dri/renderD129",
 	})
 	cfg := svc.currentHWConfig()
@@ -64,10 +64,10 @@ func TestStartTranscodeWithFallback_HWFailsToSW(t *testing.T) {
 func TestStartTranscodeWithFallback_SWOnly(t *testing.T) {
 	svc := NewService(ServiceConfig{CacheDir: t.TempDir()}, nil, nil, nil)
 	opts := PackagerOptions{
-		SourcePath: filepath.Join(t.TempDir(), "missing.mkv"),
-		OutputDir:  filepath.Join(t.TempDir(), "out"),
-		Mode:       ModeTranscode,
-		Tiers:      []LadderTier{{VideoBitrate: 1_000_000}},
+		SourcePath:    filepath.Join(t.TempDir(), "missing.mkv"),
+		OutputDir:     filepath.Join(t.TempDir(), "out"),
+		Mode:          ModeTranscode,
+		Tiers:         []LadderTier{{VideoBitrate: 1_000_000}},
 		TranscodePath: TranscodePath{UseHW: false, VideoEncoder: "libx264"},
 	}
 	svc.procMgr = NewProcessManager(ProcessManagerConfig{MaxConcurrent: 1, FFmpegBin: "/bin/false"})
