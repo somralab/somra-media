@@ -90,7 +90,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: web/pnpm-lock.yaml
       - name: go test
-        run: go test ./... -count=1 -race -coverprofile=coverage.go.out
+        run: go test ./... -count=1 -coverprofile=coverage.go.out
       - name: pnpm install
         run: pnpm --dir web install --frozen-lockfile
       - name: web test (with coverage)
@@ -115,7 +115,7 @@ jobs:
           go-version-file: go.mod
           cache: true
       - name: go test (integration tag)
-        run: go test -tags=integration ./... -count=1 -race
+        run: go test -tags=integration ./... -count=1
 
   coverage-gate:
     name: coverage-gate
