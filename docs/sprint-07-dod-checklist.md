@@ -49,8 +49,8 @@
 
 ## CI gates
 
-- [ ] `make lint`
-- [ ] `make test`
-- [ ] `make i18n-check`
-- [ ] `make coverage-gate`
-- [ ] `make build`
+- [x] `make lint`
+- [x] `make test`
+- [x] `make i18n-check`
+- [x] `make coverage-gate`
+- [x] `make build`
