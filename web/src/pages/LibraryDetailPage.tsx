@@ -55,14 +55,6 @@ export default function LibraryDetailPage(): ReactNode {
     }
   }, [progress, refetch]);
 
-  if (!library) {
-    return (
-      <section className="p-6">
-        <PosterSkeleton />
-      </section>
-    );
-  }
-
   const items = useMemo(
     () =>
       page?.items.map((item) => {
@@ -77,6 +69,14 @@ export default function LibraryDetailPage(): ReactNode {
       }) ?? [],
     [page?.items],
   );
+
+  if (!library) {
+    return (
+      <section className="p-6">
+        <PosterSkeleton />
+      </section>
+    );
+  }
 
   return (
     <section className="mx-auto flex max-w-6xl flex-col gap-6 p-6">
