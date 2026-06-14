@@ -174,3 +174,26 @@ See [`plan/definition-of-done.md`](./plan/definition-of-done.md) §6 and
 2. Confirm the task is in scope and identify the owning module ([`plan/architecture.md`](./plan/architecture.md) §3).
 3. Implement with tests + i18n keys; run `make lint test i18n-check coverage`.
 4. Open a focused, DCO-signed PR referencing the task and its acceptance criteria.
+
+## Cursor Cloud specific instructions
+
+Notes for future cloud agents (the startup update script and toolchain are already applied;
+do not re-run installs here).
+
+- **Repository is greenfield.** Only `AGENTS.md` and `plan/` exist; there is no `go.mod`,
+  `web/package.json`, `Makefile`, or application code yet (the runnable codebase is bootstrapped
+  in Sprint 01 — see `plan/sprint-01-foundation/`). Until then there is no app/test suite to run;
+  the `make ...` targets above are the agreed *target* and do not exist yet.
+- **Toolchain available in the VM snapshot:** Go (current stable, installed at `/usr/local/go`,
+  on `PATH` via `/usr/local/bin/go`), Node 22 + `pnpm` 10, `ffmpeg`/`ffprobe` 6.x,
+  `golangci-lint` 2.x, GNU `make`. The distro's older Go (`/usr/lib/go-1.22`) was intentionally
+  superseded because current `go-chi/chi` requires Go ≥ 1.23; without a recent default Go, the Go
+  toolchain auto-downloads a per-build toolchain (slow/brittle).
+- **Docker is NOT installed.** It is only needed for `make docker` / image builds (Sprint 01
+  DevOps Epic A) and multi-arch packaging — not for the local dev runtime (`make dev`). Install it
+  on demand if you specifically work on the image/CI.
+- **Keep builds CGO-free** (`CGO_ENABLED=0`); the SQLite driver is `modernc.org/sqlite` (pure Go).
+- **Update script** (runs on startup) is intentionally guarded for the greenfield state: it runs
+  `go mod download` only if `go.mod` exists and `pnpm install` in `web/` only if `web/package.json`
+  exists. Once Sprint 01 lands those manifests, dependency refresh works automatically with no
+  change. The frontend lives under `web/` and uses `pnpm`.
