@@ -18,6 +18,8 @@ type PackagerOptions struct {
 	SubtitleStreamIndex *int
 	Tiers               []LadderTier
 	SegmentSeconds      int
+	TranscodePath       TranscodePath
+	HWConfig            HWRuntimeConfig
 }
 
 // BuildFFmpegArgs returns ffmpeg arguments for the given packaging mode.
@@ -62,15 +64,9 @@ func BuildFFmpegArgs(opts PackagerOptions) []string {
 			filepath.Join(opts.OutputDir, "stream.m3u8"),
 		)
 	case ModeTranscode:
+		videoArgs := AppendHWVideoArgs(nil, opts.TranscodePath, tier, opts.HWConfig.VAAPIDevice)
+		args = append(args, videoArgs...)
 		args = append(args,
-			"-c:v", "libx264", "-preset", "veryfast", "-profile:v", "baseline",
-			"-pix_fmt", "yuv420p",
-		)
-		if tier.Width > 0 && tier.Height > 0 {
-			args = append(args, "-vf", fmt.Sprintf("scale=%d:%d", tier.Width, tier.Height))
-		}
-		args = append(args,
-			"-b:v", fmt.Sprintf("%d", tier.VideoBitrate),
 			"-c:a", "aac", "-b:a", fmt.Sprintf("%d", tier.AudioBitrate), "-ac", "2",
 			"-f", "hls",
 			"-hls_segment_type", "fmp4",

@@ -62,7 +62,8 @@ func (o *Onboarding) Status(ctx context.Context) (OnboardingState, error) {
 	}
 	if phase == PhaseDefaults {
 		locale, _ := o.settings.GetString(ctx, KeyDefaultLocale, "en-US")
-		def := RecommendDefaults(detectCPUCores(), locale)
+		profile := DetectSystem(nil)
+		def := RecommendDefaultsWithProfile(detectCPUCores(), locale, profile)
 		state.SmartDefaults = &def
 	}
 	return state, nil
@@ -84,7 +85,8 @@ func (o *Onboarding) AdvanceStep(ctx context.Context, req StepRequest) (Onboardi
 	case PhaseDefaults:
 		if req.ApplyDefaults {
 			locale, _ := o.settings.GetString(ctx, KeyDefaultLocale, "en-US")
-			def := RecommendDefaults(detectCPUCores(), locale)
+			profile := DetectSystem(nil)
+			def := RecommendDefaultsWithProfile(detectCPUCores(), locale, profile)
 			if err := o.settings.ApplySmartDefaults(ctx, def); err != nil {
 				return OnboardingState{}, err
 			}

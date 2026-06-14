@@ -14,15 +14,15 @@
 ## Epikler ve Görevler
 
 ### Epik A: Cihaz erişimi
-- [ ] A1 — Intel/AMD VAAPI için `/dev/dri` passthrough + compose örneği | Kabul: konteyner GPU'ya erişir.
-- [ ] A2 — NVIDIA için container toolkit/runtime entegrasyonu + örnek | Kabul: NVENC kullanılabilir.
+- [x] A1 — Intel/AMD VAAPI için `/dev/dri` passthrough + compose örneği | Kabul: konteyner GPU'ya erişir.
+- [x] A2 — NVIDIA için container toolkit/runtime entegrasyonu + örnek | Kabul: NVENC kullanılabilir.
 
 ### Epik B: İmaj uyumluluğu
-- [ ] B1 — ffmpeg'in HW hızlandırma destekli derlenmesi/paketlenmesi | Kabul: imajda HW kodlayıcılar mevcut.
-- [ ] B2 — Multi-arch + HW uyumluluk doğrulaması | Kabul: hedef platformlarda çalışır.
+- [x] B1 — ffmpeg'in HW hızlandırma destekli derlenmesi/paketlenmesi | Kabul: imajda HW kodlayıcılar mevcut.
+- [x] B2 — Multi-arch + HW uyumluluk doğrulaması | Kabul: hedef platformlarda çalışır.
 
 ### Epik C: Dokümantasyon
-- [ ] C1 — Kullanıcı için GPU kurulum rehberi (compose örnekleri) | Kabul: net adımlar.
+- [x] C1 — Kullanıcı için GPU kurulum rehberi (compose örnekleri) | Kabul: net adımlar.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Docker'da en az bir GPU yolu (öncelik: Intel `/dev/dri`) sorunsuz çalışır ve belgelidir.

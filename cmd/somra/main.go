@@ -20,6 +20,7 @@ import (
 	"github.com/somralab/somra-media/internal/platform/db"
 	i18npkg "github.com/somralab/somra-media/internal/platform/i18n"
 	platformlog "github.com/somralab/somra-media/internal/platform/log"
+	"github.com/somralab/somra-media/internal/settings"
 )
 
 // Build identifiers populated at link time via -ldflags. Defaults keep local
@@ -149,10 +150,25 @@ func run() error {
 		},
 	}
 	apiOpts.SystemHandlers = &api.SystemHandlers{
-		DataDir:  cfg.Data.Dir,
-		CacheDir: cfg.Data.CacheDir,
+		DataDir:   cfg.Data.Dir,
+		CacheDir:  cfg.Data.CacheDir,
+		FFmpegBin: cfg.Streaming.FFmpegBin,
 	}
-	apiOpts.SettingsHandlers = &api.SettingsHandlers{Service: settingsBundle.Settings}
+	if streamBundle != nil && streamBundle.Service != nil {
+		_ = bootstrap.SyncStreamingSettings(context.Background(), settingsBundle.Settings, streamBundle.Service, cfg.Streaming.FFmpegBin)
+	}
+	apiOpts.SettingsHandlers = &api.SettingsHandlers{
+		Service: settingsBundle.Settings,
+		OnPatched: func(ctx context.Context, category string) error {
+			if streamBundle == nil || streamBundle.Service == nil {
+				return nil
+			}
+			if category == settings.CategoryPlayback || category == settings.CategoryStreaming {
+				return bootstrap.SyncStreamingSettings(ctx, settingsBundle.Settings, streamBundle.Service, cfg.Streaming.FFmpegBin)
+			}
+			return nil
+		},
+	}
 	apiOpts.OnboardingHandlers = &api.OnboardingHandlers{Onboarding: settingsBundle.Onboarding}
 	if subtitlesBundle != nil && subtitlesBundle.Service != nil {
 		apiOpts.SubtitleHandlers = &api.SubtitleHandlers{Service: subtitlesBundle.Service}

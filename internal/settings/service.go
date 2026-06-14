@@ -81,6 +81,25 @@ func (s *Service) ApplySmartDefaults(ctx context.Context, defaults SmartDefaults
 	if err := s.repo.Set(ctx, KeyStreamingMaxConcurrent, strconv.Itoa(defaults.MaxConcurrentTranscodes)); err != nil {
 		return err
 	}
+	if defaults.MaxHWTranscodes > 0 {
+		if err := s.repo.Set(ctx, KeyStreamingMaxHW, strconv.Itoa(defaults.MaxHWTranscodes)); err != nil {
+			return err
+		}
+	}
+	if defaults.HWMode != "" {
+		if err := s.repo.Set(ctx, KeyStreamingHWMode, string(defaults.HWMode)); err != nil {
+			return err
+		}
+	}
+	if defaults.RecommendedAccelerator != "" {
+		if err := s.repo.Set(ctx, KeyStreamingHWAccelerator, string(defaults.RecommendedAccelerator)); err != nil {
+			return err
+		}
+	} else if defaults.HWMode == HWModeOff {
+		if err := s.repo.Set(ctx, KeyStreamingHWAccelerator, "auto"); err != nil {
+			return err
+		}
+	}
 	if defaults.ScanCron != "" {
 		if err := s.repo.Set(ctx, KeyLibraryScanCron, defaults.ScanCron); err != nil {
 			return err
@@ -117,22 +136,54 @@ func (s *Service) getPlayback(ctx context.Context) (map[string]any, error) {
 	}
 	return map[string]any{
 		"maxConcurrentTranscodes": streaming["maxConcurrentTranscodes"],
+		"maxHWTranscodes":         streaming["maxHWTranscodes"],
+		"hwMode":                  streaming["hwMode"],
+		"hwAccelerator":           streaming["hwAccelerator"],
+		"availableAccelerators":   streaming["availableAccelerators"],
 	}, nil
 }
 
 func (s *Service) getStreaming(ctx context.Context) (map[string]any, error) {
 	raw, err := s.repo.Get(ctx, KeyStreamingMaxConcurrent)
 	if errors.Is(err, db.ErrSettingNotFound) || raw == "" {
-		return map[string]any{"maxConcurrentTranscodes": 2}, nil
-	}
-	if err != nil {
+		raw = "2"
+	} else if err != nil {
 		return nil, err
 	}
 	n, convErr := strconv.Atoi(raw)
 	if convErr != nil {
 		n = 2
 	}
-	return map[string]any{"maxConcurrentTranscodes": n}, nil
+	hwRaw, err := s.GetString(ctx, KeyStreamingMaxHW, "2")
+	if err != nil {
+		return nil, err
+	}
+	hwN, _ := strconv.Atoi(hwRaw)
+	if hwN < 1 {
+		hwN = 2
+	}
+	mode, err := s.GetString(ctx, KeyStreamingHWMode, string(HWModeAuto))
+	if err != nil {
+		return nil, err
+	}
+	accel, err := s.GetString(ctx, KeyStreamingHWAccelerator, "auto")
+	if err != nil {
+		return nil, err
+	}
+	profile := DetectSystem(nil)
+	available := make([]string, 0)
+	for _, a := range profile.Accelerators {
+		if a.Available {
+			available = append(available, string(a.ID))
+		}
+	}
+	return map[string]any{
+		"maxConcurrentTranscodes": n,
+		"maxHWTranscodes":         hwN,
+		"hwMode":                  mode,
+		"hwAccelerator":           accel,
+		"availableAccelerators":   available,
+	}, nil
 }
 
 func (s *Service) getSubtitles(ctx context.Context) (map[string]any, error) {
@@ -177,6 +228,33 @@ func (s *Service) patchPlayback(ctx context.Context, patch map[string]any) (map[
 			return nil, fmt.Errorf("settings: invalid maxConcurrentTranscodes")
 		}
 		if err := s.repo.Set(ctx, KeyStreamingMaxConcurrent, strconv.Itoa(n)); err != nil {
+			return nil, err
+		}
+	}
+	if v, ok := patch["maxHWTranscodes"]; ok {
+		n, err := toInt(v)
+		if err != nil || n < 1 || n > 4 {
+			return nil, fmt.Errorf("settings: invalid maxHWTranscodes")
+		}
+		if err := s.repo.Set(ctx, KeyStreamingMaxHW, strconv.Itoa(n)); err != nil {
+			return nil, err
+		}
+	}
+	if v, ok := patch["hwMode"].(string); ok {
+		if v != string(HWModeAuto) && v != string(HWModeOff) && v != string(HWModeForce) {
+			return nil, fmt.Errorf("settings: invalid hwMode")
+		}
+		if err := s.repo.Set(ctx, KeyStreamingHWMode, v); err != nil {
+			return nil, err
+		}
+	}
+	if v, ok := patch["hwAccelerator"].(string); ok {
+		valid := v == "auto" || v == string(AcceleratorQSV) || v == string(AcceleratorNVENC) ||
+			v == string(AcceleratorVAAPI) || v == string(AcceleratorAMF)
+		if !valid {
+			return nil, fmt.Errorf("settings: invalid hwAccelerator")
+		}
+		if err := s.repo.Set(ctx, KeyStreamingHWAccelerator, v); err != nil {
 			return nil, err
 		}
 	}

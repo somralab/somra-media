@@ -1586,7 +1586,7 @@ components:
 
     SystemProfile:
       type: object
-      required: [cpuCores, memoryBytes, gpuPresent, paths]
+      required: [cpuCores, memoryBytes, gpuPresent, accelerators, paths]
       properties:
         cpuCores:
           type: integer
@@ -1595,10 +1595,37 @@ components:
           format: int64
         gpuPresent:
           type: boolean
+        recommendedAccelerator:
+          type: string
+          enum: [qsv, nvenc, vaapi, amf]
+        accelerators:
+          type: array
+          items:
+            $ref: "#/components/schemas/AcceleratorInfo"
         paths:
           type: array
           items:
             $ref: "#/components/schemas/PathValidation"
+
+    AcceleratorInfo:
+      type: object
+      required: [id, available, devicePresent, encodeCodecs, decodeCodecs]
+      properties:
+        id:
+          type: string
+          enum: [qsv, nvenc, vaapi, amf]
+        available:
+          type: boolean
+        devicePresent:
+          type: boolean
+        encodeCodecs:
+          type: array
+          items:
+            type: string
+        decodeCodecs:
+          type: array
+          items:
+            type: string
 
     PathValidation:
       type: object
@@ -1617,6 +1644,14 @@ components:
       properties:
         maxConcurrentTranscodes:
           type: integer
+        maxHWTranscodes:
+          type: integer
+        hwMode:
+          type: string
+          enum: [auto, off, force]
+        recommendedAccelerator:
+          type: string
+          enum: [qsv, nvenc, vaapi, amf]
         scanCron:
           type: string
         defaultLocale:

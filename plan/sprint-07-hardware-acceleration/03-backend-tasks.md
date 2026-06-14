@@ -14,12 +14,12 @@
 ## Epikler ve Görevler
 
 ### Epik A: Ayar entegrasyonu
-- [ ] A1 — HW hızlandırma ayarı (otomatik/zorla aç/kapat, hızlandırıcı seçimi) | Kabul: ayar API'de.
-- [ ] A2 — Onboarding'e GPU tespit/öneri adımının eklenmesi | Kabul: sihirbaz GPU önerir.
+- [x] A1 — HW hızlandırma ayarı (otomatik/zorla aç/kapat, hızlandırıcı seçimi) | Kabul: ayar API'de.
+- [x] A2 — Onboarding'e GPU tespit/öneri adımının eklenmesi | Kabul: sihirbaz GPU önerir.
 
 ### Epik B: İzleme
-- [ ] B1 — HW oturum metrikleri (kullanım, fallback oranı) | Kabul: telemetri toplanır.
-- [ ] B2 — HW hata/fallback loglama ve teşhis | Kabul: sorun teşhisi kolaylaşır.
+- [x] B1 — HW oturum metrikleri (kullanım, fallback oranı) | Kabul: telemetri toplanır.
+- [x] B2 — HW hata/fallback loglama ve teşhis | Kabul: sorun teşhisi kolaylaşır.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - HW hızlandırma arayüzden yönetilebilir; tespit/öneri onboarding'e entegre; telemetri var.
