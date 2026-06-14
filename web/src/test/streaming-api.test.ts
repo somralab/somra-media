@@ -57,15 +57,21 @@ describe('streaming endpoints', () => {
   });
 
   it('stopPlayback sends DELETE and accepts empty body', async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 204 })) as unknown as typeof fetch;
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 204 })) as unknown as typeof fetch;
     await expect(stopPlayback('sess-1')).resolves.toBeUndefined();
   });
 
   it('getWatchState and saveWatchState round-trip progress', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(jsonResponse(200, { mediaItemId: 7, positionMs: 5000, completed: false }))
-      .mockResolvedValueOnce(jsonResponse(200, { mediaItemId: 7, positionMs: 9000, completed: false }));
+      .mockResolvedValueOnce(
+        jsonResponse(200, { mediaItemId: 7, positionMs: 5000, completed: false }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse(200, { mediaItemId: 7, positionMs: 9000, completed: false }),
+      );
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     const state = await getWatchState(7);
@@ -76,10 +82,14 @@ describe('streaming endpoints', () => {
   });
 
   it('resolveStreamUrl keeps absolute URLs and prefixes relative API paths', () => {
-    expect(resolveStreamUrl('https://cdn.example/stream.m3u8')).toBe('https://cdn.example/stream.m3u8');
+    expect(resolveStreamUrl('https://cdn.example/stream.m3u8')).toBe(
+      'https://cdn.example/stream.m3u8',
+    );
     expect(resolveStreamUrl('/api/v1/streaming/sessions/x/master.m3u8')).toBe(
       '/api/v1/streaming/sessions/x/master.m3u8',
     );
-    expect(resolveStreamUrl('streaming/sessions/x/master.m3u8')).toMatch(/\/streaming\/sessions\/x\/master\.m3u8$/);
+    expect(resolveStreamUrl('streaming/sessions/x/master.m3u8')).toMatch(
+      /\/streaming\/sessions\/x\/master\.m3u8$/,
+    );
   });
 });

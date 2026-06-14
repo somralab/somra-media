@@ -40,7 +40,9 @@ describe('VideoPlayer', () => {
   });
 
   it('toggles playback on space key', () => {
-    const pauseSpy = vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => undefined);
+    const pauseSpy = vi
+      .spyOn(HTMLMediaElement.prototype, 'pause')
+      .mockImplementation(() => undefined);
     render(
       <I18nextProvider i18n={i18n}>
         <VideoPlayer manifestUrl="/api/v1/streaming/sessions/x/master.m3u8" mode="direct_play" />

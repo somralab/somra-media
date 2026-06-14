@@ -38,6 +38,9 @@ describe('PlayerPage', () => {
 
     expect(screen.getByTestId('video-player-stub')).toBeInTheDocument();
     expect(screen.getByText(/direct play/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /libraries/i })).toHaveAttribute('href', '/libraries/1');
+    expect(screen.getByRole('link', { name: /libraries/i })).toHaveAttribute(
+      'href',
+      '/libraries/1',
+    );
   });
 });
