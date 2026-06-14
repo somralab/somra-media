@@ -47,7 +47,7 @@ integration tests instead).
 ## Running tests locally
 
 ```bash
-make test           # unit (Go race + Vitest)
+make test           # unit (Go + Vitest)
 make coverage       # unit + writes coverage profile + summary
 make coverage-gate  # enforce DoD §4.1 thresholds locally
 make i18n-check     # locale parity (en-US ↔ tr-TR)
@@ -57,6 +57,14 @@ go test -tags=integration ./...   # integration suite (in-process)
 pnpm --dir web exec playwright install --with-deps chromium   # one-time
 pnpm --dir web exec playwright test                            # e2e smoke
 ```
+
+Go unit tests run without `-race` (CGO-free build via `modernc.org/sqlite`; CI matches).
+
+### Database integrity
+
+`internal/platform/db.IntegrityCheck` runs SQLite `PRAGMA integrity_check` and returns
+`ok` for a healthy file. Covered by `TestIntegrityCheck_Ok` in
+`internal/platform/db/migrate_test.go`; surfaced in `/api/v1/health` diagnostics.
 
 `make lint test i18n-check coverage` must all pass before opening a PR — `make lint`
 covers `gofmt`, `golangci-lint`, ESLint + Prettier + `tsc`.

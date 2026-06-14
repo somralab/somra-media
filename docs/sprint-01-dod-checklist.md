@@ -20,7 +20,7 @@ Tick the boxes that are satisfied today; leave open items for the sprints that o
 - [x] **1.4** Lint clean: `gofmt`, `golangci-lint` v2, ESLint, Prettier, `tsc --noEmit`.
 - [x] **1.5** README + per-package docs updated (`README.md`, `web/README.md`,
       `docs/testing-strategy.md`, `docs/issue-severity.md`).
-- [ ] **1.6** ≥ 1 code review approval per packet (handled at PR review time).
+- [ ] **1.6** ≥ 1 code review approval per packet (handled at PR review time; M1 merged via PR #3 — closure fixes in follow-up PR).
 - [x] **1.7** CI pipeline runs all seven gates:
       `lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build`.
 - [x] **1.8** i18n compliance — see DoD §i18n below.
@@ -28,9 +28,10 @@ Tick the boxes that are satisfied today; leave open items for the sprints that o
 ## DoD §2 — Sprint-level
 
 - [x] **2.1** All Sprint 01 "must" tasks (Paket 1–8) merged into `feat/sprint-01-m1`.
-- [x] **2.2** Demo recipe is reproducible: `docker compose -f deploy/docker-compose.yml up`
-      exposes `/api/v1/health`, `/api/v1/version`, the SSE stream, and serves the SPA on
-      `http://localhost:8080`. See [`README.md` § Sprint 01 (M1) demo](../README.md).
+- [x] **2.2** Demo recipe is reproducible: `docker compose -f deploy/docker-compose.yml up --build`
+      (local image build; no GHCR pull) exposes `/api/v1/health`, `/api/v1/version`, the SSE
+      stream, and serves the SPA on `http://localhost:8080`. See
+      [`README.md` § Sprint 01 (M1) demo](../README.md).
 - [x] **2.3** Regression: unit + integration + e2e harnesses all green.
 - [x] **2.4** No outstanding P1/P2 issues against Sprint 01 scope (see
       [`issue-severity.md`](./issue-severity.md)).

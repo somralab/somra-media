@@ -48,7 +48,7 @@ update (see [`plan/tech-stack.md`](./plan/tech-stack.md)).
 make help            # list all targets
 make dev             # backend + frontend dev servers concurrently
 make build           # backend (CGO=0) + frontend bundle
-make test            # Go race tests + Vitest
+make test            # Go unit tests + Vitest
 make lint            # gofmt + golangci-lint + ESLint + Prettier + tsc
 make i18n-check      # verify en-US / tr-TR key parity (Go + frontend)
 make coverage        # run all tests with coverage outputs
@@ -57,13 +57,16 @@ make docker          # build the container image for the local arch
 make docker-multiarch # buildx + push amd64 + arm64 to GHCR
 ```
 
-Running with Docker:
+Running with Docker (builds locally — no GHCR pull required):
 
 ```bash
-mkdir -p config data cache media
-docker compose -f deploy/docker-compose.yml up
+mkdir -p deploy/config deploy/data deploy/cache deploy/media
+docker compose -f deploy/docker-compose.yml up --build
 # → API + SPA on http://localhost:8080 (API under /api/v1)
 ```
+
+The `ghcr.io/somralab/somra-media` image tag in compose is for local naming only.
+CI and tagged releases publish to GHCR; for a standalone image build use `make docker`.
 
 ### Sprint 01 (M1) demo
 
@@ -71,11 +74,12 @@ The M1 milestone ships a fully-functional skeleton that you can reproduce
 locally in three steps. Both recipes (docker and `go run`) hit the same
 HTTP gateway exposed by the single `somra` binary.
 
-**Container (preferred — matches CI):**
+**Container (preferred — matches CI image recipe):**
 
 ```bash
-mkdir -p config data cache media
+mkdir -p deploy/config deploy/data deploy/cache deploy/media
 docker compose -f deploy/docker-compose.yml up --build
+# alternative: make docker && docker compose -f deploy/docker-compose.yml up
 ```
 
 Then, in another shell:

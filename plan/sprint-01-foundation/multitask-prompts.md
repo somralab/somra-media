@@ -406,14 +406,14 @@ Her subagent bitince kısa özet: dosyalar, test sonucu, blocker.
 
 ## Sabah review checklist (sizin)
 
-- [ ] `make lint test i18n-check coverage build docker` yeşil
-- [ ] `docker compose up` → `/api/v1/health` 200
-- [ ] SPA status sayfası health/version gösteriyor
-- [ ] Hardcoded kullanıcı metni yok (grep `"[A-Z][a-z]+ [a-z]+"` şüpheli alanlar)
-- [ ] Modül sınırları `plan/architecture.md` §3 ile uyumlu
-- [ ] CGO_ENABLED=0 build
-- [ ] Commit'lerde `Signed-off-by:` var
-- [ ] Kapsam dışı feature creep yok (auth logic, library scan, transcode)
+- [x] `make lint test i18n-check coverage build docker` yeşil
+- [x] `docker compose -f deploy/docker-compose.yml up --build` → `/api/v1/health` 200
+- [x] SPA status sayfası health/version gösteriyor
+- [x] Hardcoded kullanıcı metni yok (grep `"[A-Z][a-z]+ [a-z]+"` şüpheli alanlar)
+- [x] Modül sınırları `plan/architecture.md` §3 ile uyumlu
+- [x] CGO_ENABLED=0 build
+- [x] Commit'lerde `Signed-off-by:` var
+- [x] Kapsam dışı feature creep yok (auth logic, library scan, transcode)
 
 ---
 

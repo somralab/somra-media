@@ -72,9 +72,9 @@ build-web:
 ## test: run backend + frontend tests
 test: test-go test-web
 
-## test-go: run all Go tests with race detector
+## test-go: run all Go unit tests (CGO-free; no -race — see CI unit-test job)
 test-go:
-	$(GO) test ./... -count=1 -race
+	$(GO) test ./... -count=1
 
 ## test-web: run frontend tests once
 test-web:

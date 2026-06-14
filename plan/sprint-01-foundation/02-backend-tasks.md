@@ -14,19 +14,19 @@
 ## Epikler ve Görevler
 
 ### Epik A: Uygulama çekirdeği
-- [ ] A1 — Uygulama başlatma/kapatma yaşam döngüsü (graceful shutdown, signal handling) | Kabul: SIGTERM'de temiz kapanır, test edilir.
-- [ ] A2 — Konfigürasyon okuma + doğrulama (env + varsayılan) | Kabul: hatalı konfigde anlamlı hata.
-- [ ] A3 — Ortak hata tipleri ve sarmalama yardımcıları | Kabul: standart hata yanıtı formatı.
+- [x] A1 — Uygulama başlatma/kapatma yaşam döngüsü (graceful shutdown, signal handling) | Kabul: SIGTERM'de temiz kapanır, test edilir.
+- [x] A2 — Konfigürasyon okuma + doğrulama (env + varsayılan) | Kabul: hatalı konfigde anlamlı hata.
+- [x] A3 — Ortak hata tipleri ve sarmalama yardımcıları | Kabul: standart hata yanıtı formatı.
 
 ### Epik B: Job Scheduler iskeleti
-- [ ] B1 — Periyodik + tek-seferlik iş çalıştırma altyapısı | Kabul: örnek job çalışır, loglanır.
-- [ ] B2 — İş durumu izleme (çalışıyor/başarılı/hata) ve eşzamanlılık koruması | Kabul: aynı işin çakışması engellenir.
-- [ ] B3 — İş kuyruğu API iskeleti (sonraki sprintlerde tarama/yenileme bağlanacak) | Kabul: arayüz sözleşmesi tanımlı.
+- [x] B1 — Periyodik + tek-seferlik iş çalıştırma altyapısı | Kabul: örnek job çalışır, loglanır.
+- [x] B2 — İş durumu izleme (çalışıyor/başarılı/hata) ve eşzamanlılık koruması | Kabul: aynı işin çakışması engellenir.
+- [x] B3 — İş kuyruğu API iskeleti (sonraki sprintlerde tarama/yenileme bağlanacak) | Kabul: arayüz sözleşmesi tanımlı.
 
 ### Epik C: Ortak altyapı
-- [ ] C1 — Yapılandırılmış logger entegrasyonu | Kabul: tüm modüllerde tutarlı.
-- [ ] C2 — Sağlık/teşhis (diagnostics) bilgisi toplama iskeleti | Kabul: `/api/v1/health` zenginleştirilir.
-- [ ] C3 — Backend i18n iskeleti: locale-aware mesaj kataloğu + dil pazarlığı (kullanıcı/sistem/`Accept-Language`/en-US) + API hata yanıtında anahtar+yerelleştirilmiş mesaj | Kabul: örnek hata mesajı en-US/tr-TR döner. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §4.3.
+- [x] C1 — Yapılandırılmış logger entegrasyonu | Kabul: tüm modüllerde tutarlı.
+- [x] C2 — Sağlık/teşhis (diagnostics) bilgisi toplama iskeleti | Kabul: `/api/v1/health` zenginleştirilir.
+- [x] C3 — Backend i18n iskeleti: locale-aware mesaj kataloğu + dil pazarlığı (kullanıcı/sistem/`Accept-Language`/en-US) + API hata yanıtında anahtar+yerelleştirilmiş mesaj | Kabul: örnek hata mesajı en-US/tr-TR döner. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §4.3.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Scheduler örnek bir periyodik işi güvenle çalıştırır.
