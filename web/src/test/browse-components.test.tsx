@@ -5,9 +5,11 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { I18nextProvider } from 'react-i18next';
 import { PosterCard } from '@/components/browse/PosterCard';
 import { MediaRow } from '@/components/browse/MediaRow';
+import { MediaGrid } from '@/components/browse/MediaGrid';
 import { EmptyState } from '@/components/browse/EmptyState';
 import { ErrorState } from '@/components/browse/ErrorState';
 import { SearchBar } from '@/components/search/SearchBar';
+import { SearchResultsDropdown } from '@/components/search/SearchResultsDropdown';
 import { createQueryClient } from '@/lib/queryClient';
 import i18n from '@/i18n';
 
@@ -55,5 +57,36 @@ describe('browse components', () => {
   it('renders SearchBar with placeholder', () => {
     wrap(<SearchBar value="" onChange={vi.fn()} debounceMs={0} />);
     expect(screen.getByRole('searchbox')).toBeInTheDocument();
+  });
+
+  it('renders MediaGrid container', () => {
+    const items = Array.from({ length: 8 }, (_, i) => ({
+      id: i + 1,
+      libraryId: 1,
+      title: `Title ${i + 1}`,
+    }));
+    wrap(<MediaGrid items={items} viewMode="grid" />);
+    expect(screen.getByRole('list')).toBeInTheDocument();
+  });
+
+  it('returns null when MediaGrid has no items', () => {
+    const { container } = wrap(<MediaGrid items={[]} />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('renders SearchResultsDropdown states', () => {
+    wrap(<SearchResultsDropdown results={[]} query="" />);
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+
+    wrap(<SearchResultsDropdown results={[]} query="missing" isLoading />);
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+
+    wrap(
+      <SearchResultsDropdown
+        results={[{ id: 1, libraryId: 2, title: 'Found', year: 2020 }]}
+        query="found"
+      />,
+    );
+    expect(screen.getByRole('option', { name: /found/i })).toBeInTheDocument();
   });
 });
