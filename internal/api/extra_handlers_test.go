@@ -37,7 +37,10 @@ func TestMediaHandlers_ListAndMatch(t *testing.T) {
 	meta := &metadata.Service{DB: &metadata.DBStore{DB: d}, Registry: reg, Matcher: &metadata.Matcher{Registry: reg}}
 
 	h := New(Options{
-		MediaHandlers: &MediaHandlers{DB: d, Metadata: meta},
+		MediaHandlers: &MediaHandlers{
+			DB: d, Metadata: meta,
+			Locale: func(*http.Request) string { return "tr-TR" },
+		},
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/libraries/"+jsonNumber(lib.ID)+"/items", nil)
@@ -65,6 +68,11 @@ func TestMediaHandlers_ListAndMatch(t *testing.T) {
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusOK, rec.Code)
+
+	req = httptest.NewRequest(http.MethodPost, "/api/v1/media-items/bad/rematch", bytes.NewReader([]byte(`{}`)))
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusBadRequest, rec.Code)
 }
 
 func TestEventBus_PublishSubscribe(t *testing.T) {

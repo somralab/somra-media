@@ -89,6 +89,120 @@ func TestScanRepo_Lifecycle(t *testing.T) {
 	assert.Equal(t, 10, run.FilesTotal)
 }
 
+func TestLibraryRepo_CreateValidation(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	defer d.Close()
+	repo := NewLibraryRepo(d.Querier())
+	dir := t.TempDir()
+
+	_, err := repo.Create(ctx, "", LibraryKindMovie, []string{dir}, false)
+	require.Error(t, err)
+
+	_, err = repo.Create(ctx, "Name", LibraryKindMovie, nil, false)
+	require.Error(t, err)
+}
+
+func TestLibraryRepo_UpdateNotFound(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	defer d.Close()
+	repo := NewLibraryRepo(d.Querier())
+	dir := t.TempDir()
+
+	_, err := repo.Update(ctx, 9999, "X", []string{dir}, false)
+	require.Error(t, err)
+}
+
+func TestMediaRepo_ListItemsDefaultLimit(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	defer d.Close()
+	libRepo := NewLibraryRepo(d.Querier())
+	mediaRepo := NewMediaRepo(d.Querier())
+	dir := t.TempDir()
+	lib, err := libRepo.Create(ctx, "L", LibraryKindMovie, []string{dir}, false)
+	require.NoError(t, err)
+	itemID, err := mediaRepo.CreateItem(ctx, lib.ID, LibraryKindMovie, "Title", nil)
+	require.NoError(t, err)
+	_, err = mediaRepo.UpsertFile(ctx, MediaFile{
+		LibraryID: lib.ID, MediaItemID: &itemID,
+		Path: "/tmp/t.mkv", FileName: "t.mkv", SizeBytes: 1,
+	})
+	require.NoError(t, err)
+
+	items, err := mediaRepo.ListItemsByLibrary(ctx, lib.ID, "en-US", 0, 0)
+	require.NoError(t, err)
+	require.Len(t, items, 1)
+}
+
+func TestLibraryRepo_UpdateValidation(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	defer d.Close()
+	repo := NewLibraryRepo(d.Querier())
+	dir := t.TempDir()
+	lib, err := repo.Create(ctx, "A", LibraryKindMovie, []string{dir}, false)
+	require.NoError(t, err)
+
+	_, err = repo.Update(ctx, lib.ID, "", []string{dir}, false)
+	require.Error(t, err)
+
+	_, err = repo.Update(ctx, lib.ID, "B", nil, false)
+	require.Error(t, err)
+}
+
+func TestLibraryRepo_ListMultiple(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	defer d.Close()
+	repo := NewLibraryRepo(d.Querier())
+	dir1 := t.TempDir()
+	dir2 := t.TempDir()
+	_, err := repo.Create(ctx, "One", LibraryKindMovie, []string{dir1}, false)
+	require.NoError(t, err)
+	_, err = repo.Create(ctx, "Two", LibraryKindTV, []string{dir2}, true)
+	require.NoError(t, err)
+
+	libs, err := repo.List(ctx)
+	require.NoError(t, err)
+	require.Len(t, libs, 2)
+}
+
+func TestScanRepo_DefaultLimit(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	defer d.Close()
+	libRepo := NewLibraryRepo(d.Querier())
+	scanRepo := NewScanRepo(d.Querier())
+	dir := t.TempDir()
+	lib, err := libRepo.Create(ctx, "S", LibraryKindMusic, []string{dir}, false)
+	require.NoError(t, err)
+	runID, err := scanRepo.CreateRun(ctx, lib.ID, ScanFull, "t")
+	require.NoError(t, err)
+	require.NoError(t, scanRepo.MarkRunning(ctx, runID))
+
+	runs, err := scanRepo.ListByLibrary(ctx, lib.ID, 0)
+	require.NoError(t, err)
+	require.Len(t, runs, 1)
+}
+
+func TestMediaRepo_UpsertArtworkReplace(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	defer d.Close()
+	libRepo := NewLibraryRepo(d.Querier())
+	mediaRepo := NewMediaRepo(d.Querier())
+	dir := t.TempDir()
+	lib, err := libRepo.Create(ctx, "A", LibraryKindMovie, []string{dir}, false)
+	require.NoError(t, err)
+	itemID, err := mediaRepo.CreateItem(ctx, lib.ID, LibraryKindMovie, "T", nil)
+	require.NoError(t, err)
+
+	require.NoError(t, mediaRepo.UpsertArtwork(ctx, itemID, "poster", "https://example.com/a.jpg", ""))
+	require.NoError(t, mediaRepo.UpsertArtwork(ctx, itemID, "poster", "https://example.com/b.jpg", "/local/b.jpg"))
+}
+
 func openTestDB(t *testing.T) *DB {
 	t.Helper()
 	cfg := Default()

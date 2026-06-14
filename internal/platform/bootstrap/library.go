@@ -50,19 +50,23 @@ func WireLibrary(c *Components) *LibraryBundle {
 		Matcher:  &metadata.Matcher{Registry: reg, Limiter: metadata.NewRateLimiter(250 * time.Millisecond)},
 	}
 
-	_, _ = c.Scheduler.Schedule("0 0 3 * * *", "metadata-refresh", jobs.JobFunc(func(ctx context.Context) error {
-		libs, err := svc.ListLibraries(ctx)
+	_, _ = c.Scheduler.Schedule("0 0 3 * * *", "metadata-refresh", metadataRefreshJob(c.Logger, svc, metaSvc))
+
+	return &LibraryBundle{EventBus: bus, Library: svc, Metadata: metaSvc}
+}
+
+func metadataRefreshJob(logger *slog.Logger, libSvc *library.Service, metaSvc *metadata.Service) jobs.Job {
+	return jobs.JobFunc(func(ctx context.Context) error {
+		libs, err := libSvc.ListLibraries(ctx)
 		if err != nil {
 			return err
 		}
 		for _, lib := range libs {
 			_, err := metaSvc.AutoMatch(ctx, lib.ID, "en-US", 50)
 			if err != nil {
-				c.Logger.Warn("metadata refresh", slog.Int64("libraryId", lib.ID), slog.Any("error", err))
+				logger.Warn("metadata refresh", slog.Int64("libraryId", lib.ID), slog.Any("error", err))
 			}
 		}
 		return nil
-	}))
-
-	return &LibraryBundle{EventBus: bus, Library: svc, Metadata: metaSvc}
+	})
 }

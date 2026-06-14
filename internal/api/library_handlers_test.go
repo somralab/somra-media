@@ -50,6 +50,19 @@ func TestLibraryHandlers_CRUD(t *testing.T) {
 	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
 	id := int64(created["id"].(float64))
 
+	req = httptest.NewRequest(http.MethodGet, "/api/v1/libraries/"+jsonNumber(id), nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	updateBody, _ := json.Marshal(map[string]any{
+		"name": "Films Updated", "kind": "movie", "paths": []string{dir}, "watchEnabled": true,
+	})
+	req = httptest.NewRequest(http.MethodPut, "/api/v1/libraries/"+jsonNumber(id), bytes.NewReader(updateBody))
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
 	req = httptest.NewRequest(http.MethodGet, "/api/v1/libraries", nil)
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
@@ -59,6 +72,26 @@ func TestLibraryHandlers_CRUD(t *testing.T) {
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
 	assert.Equal(t, http.StatusAccepted, rec.Code)
+
+	req = httptest.NewRequest(http.MethodGet, "/api/v1/libraries/"+jsonNumber(id)+"/scans", nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	req = httptest.NewRequest(http.MethodPost, "/api/v1/libraries/"+jsonNumber(id)+"/scan", bytes.NewReader([]byte(`{"type":"incremental"}`)))
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	assert.Equal(t, http.StatusAccepted, rec.Code)
+
+	req = httptest.NewRequest(http.MethodGet, "/api/v1/libraries/not-a-number", nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+
+	req = httptest.NewRequest(http.MethodPost, "/api/v1/libraries", bytes.NewReader([]byte(`not-json`)))
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusBadRequest, rec.Code)
 
 	req = httptest.NewRequest(http.MethodDelete, "/api/v1/libraries/"+jsonNumber(id), nil)
 	rec = httptest.NewRecorder()
