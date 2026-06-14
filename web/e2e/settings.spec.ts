@@ -10,7 +10,7 @@ test.describe('settings regression', () => {
     await login(page);
     await page.goto('/settings');
     await expect(page.getByRole('heading', { name: /settings|ayarlar/i })).toBeVisible();
-    await expect(page.getByText(/language|dil/i)).toBeVisible();
+    await expect(page.getByText(/language|dil/i).first()).toBeVisible();
   });
 
   test('advanced settings toggle', async ({ page }) => {

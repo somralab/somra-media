@@ -31,18 +31,20 @@ func TestSystemDetectHandler(t *testing.T) {
 
 func TestOnboardingCompleteUnauthenticated(t *testing.T) {
 	d := openTestDB(t)
+	svc := newTestAuthService(t, d)
 	settingsRepo := db.NewSettingsRepo(d.Querier())
 	settingsSvc := settings.NewService(settingsRepo)
 	onb := settings.NewOnboarding(settingsRepo, settingsSvc, fakeSetupChecker{})
 
-	h := testRouterWithAuth(New(Options{
+	h := New(Options{
+		AuthMiddleware:     &AuthMiddleware{Service: svc},
 		OnboardingHandlers: &OnboardingHandlers{Onboarding: onb},
-	}))
+	})
 
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/onboarding/complete", nil)
 	rec := httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
-	require.Equal(t, http.StatusNoContent, rec.Code)
+	require.Equal(t, http.StatusUnauthorized, rec.Code)
 }
 
 type fakeSetupChecker struct{}

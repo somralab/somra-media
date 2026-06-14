@@ -76,10 +76,11 @@ type OnboardingHandlers struct {
 func (h *OnboardingHandlers) Mount(r chi.Router) {
 	r.Get("/onboarding/status", h.status)
 	r.Post("/onboarding/step", h.step)
-	r.Group(func(r chi.Router) {
-		r.Use(RequirePermission(auth.PermUsersManage))
-		r.Post("/onboarding/complete", h.complete)
-	})
+}
+
+// MountProtected registers onboarding routes that require authentication.
+func (h *OnboardingHandlers) MountProtected(r chi.Router) {
+	r.With(RequirePermission(auth.PermUsersManage)).Post("/onboarding/complete", h.complete)
 }
 
 func (h *OnboardingHandlers) status(w http.ResponseWriter, r *http.Request) {

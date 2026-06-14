@@ -188,6 +188,9 @@ func mountProtectedRoutes(r chi.Router, opts Options) {
 	if opts.SettingsHandlers != nil {
 		opts.SettingsHandlers.Mount(r)
 	}
+	if opts.OnboardingHandlers != nil {
+		opts.OnboardingHandlers.MountProtected(r)
+	}
 	if opts.SubtitleHandlers != nil {
 		opts.SubtitleHandlers.Mount(r)
 	}
