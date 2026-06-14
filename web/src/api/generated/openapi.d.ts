@@ -1216,6 +1216,7 @@ export interface components {
             accessToken: string;
             /** Format: date-time */
             expiresAt: string;
+            user: components["schemas"]["User"];
         };
         User: {
             id?: string;

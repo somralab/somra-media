@@ -1823,13 +1823,15 @@ components:
 
     RefreshResponse:
       type: object
-      required: [accessToken, expiresAt]
+      required: [accessToken, expiresAt, user]
       properties:
         accessToken:
           type: string
         expiresAt:
           type: string
           format: date-time
+        user:
+          $ref: "#/components/schemas/User"
 
     User:
       type: object

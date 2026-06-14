@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { SearchBar } from '@/components/search/SearchBar';
 import { SearchResultsDropdown } from '@/components/search/SearchResultsDropdown';
 import { useSearchMedia } from '@/api/hooks/useBrowse';
+import { useSetupStatus } from '@/api/hooks/useOnboarding';
 
 const HomePage = lazy(() => import('@/pages/HomePage'));
 const StatusPage = lazy(() => import('@/pages/StatusPage'));
@@ -103,6 +104,10 @@ function AuthNav(): ReactNode {
 export default function App(): ReactNode {
   const { t } = useTranslation();
   const accessToken = useAuthStore((s) => s.accessToken);
+  const setupQuery = useSetupStatus();
+  const onboardingActive =
+    setupQuery.data?.completed === false ||
+    (setupQuery.data?.phase != null && setupQuery.data.phase !== 'complete');
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -112,15 +117,15 @@ export default function App(): ReactNode {
             <span className="text-lg font-semibold">{t('app.name')}</span>
             <span className="text-xs text-muted">{t('app.tagline')}</span>
           </div>
-          <GlobalSearch />
+          {!onboardingActive ? <GlobalSearch /> : null}
           <nav aria-label="primary" className="flex flex-wrap items-center gap-1">
-            {accessToken ? <NavItem to="/" label={t('nav.home')} /> : null}
-            {accessToken ? (
+            {!onboardingActive && accessToken ? <NavItem to="/" label={t('nav.home')} /> : null}
+            {!onboardingActive && accessToken ? (
               <NavItem to="/libraries" label={t('nav.libraries', { ns: 'library' })} />
             ) : null}
-            <NavItem to="/status" label={t('nav.status')} />
-            <NavItem to="/settings" label={t('nav.settings')} />
-            <AuthNav />
+            {!onboardingActive ? <NavItem to="/status" label={t('nav.status')} /> : null}
+            {!onboardingActive ? <NavItem to="/settings" label={t('nav.settings')} /> : null}
+            {!onboardingActive ? <AuthNav /> : null}
           </nav>
         </div>
       </header>

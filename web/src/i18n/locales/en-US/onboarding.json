@@ -29,6 +29,7 @@
     "description": "Point Somra at a folder containing your movies or TV shows.",
     "name": "Library name",
     "path": "Media folder path",
+    "pathHint": "Use /media in Docker. For local dev (make dev), try ./deploy/media.",
     "kind": "Content type",
     "kinds": {
       "movie": "Movies",
@@ -69,6 +70,7 @@
   },
   "errors": {
     "stepFailed": "Could not save this step. Try again.",
+    "adminFailed": "Could not create the admin account.",
     "libraryFailed": "Could not create the library.",
     "defaultsFailed": "Could not apply recommendations."
   }

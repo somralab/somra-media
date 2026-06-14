@@ -377,30 +377,30 @@ func (s *Service) refreshIssue(ctx context.Context, sub Subject, sessionID strin
 }
 
 // Refresh rotates tokens using a refresh secret.
-func (s *Service) Refresh(ctx context.Context, refreshSecret string) (TokenPair, error) {
+func (s *Service) Refresh(ctx context.Context, refreshSecret string) (UserAccount, TokenPair, error) {
 	rec, err := s.refresh.Lookup(ctx, refreshSecret)
 	if err != nil {
-		return TokenPair{}, err
+		return UserAccount{}, TokenPair{}, err
 	}
 	user, err := s.users.GetByID(ctx, rec.Subject.UserID)
 	if err != nil {
-		return TokenPair{}, err
+		return UserAccount{}, TokenPair{}, err
 	}
 	if user.Disabled {
-		return TokenPair{}, ErrRevokedToken
+		return UserAccount{}, TokenPair{}, ErrRevokedToken
 	}
 	_ = s.refresh.Revoke(ctx, rec.ID)
 	sub := Subject{UserID: user.ID, Username: user.Username, Roles: user.Roles}
 	sessionID := NewSessionID()
 	access, claims, err := s.tokens.Issue(ctx, sub, sessionID)
 	if err != nil {
-		return TokenPair{}, err
+		return UserAccount{}, TokenPair{}, err
 	}
 	newRefresh, err := s.refreshIssue(ctx, sub, sessionID, "")
 	if err != nil {
-		return TokenPair{}, err
+		return UserAccount{}, TokenPair{}, err
 	}
-	return TokenPair{
+	return toUserAccount(user), TokenPair{
 		AccessToken:  access,
 		RefreshToken: newRefresh,
 		ExpiresAt:    claims.ExpiresAt,

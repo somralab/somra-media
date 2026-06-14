@@ -22,7 +22,7 @@ func TestRefresh_UserDeleted(t *testing.T) {
 	require.NoError(t, err)
 	_, err = d.SQL().ExecContext(ctx, `DELETE FROM user_account WHERE id = ?`, user.ID)
 	require.NoError(t, err)
-	_, err = svc.Refresh(ctx, pair.RefreshToken)
+	_, _, err = svc.Refresh(ctx, pair.RefreshToken)
 	require.Error(t, err)
 }
 

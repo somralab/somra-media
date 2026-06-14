@@ -38,7 +38,7 @@ func TestRefresh_DisabledUser(t *testing.T) {
 	require.NoError(t, err)
 	repo := db.NewUserRepo(d.Querier())
 	require.NoError(t, repo.SetDisabled(ctx, user.ID, true))
-	_, err = svc.Refresh(ctx, pair.RefreshToken)
+	_, _, err = svc.Refresh(ctx, pair.RefreshToken)
 	require.ErrorIs(t, err, auth.ErrRevokedToken)
 }
 
@@ -71,7 +71,7 @@ func TestExpiredRefreshToken(t *testing.T) {
 	ctx := context.Background()
 	_, pair, err := svc.CreateAdmin(ctx, "admin", "AdminPass1")
 	require.NoError(t, err)
-	_, err = svc.Refresh(ctx, pair.RefreshToken)
+	_, _, err = svc.Refresh(ctx, pair.RefreshToken)
 	require.ErrorIs(t, err, auth.ErrTokenNotFound)
 }
 

@@ -4,7 +4,7 @@ test.describe('onboarding wizard', () => {
   test('fresh install redirects to setup wizard', async ({ page }) => {
     const start = Date.now();
     await page.goto('/');
-    await expect(page).toHaveURL(/\/(setup\/wizard|login)/);
+    await expect(page).toHaveURL(/\/setup\/wizard/);
     const elapsed = Date.now() - start;
     expect(elapsed).toBeLessThan(60_000);
   });

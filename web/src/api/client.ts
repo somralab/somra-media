@@ -1,5 +1,6 @@
 import i18n from '@/i18n';
-import { clearAuthSession, getAccessToken, setAuthSession, useAuthStore } from '@/stores/auth';
+import { clearAuthSession, getAccessToken, setAuthSession } from '@/stores/auth';
+import type { AuthUser } from '@/stores/auth';
 import { ApiError, type ErrorEnvelope } from './ApiError';
 
 export interface RequestOptions {
@@ -124,10 +125,10 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
           const refreshed = (await refreshResp.json()) as {
             accessToken: string;
             expiresAt: string;
+            user?: AuthUser;
           };
-          const user = useAuthStore.getState().user;
-          if (user) {
-            setAuthSession(refreshed.accessToken, refreshed.expiresAt, user);
+          if (refreshed.user) {
+            setAuthSession(refreshed.accessToken, refreshed.expiresAt, refreshed.user);
             return apiFetch<T>(path, { ...options, _retry: true });
           }
         }

@@ -82,6 +82,21 @@ func (o *Onboarding) AdvanceStep(ctx context.Context, req StepRequest) (Onboardi
 		if err := o.repo.Set(ctx, KeyOnboardingPhase, PhaseAdmin); err != nil {
 			return OnboardingState{}, err
 		}
+	case PhaseLibrary:
+		completed, err := o.isCompleted(ctx)
+		if err != nil {
+			return OnboardingState{}, err
+		}
+		if completed {
+			return o.Status(ctx)
+		}
+		phase, _ := o.repo.Get(ctx, KeyOnboardingPhase)
+		if phase == PhaseDefaults || phase == PhaseScan || phase == PhaseComplete {
+			return o.Status(ctx)
+		}
+		if err := o.repo.Set(ctx, KeyOnboardingPhase, PhaseDefaults); err != nil {
+			return OnboardingState{}, err
+		}
 	case PhaseDefaults:
 		if req.ApplyDefaults {
 			locale, _ := o.settings.GetString(ctx, KeyDefaultLocale, "en-US")

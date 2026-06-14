@@ -140,7 +140,7 @@ func TestRefresh_TokenIssueFailure(t *testing.T) {
 	ctx := context.Background()
 	_, pair, err := svc.CreateAdmin(ctx, "admin", "AdminPass1")
 	require.NoError(t, err)
-	_, err = svc.Refresh(ctx, pair.RefreshToken)
+	_, _, err = svc.Refresh(ctx, pair.RefreshToken)
 	require.Error(t, err)
 }
 
@@ -192,7 +192,7 @@ func TestRefresh_RefreshIssueFailure(t *testing.T) {
 	ctx := context.Background()
 	_, pair, err := svc.CreateAdmin(ctx, "admin", "AdminPass1")
 	require.NoError(t, err)
-	_, err = svc.Refresh(ctx, pair.RefreshToken)
+	_, _, err = svc.Refresh(ctx, pair.RefreshToken)
 	require.Error(t, err)
 }
 

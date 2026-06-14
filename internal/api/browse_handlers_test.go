@@ -73,4 +73,9 @@ func TestBrowseHandlers_DiscoverSearchDetail(t *testing.T) {
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusOK, rec.Code)
+
+	var detailBody map[string]json.RawMessage
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &detailBody))
+	assert.Equal(t, json.RawMessage("[]"), detailBody["cast"])
+	assert.Equal(t, json.RawMessage("[]"), detailBody["genres"])
 }

@@ -45,6 +45,12 @@ func TestBrowseRepo_ListPaginatedAndDiscover(t *testing.T) {
 	detail, err := browseRepo.GetDetail(ctx, itemID, "en-US", "")
 	require.NoError(t, err)
 	assert.Equal(t, "Alpha Movie", detail.Title)
+	assert.NotNil(t, detail.Genres)
+	assert.NotNil(t, detail.Cast)
+	assert.NotNil(t, detail.Images)
+	assert.Len(t, detail.Genres, 0)
+	assert.Len(t, detail.Cast, 0)
+	assert.Len(t, detail.Images, 0)
 }
 
 func intPtr(n int) *int { return &n }

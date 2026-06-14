@@ -32,6 +32,8 @@ export default function MediaDetailPage(): ReactNode {
 
   const resumeMs = detail.watchState?.positionMs ?? 0;
   const hasProgress = resumeMs > 0 && !detail.watchState?.completed;
+  const cast = detail.cast ?? [];
+  const genres = detail.genres ?? [];
 
   return (
     <section className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
@@ -58,7 +60,7 @@ export default function MediaDetailPage(): ReactNode {
             <div className="mt-1 flex flex-wrap gap-2 text-sm text-muted">
               {detail.year ? <span>{detail.year}</span> : null}
               {detail.contentRating ? <span>{detail.contentRating}</span> : null}
-              {detail.genres?.map((g) => (
+              {genres.map((g) => (
                 <span key={g} className="rounded bg-surface px-2 py-0.5">
                   {g}
                 </span>
@@ -100,14 +102,14 @@ export default function MediaDetailPage(): ReactNode {
 
       <SubtitleSection itemId={itemId} />
 
-      {detail.cast.length > 0 && (
+      {cast.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>{t('cast.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {detail.cast.map((member) => (
+              {cast.map((member) => (
                 <li key={`${member.name}-${member.role}`} className="text-sm">
                   <span className="font-medium">{member.name}</span>
                   <span className="text-muted"> · {member.role}</span>

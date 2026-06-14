@@ -151,7 +151,7 @@ func (h *AuthHandlers) refresh(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, platformerrors.New(http.StatusUnauthorized, platformerrors.CodeUnauthorized, "auth.refresh.missing"))
 		return
 	}
-	pair, err := h.Service.Refresh(r.Context(), secret)
+	user, pair, err := h.Service.Refresh(r.Context(), secret)
 	if errors.Is(err, auth.ErrRevokedToken) || errors.Is(err, auth.ErrTokenNotFound) || errors.Is(err, auth.ErrInvalidToken) {
 		h.clearRefreshCookie(w)
 		writeError(w, r, platformerrors.New(http.StatusUnauthorized, platformerrors.CodeUnauthorized, "auth.refresh.invalid"))
@@ -162,9 +162,10 @@ func (h *AuthHandlers) refresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.setRefreshCookie(w, pair.RefreshToken)
-	writeJSON(w, http.StatusOK, map[string]any{
-		"accessToken": pair.AccessToken,
-		"expiresAt":   pair.ExpiresAt,
+	writeJSON(w, http.StatusOK, tokenResponse{
+		AccessToken: pair.AccessToken,
+		ExpiresAt:   pair.ExpiresAt,
+		User:        toUserResponse(user),
 	})
 }
 

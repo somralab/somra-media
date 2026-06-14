@@ -48,6 +48,28 @@ func TestOnboardingCompletedAndSetupBranches(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, settings.PhaseScan, state.Phase)
 	})
+
+	t.Run("library step advances to defaults", func(t *testing.T) {
+		d := openSettingsTestDB(t)
+		repo := db.NewSettingsRepo(d.Querier())
+		svc := settings.NewService(repo)
+		require.NoError(t, repo.Set(ctx, settings.KeyOnboardingPhase, settings.PhaseLibrary))
+		onb := settings.NewOnboarding(repo, svc, fakeSetup{required: false})
+		state, err := onb.AdvanceStep(ctx, settings.StepRequest{Phase: settings.PhaseLibrary, LibraryID: 1})
+		require.NoError(t, err)
+		assert.Equal(t, settings.PhaseDefaults, state.Phase)
+	})
+
+	t.Run("library step is idempotent when already past defaults", func(t *testing.T) {
+		d := openSettingsTestDB(t)
+		repo := db.NewSettingsRepo(d.Querier())
+		svc := settings.NewService(repo)
+		require.NoError(t, repo.Set(ctx, settings.KeyOnboardingPhase, settings.PhaseScan))
+		onb := settings.NewOnboarding(repo, svc, fakeSetup{required: false})
+		state, err := onb.AdvanceStep(ctx, settings.StepRequest{Phase: settings.PhaseLibrary, LibraryID: 1})
+		require.NoError(t, err)
+		assert.Equal(t, settings.PhaseScan, state.Phase)
+	})
 }
 
 func TestValidatePathsMissingDir(t *testing.T) {

@@ -7,11 +7,13 @@ import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useSettings, usePatchSettings } from '@/api/hooks/useSettings';
+import { useAuthStore } from '@/stores/auth';
 
 export default function SettingsPage(): ReactNode {
   const { t } = useTranslation('settings');
   const { t: tc } = useTranslation();
-  const { data: settings, isLoading } = useSettings();
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const { data: settings, isLoading, isError } = useSettings(Boolean(accessToken));
   const [advanced, setAdvanced] = useState(false);
   const patchGeneral = usePatchSettings('general');
   const patchLibrary = usePatchSettings('library');
@@ -54,6 +56,15 @@ export default function SettingsPage(): ReactNode {
           <ThemeSwitcher />
         </CardContent>
       </Card>
+
+      {!accessToken || isError ? (
+        <p
+          className="rounded-md border border-border bg-surface px-4 py-3 text-sm text-muted"
+          role="status"
+        >
+          {t('authRequired')}
+        </p>
+      ) : null}
 
       {!isLoading && settings ? (
         <>

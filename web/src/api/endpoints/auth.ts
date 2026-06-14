@@ -46,8 +46,8 @@ export async function login(
   });
 }
 
-export async function refreshSession(): Promise<{ accessToken: string; expiresAt: string }> {
-  return apiClient.fetch<{ accessToken: string; expiresAt: string }>('/auth/refresh', {
+export async function refreshSession(): Promise<TokenResponse> {
+  return apiClient.fetch<TokenResponse>('/auth/refresh', {
     method: 'POST',
     credentials: 'include',
   });

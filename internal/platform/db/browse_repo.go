@@ -263,6 +263,16 @@ func (r *BrowseRepo) GetDetail(ctx context.Context, itemID int64, locale, userID
 		}
 	}
 
+	if detail.Genres == nil {
+		detail.Genres = []string{}
+	}
+	if detail.Cast == nil {
+		detail.Cast = []CastMember{}
+	}
+	if detail.Images == nil {
+		detail.Images = []ArtworkImage{}
+	}
+
 	return detail, nil
 }
 

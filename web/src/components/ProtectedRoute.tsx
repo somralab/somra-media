@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/stores/auth';
 import { getSetupStatus } from '@/api/endpoints/auth';
 
@@ -9,7 +10,20 @@ interface ProtectedRouteProps {
   adminOnly?: boolean;
 }
 
+function isOnboardingIncomplete(
+  setup:
+    | {
+        completed?: boolean;
+        phase?: string;
+      }
+    | undefined,
+): boolean {
+  if (!setup) return false;
+  return setup.completed === false || (setup.phase != null && setup.phase !== 'complete');
+}
+
 export function ProtectedRoute({ children, adminOnly = false }: ProtectedRouteProps): ReactNode {
+  const { t } = useTranslation('common');
   const accessToken = useAuthStore((s) => s.accessToken);
   const isAdmin = useAuthStore((s) => s.isAdmin());
   const location = useLocation();
@@ -17,19 +31,24 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
   const setupQuery = useQuery({
     queryKey: ['setup-status'],
     queryFn: getSetupStatus,
-    enabled: Boolean(accessToken),
     staleTime: 30_000,
   });
 
   if (!accessToken) {
+    if (setupQuery.isLoading) {
+      return <p className="p-6 text-muted">{t('states.loading')}</p>;
+    }
+    if (isOnboardingIncomplete(setupQuery.data)) {
+      return <Navigate to="/setup/wizard" replace />;
+    }
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
-  const onboardingIncomplete =
-    setupQuery.data?.completed === false ||
-    (setupQuery.data?.phase != null && setupQuery.data.phase !== 'complete');
+  if (setupQuery.isLoading) {
+    return <p className="p-6 text-muted">{t('states.loading')}</p>;
+  }
 
-  if (onboardingIncomplete && location.pathname !== '/setup/wizard') {
+  if (isOnboardingIncomplete(setupQuery.data) && location.pathname !== '/setup/wizard') {
     return <Navigate to="/setup/wizard" replace />;
   }
 

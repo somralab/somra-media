@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
 import i18n from './i18n';
+import { AuthBootstrap } from './components/AuthBootstrap';
 import { ThemeProvider } from './theme/ThemeProvider';
 import { ToastProvider } from './components/ui/Toast';
 import { createQueryClient } from './lib/queryClient';
@@ -26,7 +27,9 @@ createRoot(container).render(
         <ThemeProvider>
           <ToastProvider>
             <BrowserRouter>
-              <App />
+              <AuthBootstrap>
+                <App />
+              </AuthBootstrap>
             </BrowserRouter>
           </ToastProvider>
         </ThemeProvider>

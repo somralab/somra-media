@@ -122,11 +122,11 @@ func TestService_RefreshAndLogout(t *testing.T) {
 	_, pair, err := svc.CreateAdmin(ctx, "admin", "AdminPass1")
 	require.NoError(t, err)
 
-	newPair, err := svc.Refresh(ctx, pair.RefreshToken)
+	_, newPair, err := svc.Refresh(ctx, pair.RefreshToken)
 	require.NoError(t, err)
 	assert.NotEmpty(t, newPair.AccessToken)
 
-	_, err = svc.Refresh(ctx, pair.RefreshToken)
+	_, _, err = svc.Refresh(ctx, pair.RefreshToken)
 	require.Error(t, err)
 
 	require.NoError(t, svc.Logout(ctx, newPair.RefreshToken))

@@ -29,6 +29,7 @@
     "description": "Somra'yı filmlerinizin veya dizilerinizin bulunduğu klasöre yönlendirin.",
     "name": "Kütüphane adı",
     "path": "Medya klasörü yolu",
+    "pathHint": "Docker'da /media kullanın. Yerel geliştirmede (make dev) ./deploy/media deneyin.",
     "kind": "İçerik türü",
     "kinds": {
       "movie": "Filmler",
@@ -69,6 +70,7 @@
   },
   "errors": {
     "stepFailed": "Bu adım kaydedilemedi. Tekrar deneyin.",
+    "adminFailed": "Yönetici hesabı oluşturulamadı.",
     "libraryFailed": "Kütüphane oluşturulamadı.",
     "defaultsFailed": "Öneriler uygulanamadı."
   }

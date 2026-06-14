@@ -43,6 +43,12 @@ func TestAuthHandlers_LoginRefreshLogoutFlow(t *testing.T) {
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusOK, rec.Code)
+	var refreshResp map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &refreshResp))
+	require.NotEmpty(t, refreshResp["accessToken"])
+	require.NotNil(t, refreshResp["user"])
+	access = refreshResp["accessToken"].(string)
+	cookie = rec.Result().Cookies()[0]
 
 	req = httptest.NewRequest(http.MethodGet, "/api/v1/profile", nil)
 	req.Header.Set("Authorization", "Bearer "+access)

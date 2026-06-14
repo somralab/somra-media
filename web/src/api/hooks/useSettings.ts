@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getSettings, patchSettingsCategory } from '@/api/endpoints/settings';
 
-export function useSettings() {
+export function useSettings(enabled = true) {
   return useQuery({
     queryKey: ['settings'],
     queryFn: getSettings,
+    enabled,
   });
 }
 

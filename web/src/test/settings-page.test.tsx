@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -6,23 +6,27 @@ import SettingsPage from '@/pages/SettingsPage';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import i18n from '@/i18n';
 import { TestProviders } from './testUtils';
+import { useAuthStore } from '@/stores/auth';
 
 const patchMutate = vi.fn();
 
+const settingsData = {
+  general: { defaultLocale: 'en-US' },
+  library: { scanCron: '0 3 * * *' },
+  playback: {
+    maxConcurrentTranscodes: 2,
+    hwMode: 'auto',
+    hwAccelerator: 'auto',
+    maxHWTranscodes: 2,
+  },
+  subtitles: { autoDownload: false, preferredLanguages: ['en'], apiKeySet: false },
+};
+
 vi.mock('@/api/hooks/useSettings', () => ({
-  useSettings: () => ({
-    data: {
-      general: { defaultLocale: 'en-US' },
-      library: { scanCron: '0 3 * * *' },
-      playback: {
-        maxConcurrentTranscodes: 2,
-        hwMode: 'auto',
-        hwAccelerator: 'auto',
-        maxHWTranscodes: 2,
-      },
-      subtitles: { autoDownload: false, preferredLanguages: ['en'], apiKeySet: false },
-    },
+  useSettings: (enabled = true) => ({
+    data: enabled ? settingsData : undefined,
     isLoading: false,
+    isError: false,
   }),
   usePatchSettings: () => ({ mutate: patchMutate, isPending: false }),
 }));
@@ -42,6 +46,14 @@ function renderSettings(): ReturnType<typeof render> {
 }
 
 describe('<SettingsPage />', () => {
+  beforeEach(() => {
+    useAuthStore.setState({
+      accessToken: 'token',
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+      user: { id: '1', username: 'admin', roles: ['admin'], disabled: false },
+    });
+  });
+
   it('renders the language and theme cards', async () => {
     await i18n.changeLanguage('en-US');
     renderSettings();
@@ -83,5 +95,15 @@ describe('<SettingsPage />', () => {
       'href',
       '/admin/users',
     );
+  });
+
+  it('shows auth required banner without a session', async () => {
+    useAuthStore.getState().clearSession();
+    await i18n.changeLanguage('en-US');
+    renderSettings();
+    expect(
+      screen.getByText(/sign in as an administrator to view and change server settings/i),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Library' })).not.toBeInTheDocument();
   });
 });

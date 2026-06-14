@@ -1,10 +1,15 @@
 import { type FormEvent, type ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n';
 import { setupAdmin } from '@/api/endpoints/auth';
-import { createLibrary, triggerScan, type LibraryKind } from '@/api/endpoints/library';
+import {
+  createLibrary,
+  listLibraries,
+  triggerScan,
+  type LibraryKind,
+} from '@/api/endpoints/library';
 import {
   useAdvanceOnboarding,
   useCompleteOnboarding,
@@ -13,8 +18,10 @@ import {
 } from '@/api/hooks/useOnboarding';
 import { subscribeScanProgress, type ScanProgressEvent } from '@/api/scanEvents';
 import { setAuthSession } from '@/stores/auth';
+import { defaultLibraryPath } from '@/lib/libraryPaths';
 import { WizardShell } from '@/components/onboarding/WizardShell';
 import { RecommendationCard } from '@/components/onboarding/RecommendationCard';
+import { useToast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
@@ -24,6 +31,8 @@ export default function OnboardingWizardPage(): ReactNode {
   const { t } = useTranslation('onboarding');
   const { t: ta } = useTranslation('auth');
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { publish } = useToast();
   const statusQuery = useOnboardingStatus();
   const detectQuery = useSystemDetect();
   const advance = useAdvanceOnboarding();
@@ -36,16 +45,25 @@ export default function OnboardingWizardPage(): ReactNode {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [libName, setLibName] = useState('My Library');
-  const [libPath, setLibPath] = useState('/media');
+  const [libPath, setLibPath] = useState(defaultLibraryPath);
   const [libKind, setLibKind] = useState<LibraryKind>('movie');
   const [libraryId, setLibraryId] = useState<number | null>(null);
   const [scanProgress, setScanProgress] = useState<ScanProgressEvent | null>(null);
   const [defaultsApplied, setDefaultsApplied] = useState(false);
 
+  const invalidateOnboarding = (): void => {
+    void queryClient.invalidateQueries({ queryKey: ['onboarding-status'] });
+    void queryClient.invalidateQueries({ queryKey: ['setup-status'] });
+  };
+
   const adminMutation = useMutation({
     mutationFn: () => setupAdmin(username, password),
     onSuccess: (data) => {
       setAuthSession(data.accessToken, data.expiresAt, data.user);
+      invalidateOnboarding();
+    },
+    onError: () => {
+      publish({ title: t('errors.adminFailed'), variant: 'danger' });
     },
   });
 
@@ -54,8 +72,24 @@ export default function OnboardingWizardPage(): ReactNode {
       createLibrary({ name: libName, kind: libKind, paths: [libPath], watchEnabled: true }),
     onSuccess: (lib) => {
       setLibraryId(lib.id);
+      invalidateOnboarding();
+    },
+    onError: () => {
+      publish({ title: t('errors.libraryFailed'), variant: 'danger' });
     },
   });
+
+  useEffect(() => {
+    if (phase !== 'scan' || libraryId != null) return;
+    void listLibraries()
+      .then((libs) => {
+        const first = libs[0];
+        if (first) {
+          setLibraryId(first.id);
+        }
+      })
+      .catch(() => undefined);
+  }, [phase, libraryId]);
 
   useEffect(() => {
     if (phase !== 'scan' || libraryId == null) return;
@@ -73,33 +107,56 @@ export default function OnboardingWizardPage(): ReactNode {
   }
 
   const handleLanguage = async (): Promise<void> => {
-    await i18n.changeLanguage(locale);
-    await advance.mutateAsync({ phase: 'language', locale });
+    try {
+      await i18n.changeLanguage(locale);
+      await advance.mutateAsync({ phase: 'language', locale });
+    } catch {
+      publish({ title: t('errors.stepFailed'), variant: 'danger' });
+    }
   };
 
   const handleAdmin = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
-    await adminMutation.mutateAsync();
+    try {
+      await adminMutation.mutateAsync();
+    } catch {
+      // onError publishes toast
+    }
   };
 
   const handleLibrary = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
-    const lib = await libraryMutation.mutateAsync();
-    await advance.mutateAsync({ phase: 'library', libraryId: lib.id });
+    try {
+      await libraryMutation.mutateAsync();
+    } catch {
+      // onError publishes toast
+    }
   };
 
   const handleDefaults = async (): Promise<void> => {
-    await advance.mutateAsync({ phase: 'defaults', applyDefaults: true });
-    setDefaultsApplied(true);
+    try {
+      await advance.mutateAsync({ phase: 'defaults', applyDefaults: true });
+      setDefaultsApplied(true);
+    } catch {
+      publish({ title: t('errors.defaultsFailed'), variant: 'danger' });
+    }
   };
 
   const handleScanNext = async (): Promise<void> => {
-    await advance.mutateAsync({ phase: 'scan' });
+    try {
+      await advance.mutateAsync({ phase: 'scan' });
+    } catch {
+      publish({ title: t('errors.stepFailed'), variant: 'danger' });
+    }
   };
 
   const handleFinish = async (): Promise<void> => {
-    await complete.mutateAsync();
-    void navigate('/libraries', { replace: true });
+    try {
+      await complete.mutateAsync();
+      void navigate('/libraries', { replace: true });
+    } catch {
+      publish({ title: t('errors.stepFailed'), variant: 'danger' });
+    }
   };
 
   const profile = detectQuery.data;
@@ -173,6 +230,7 @@ export default function OnboardingWizardPage(): ReactNode {
             <label className="block space-y-1">
               <span className="text-sm">{t('library.path')}</span>
               <Input value={libPath} onChange={(e) => setLibPath(e.target.value)} required />
+              <p className="text-xs text-muted">{t('library.pathHint')}</p>
             </label>
             <label className="block space-y-1">
               <span className="text-sm">{t('library.kind')}</span>
