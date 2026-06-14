@@ -53,7 +53,9 @@ describe('auth pages', () => {
       </TestProviders>,
     );
 
-    expect(await screen.findByRole('heading', { name: /create admin account/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /create admin account/i }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /create admin/i })).toBeInTheDocument();
   });
 
