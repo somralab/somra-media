@@ -29,13 +29,11 @@ describe('browse endpoints', () => {
   });
 
   it('getDiscoverHome fetches shelves', async () => {
-    globalThis.fetch = vi
-      .fn()
-      .mockResolvedValue(
-        jsonResponse(200, {
-          shelves: [{ id: 'recentlyAdded', titleKey: 'shelves.recentlyAdded', items: [] }],
-        }),
-      ) as unknown as typeof fetch;
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      jsonResponse(200, {
+        shelves: [{ id: 'recentlyAdded', titleKey: 'shelves.recentlyAdded', items: [] }],
+      }),
+    ) as unknown as typeof fetch;
 
     const home = await getDiscoverHome();
     expect(home.shelves).toHaveLength(1);
