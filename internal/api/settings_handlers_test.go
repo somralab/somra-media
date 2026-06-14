@@ -82,6 +82,18 @@ func TestSettingsAndOnboardingHandlers(t *testing.T) {
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusOK, rec.Code)
+
+	patchBody, _ = json.Marshal(map[string]any{"scanCron": "0 5 * * *"})
+	req = httptest.NewRequest(http.MethodPatch, "/api/v1/settings/library", bytes.NewReader(patchBody))
+	req.Header.Set("Authorization", "Bearer "+token)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	req = httptest.NewRequest(http.MethodPost, "/api/v1/onboarding/step", bytes.NewReader([]byte(`{`)))
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusBadRequest, rec.Code)
 }
 
 func TestSettingsServiceIntegration(t *testing.T) {

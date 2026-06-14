@@ -62,4 +62,13 @@ describe('<SettingsPage />', () => {
     fireEvent.change(screen.getByDisplayValue('en-US'), { target: { value: 'tr-TR' } });
     expect(patchMutate).toHaveBeenCalledWith({ defaultLocale: 'tr-TR' });
   });
+
+  it('renders users management link', async () => {
+    await i18n.changeLanguage('en-US');
+    renderSettings();
+    expect(screen.getByRole('link', { name: /manage users/i })).toHaveAttribute(
+      'href',
+      '/admin/users',
+    );
+  });
 });

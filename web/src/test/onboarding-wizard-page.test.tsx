@@ -7,10 +7,16 @@ import i18n from '@/i18n';
 import { TestProviders } from './testUtils';
 
 const advanceMutate = vi.fn().mockResolvedValue({ phase: 'admin' });
+const { mockPhase } = vi.hoisted(() => ({ mockPhase: { value: 'language' as string } }));
 
 vi.mock('@/api/hooks/useOnboarding', () => ({
   useOnboardingStatus: () => ({
-    data: { phase: 'language', completed: false, setupRequired: true },
+    data: {
+      phase: mockPhase.value,
+      completed: false,
+      setupRequired: true,
+      smartDefaults: { maxConcurrentTranscodes: 2, scanCron: '0 3 * * *' },
+    },
     isLoading: false,
   }),
   useSystemDetect: () => ({
@@ -22,6 +28,7 @@ vi.mock('@/api/hooks/useOnboarding', () => ({
 
 describe('OnboardingWizardPage', () => {
   it('renders language step and advances on continue', async () => {
+    mockPhase.value = 'language';
     await i18n.changeLanguage('en-US');
     render(
       <TestProviders>
@@ -36,5 +43,70 @@ describe('OnboardingWizardPage', () => {
     expect(screen.getByText(/welcome to somra/i)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /continue/i }));
     await waitFor(() => expect(advanceMutate).toHaveBeenCalled());
+  });
+
+  it('renders defaults step with recommendations', async () => {
+    mockPhase.value = 'defaults';
+    await i18n.changeLanguage('en-US');
+    render(
+      <TestProviders>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter>
+            <OnboardingWizardPage />
+          </MemoryRouter>
+        </I18nextProvider>
+      </TestProviders>,
+    );
+
+    expect(screen.getByText(/recommended settings/i)).toBeInTheDocument();
+    expect(screen.getByText(/4 CPU cores/i)).toBeInTheDocument();
+  });
+
+  it('renders scan step progress area', async () => {
+    mockPhase.value = 'scan';
+    await i18n.changeLanguage('en-US');
+    render(
+      <TestProviders>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter>
+            <OnboardingWizardPage />
+          </MemoryRouter>
+        </I18nextProvider>
+      </TestProviders>,
+    );
+
+    expect(screen.getByText(/scanning your library/i)).toBeInTheDocument();
+  });
+
+  it('renders admin step fields', async () => {
+    mockPhase.value = 'admin';
+    await i18n.changeLanguage('en-US');
+    render(
+      <TestProviders>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter>
+            <OnboardingWizardPage />
+          </MemoryRouter>
+        </I18nextProvider>
+      </TestProviders>,
+    );
+
+    expect(screen.getByText(/create admin account/i)).toBeInTheDocument();
+  });
+
+  it('renders complete step actions', async () => {
+    mockPhase.value = 'complete';
+    await i18n.changeLanguage('en-US');
+    render(
+      <TestProviders>
+        <I18nextProvider i18n={i18n}>
+          <MemoryRouter>
+            <OnboardingWizardPage />
+          </MemoryRouter>
+        </I18nextProvider>
+      </TestProviders>,
+    );
+
+    expect(screen.getByText(/you're all set/i)).toBeInTheDocument();
   });
 });

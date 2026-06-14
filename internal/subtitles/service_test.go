@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/somralab/somra-media/internal/platform/db"
+	"github.com/somralab/somra-media/internal/settings"
 	"github.com/somralab/somra-media/internal/subtitles"
 )
 
@@ -109,6 +110,48 @@ func TestServiceSearchDownloadUploadList(t *testing.T) {
 	assert.GreaterOrEqual(t, count, 0)
 }
 
+func TestAutoDownloadMissingDownloadsSubtitle(t *testing.T) {
+	ctx := context.Background()
+	d := openSubtitleTestDB(t)
+	repo := db.NewSubtitleRepo(d.Querier())
+	libRepo := db.NewLibraryRepo(d.Querier())
+	mediaRepo := db.NewMediaRepo(d.Querier())
+	settingsSvc := settings.NewService(db.NewSettingsRepo(d.Querier()))
+	_, err := settingsSvc.PatchCategory(ctx, settings.CategorySubtitles, map[string]any{
+		"preferredLanguages": []any{"en"},
+	})
+	require.NoError(t, err)
+
+	dir := t.TempDir()
+	lib, err := libRepo.Create(ctx, "Films", db.LibraryKindMovie, []string{dir}, false)
+	require.NoError(t, err)
+	year := 2010
+	itemID, err := mediaRepo.CreateItem(ctx, lib.ID, db.LibraryKindMovie, "Inception", &year)
+	require.NoError(t, err)
+	_, err = mediaRepo.UpsertFile(ctx, db.MediaFile{
+		MediaItemID: &itemID,
+		LibraryID:   lib.ID,
+		Path:        filepath.Join(dir, "inception.mkv"),
+	})
+	require.NoError(t, err)
+
+	mock := &mockProvider{
+		results: []subtitles.SearchResult{{Provider: "mock", ExternalID: "9", Language: "en", Score: 90}},
+		data:    []byte("subtitle bytes"),
+	}
+	svc := &subtitles.Service{
+		Repo:     repo,
+		Media:    stubMedia{item: db.MediaItem{ID: itemID, Title: "Inception", Year: &year}},
+		Settings: settingsSvc,
+		Storage:  &subtitles.Storage{Root: t.TempDir()},
+		Provider: mock,
+	}
+
+	count, err := svc.AutoDownloadMissing(ctx, 5)
+	require.NoError(t, err)
+	assert.Equal(t, 1, count)
+}
+
 func TestDetectorMissingForItem(t *testing.T) {
 	ctx := context.Background()
 	det := &subtitles.Detector{
@@ -132,6 +175,24 @@ func TestServiceNoProvider(t *testing.T) {
 	n, err := svc.AutoDownloadMissing(ctx, 5)
 	require.NoError(t, err)
 	assert.Equal(t, 0, n)
+}
+
+func TestServiceResolveProviderFromSettings(t *testing.T) {
+	ctx := context.Background()
+	d := openSubtitleTestDB(t)
+	settingsSvc := settings.NewService(db.NewSettingsRepo(d.Querier()))
+	_, err := settingsSvc.PatchCategory(ctx, settings.CategorySubtitles, map[string]any{
+		"apiKey": "configured-key",
+	})
+	require.NoError(t, err)
+
+	svc := &subtitles.Service{
+		Repo:     db.NewSubtitleRepo(d.Querier()),
+		Settings: settingsSvc,
+		Media:    stubMedia{item: db.MediaItem{ID: 1, Title: "X"}},
+	}
+	_, err = svc.Search(ctx, 1, "en", "X")
+	require.Error(t, err)
 }
 
 func openSubtitleTestDB(t *testing.T) *db.DB {
