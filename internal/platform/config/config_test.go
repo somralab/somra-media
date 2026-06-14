@@ -60,3 +60,47 @@ func TestSplitCSV_TrimsAndDropsEmpty(t *testing.T) {
 	got := splitCSV(" a , , b ,c ")
 	assert.Equal(t, []string{"a", "b", "c"}, got)
 }
+
+func TestLoad(t *testing.T) {
+	t.Setenv("SOMRA_HTTP_ADDR", "127.0.0.1:9090")
+	t.Setenv("SOMRA_DATA_DIR", "/var/lib/somra")
+	cfg, err := Load()
+	require.NoError(t, err)
+	assert.Equal(t, "127.0.0.1:9090", cfg.HTTP.Addr)
+	assert.Equal(t, "/var/lib/somra", cfg.Data.Dir)
+}
+
+func TestLoadFrom_StreamingAndAuth(t *testing.T) {
+	env := map[string]string{
+		"SOMRA_CACHE_DIR":                "/tmp/cache",
+		"SOMRA_STREAMING_MAX_CONCURRENT": "2",
+		"SOMRA_STREAMING_MAX_QUEUE":      "5",
+		"SOMRA_STREAMING_SESSION_TTL":    "1h",
+		"SOMRA_STREAMING_IDLE_TIMEOUT":   "30m",
+		"SOMRA_FFMPEG_BIN":               "/usr/bin/ffmpeg",
+		"SOMRA_FFPROBE_BIN":              "/usr/bin/ffprobe",
+		"SOMRA_JWT_SECRET":               "secret",
+		"SOMRA_REFRESH_PEPPER":           "pepper",
+		"SOMRA_JWT_ACCESS_TTL":           "15m",
+		"SOMRA_JWT_REFRESH_TTL":          "168h",
+		"SOMRA_AUTH_SECURE_COOKIE":       "true",
+		"SOMRA_HTTP_READ_HEADER_TIMEOUT": "5s",
+		"SOMRA_HTTP_READ_TIMEOUT":        "10s",
+		"SOMRA_HTTP_WRITE_TIMEOUT":       "20s",
+		"SOMRA_HTTP_IDLE_TIMEOUT":        "30s",
+	}
+	cfg, err := loadFrom(lookupFromMap(env))
+	require.NoError(t, err)
+	assert.Equal(t, "/tmp/cache", cfg.Data.CacheDir)
+	assert.Equal(t, 2, cfg.Streaming.MaxConcurrentTranscodes)
+	assert.Equal(t, 5, cfg.Streaming.MaxTranscodeQueue)
+	assert.Equal(t, time.Hour, cfg.Streaming.SessionTTL)
+	assert.Equal(t, 30*time.Minute, cfg.Streaming.IdleTimeout)
+	assert.Equal(t, "/usr/bin/ffmpeg", cfg.Streaming.FFmpegBin)
+	assert.Equal(t, "/usr/bin/ffprobe", cfg.Streaming.FFprobeBin)
+	assert.Equal(t, "secret", cfg.Auth.JWTSecret)
+	assert.Equal(t, "pepper", cfg.Auth.RefreshPepper)
+	assert.Equal(t, 15*time.Minute, cfg.Auth.AccessTTL)
+	assert.True(t, cfg.Auth.SecureCookie)
+	assert.Equal(t, 5*time.Second, cfg.HTTP.ReadHeaderTimeout)
+}

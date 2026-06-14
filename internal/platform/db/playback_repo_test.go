@@ -120,3 +120,44 @@ func TestPlaybackRepo_TranscodeCountAndIdle(t *testing.T) {
 	require.NoError(t, err)
 	assert.Len(t, idle, 2)
 }
+
+func TestPlaybackRepo_ExpiredSessions(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	defer d.Close()
+
+	libRepo := NewLibraryRepo(d.Querier())
+	mediaRepo := NewMediaRepo(d.Querier())
+	userRepo := NewUserRepo(d.Querier())
+	playbackRepo := NewPlaybackRepo(d.Querier())
+
+	dir := t.TempDir()
+	lib, err := libRepo.Create(ctx, "Movies", LibraryKindMovie, []string{dir}, false)
+	require.NoError(t, err)
+	itemID, err := mediaRepo.CreateItem(ctx, lib.ID, LibraryKindMovie, "Old Session", nil)
+	require.NoError(t, err)
+	fileID, err := mediaRepo.UpsertFile(ctx, MediaFile{
+		LibraryID: lib.ID, MediaItemID: &itemID,
+		Path: dir + "/old.mp4", FileName: "old.mp4", SizeBytes: 100,
+	})
+	require.NoError(t, err)
+	user, err := userRepo.Create(ctx, uuid.NewString(), "expuser", "hash", []string{"user"})
+	require.NoError(t, err)
+
+	sessionID := uuid.NewString()
+	require.NoError(t, playbackRepo.Create(ctx, PlaybackSession{
+		ID: sessionID, UserID: user.ID, MediaItemID: itemID, MediaFileID: fileID,
+		Mode: PlaybackDirectPlay, Status: PlaybackActive,
+		ExpiresAt: time.Now().UTC().Add(-time.Hour),
+	}))
+
+	expired, err := playbackRepo.ListExpired(ctx, time.Now().UTC())
+	require.NoError(t, err)
+	require.Len(t, expired, 1)
+	assert.Equal(t, sessionID, expired[0].ID)
+
+	require.NoError(t, playbackRepo.MarkExpired(ctx, []string{sessionID}))
+	got, err := playbackRepo.GetByID(ctx, sessionID)
+	require.NoError(t, err)
+	assert.Equal(t, PlaybackExpired, got.Status)
+}

@@ -26,6 +26,10 @@ func TestLibraryRepo_CRUD(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, lib.Name, got.Name)
 
+	paths, err := repo.ListPaths(ctx, lib.ID)
+	require.NoError(t, err)
+	assert.Equal(t, []string{dir}, paths)
+
 	libs, err := repo.List(ctx)
 	require.NoError(t, err)
 	assert.Len(t, libs, 1)
