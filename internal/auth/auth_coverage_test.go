@@ -117,3 +117,35 @@ func TestRefreshStore_RevokeUnknown(t *testing.T) {
 	store := auth.NewSQLiteRefreshStore(db.NewSessionRepo(d.Querier()), []byte("pepper1234567890"), time.Hour)
 	require.NoError(t, store.Revoke(context.Background(), "missing"))
 }
+
+func TestRefreshStore_RevokeSession_DBClosed(t *testing.T) {
+	d := openTestDB(t)
+	store := auth.NewSQLiteRefreshStore(db.NewSessionRepo(d.Querier()), []byte("pepper1234567890"), time.Hour)
+	require.NoError(t, d.Close())
+	err := store.RevokeSession(context.Background(), "session-id")
+	require.Error(t, err)
+}
+
+func TestRefreshStore_Lookup_Expired(t *testing.T) {
+	d := openTestDB(t)
+	store := auth.NewSQLiteRefreshStore(db.NewSessionRepo(d.Querier()), []byte("pepper1234567890"), time.Millisecond)
+	ctx := context.Background()
+	sub := auth.Subject{UserID: "u2", Username: "u2", Roles: []string{"user"}}
+	users := db.NewUserRepo(d.Querier())
+	_, err := users.Create(ctx, "u2", "u2", "h", []string{"user"})
+	require.NoError(t, err)
+	sid := auth.NewSessionID()
+	raw, _, err := store.Issue(ctx, sub, sid, time.Millisecond)
+	require.NoError(t, err)
+	time.Sleep(5 * time.Millisecond)
+	_, err = store.Lookup(ctx, raw)
+	require.ErrorIs(t, err, auth.ErrTokenNotFound)
+}
+
+func TestJWTValidate_WrongSigningMethod(t *testing.T) {
+	// Token signed with HS384 while validator expects HS256.
+	token := "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1In0.sig"
+	svc := auth.NewJWTService(auth.DefaultJWTConfig([]byte("jwt-test-secret-key-32-chars!!")))
+	_, err := svc.Validate(context.Background(), token)
+	require.ErrorIs(t, err, auth.ErrInvalidToken)
+}
