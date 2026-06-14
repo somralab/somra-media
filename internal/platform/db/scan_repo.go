@@ -120,7 +120,7 @@ func (r *ScanRepo) ListByLibrary(ctx context.Context, libraryID int64, limit int
 	if err != nil {
 		return nil, fmt.Errorf("db scan list %d: %w", libraryID, err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	return scanRuns(rows)
 }
 
@@ -129,7 +129,7 @@ func (r *ScanRepo) scanOne(ctx context.Context, q string, id int64) (ScanRun, er
 	if err != nil {
 		return ScanRun{}, fmt.Errorf("db scan get %d: %w", id, err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	runs, err := scanRuns(rows)
 	if err != nil {
 		return ScanRun{}, err

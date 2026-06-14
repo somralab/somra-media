@@ -66,7 +66,7 @@ func (p *TMDBProvider) Search(ctx context.Context, q SearchQuery) ([]SearchResul
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (p *TMDBProvider) Detail(ctx context.Context, externalID, locale string) (D
 	if err != nil {
 		return Detail{}, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	body, _ := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
 	var r struct {
 		ID           int    `json:"id"`

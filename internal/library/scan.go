@@ -253,7 +253,7 @@ func fileHash(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	h := sha256.New()
 	if _, err := io.Copy(h, io.LimitReader(f, 1<<20)); err != nil {
 		return "", err
@@ -267,7 +267,6 @@ type Service struct {
 	db       *db.DB
 	queue    jobs.JobQueue
 	scanner  *Scanner
-	watcher  *Watcher
 	watchMu  sync.Mutex
 	watching map[int64]*Watcher
 }

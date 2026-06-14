@@ -110,7 +110,7 @@ func (r *LibraryRepo) List(ctx context.Context) ([]Library, error) {
 	if err != nil {
 		return nil, fmt.Errorf("db library list: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var out []Library
 	for rows.Next() {
@@ -191,7 +191,7 @@ func (r *LibraryRepo) listPaths(ctx context.Context, libraryID int64) ([]string,
 	if err != nil {
 		return nil, fmt.Errorf("db library paths %d: %w", libraryID, err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	var paths []string
 	for rows.Next() {
 		var p string

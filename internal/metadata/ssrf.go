@@ -30,7 +30,7 @@ func SafeHTTPClient(timeout time.Duration) *http.Client {
 			if len(via) >= 3 {
 				return fmt.Errorf("too many redirects")
 			}
-			return validateOutboundURL(req.URL)
+			return validateOutboundURL(req.Context(), req.URL)
 		},
 		Transport: &http.Transport{
 			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
@@ -50,14 +50,19 @@ func SafeHTTPClient(timeout time.Duration) *http.Client {
 
 // ValidateOutboundURL ensures URL targets an allowlisted public host.
 func ValidateOutboundURL(raw string) error {
+	return ValidateOutboundURLContext(context.Background(), raw)
+}
+
+// ValidateOutboundURLContext validates raw using ctx for DNS lookups.
+func ValidateOutboundURLContext(ctx context.Context, raw string) error {
 	u, err := url.Parse(raw)
 	if err != nil {
 		return fmt.Errorf("invalid url: %w", err)
 	}
-	return validateOutboundURL(u)
+	return validateOutboundURL(ctx, u)
 }
 
-func validateOutboundURL(u *url.URL) error {
+func validateOutboundURL(ctx context.Context, u *url.URL) error {
 	if u.Scheme != "https" {
 		return fmt.Errorf("only https allowed")
 	}
@@ -65,12 +70,12 @@ func validateOutboundURL(u *url.URL) error {
 	if _, ok := allowedHosts[host]; !ok {
 		return fmt.Errorf("host %q not allowlisted", host)
 	}
-	ips, err := net.LookupIP(host)
+	addrs, err := net.DefaultResolver.LookupIPAddr(ctx, host)
 	if err != nil {
 		return fmt.Errorf("dns lookup %q: %w", host, err)
 	}
-	for _, ip := range ips {
-		if ip.IsLoopback() || ip.IsPrivate() || ip.IsLinkLocalUnicast() {
+	for _, addr := range addrs {
+		if addr.IP.IsLoopback() || addr.IP.IsPrivate() || addr.IP.IsLinkLocalUnicast() {
 			return fmt.Errorf("blocked private ip for %q", host)
 		}
 	}
@@ -79,7 +84,7 @@ func validateOutboundURL(u *url.URL) error {
 
 // DoRequest performs an outbound request after SSRF validation.
 func DoRequest(ctx context.Context, client *http.Client, method, rawURL string) (*http.Response, error) {
-	if err := ValidateOutboundURL(rawURL); err != nil {
+	if err := ValidateOutboundURLContext(ctx, rawURL); err != nil {
 		return nil, err
 	}
 	req, err := http.NewRequestWithContext(ctx, method, rawURL, nil)

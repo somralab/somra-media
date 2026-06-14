@@ -44,7 +44,7 @@ func (s *DBStore) ListUnmatched(ctx context.Context, libraryID int64, limit int)
 	if err != nil {
 		return nil, fmt.Errorf("list unmatched: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	var out []MediaItemView
 	for rows.Next() {
 		var v MediaItemView

@@ -86,8 +86,8 @@ func (TestProvider) Images(context.Context, string) (string, string, string, err
 
 // MockProvider returns deterministic results for tests.
 type MockProvider struct {
-	Results []SearchResult
-	Detail_ Detail
+	Results      []SearchResult
+	PresetDetail Detail
 }
 
 func (p *MockProvider) Name() string { return "mock" }
@@ -107,8 +107,8 @@ func (p *MockProvider) Search(_ context.Context, q SearchQuery) ([]SearchResult,
 }
 
 func (p *MockProvider) Detail(_ context.Context, externalID, _ string) (Detail, error) {
-	if p.Detail_.ExternalID != "" {
-		return p.Detail_, nil
+	if p.PresetDetail.ExternalID != "" {
+		return p.PresetDetail, nil
 	}
 	return Detail{
 		Provider: "mock", ExternalID: externalID,

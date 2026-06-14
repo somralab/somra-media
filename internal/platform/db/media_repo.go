@@ -167,7 +167,7 @@ func (r *MediaRepo) ListItemsByLibrary(ctx context.Context, libraryID int64, loc
 	if err != nil {
 		return nil, fmt.Errorf("db media list items %d: %w", libraryID, err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	return scanMediaItems(rows)
 }
 
@@ -188,7 +188,7 @@ func (r *MediaRepo) GetItemByID(ctx context.Context, id int64, locale string) (M
 	if err != nil {
 		return MediaItem{}, fmt.Errorf("db media get item %d: %w", id, err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	items, err := scanMediaItems(rows)
 	if err != nil {
 		return MediaItem{}, err
@@ -296,7 +296,7 @@ func (r *MediaRepo) SearchTitleFTS(ctx context.Context, query string, limit int)
 	if err != nil {
 		return nil, fmt.Errorf("db media fts search: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	var ids []int64
 	for rows.Next() {
 		var id int64

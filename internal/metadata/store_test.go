@@ -35,7 +35,7 @@ func TestDBStore_GetItemAndApplyMatch(t *testing.T) {
 }
 
 func TestMockProvider_Detail(t *testing.T) {
-	p := &MockProvider{Detail_: Detail{Provider: "mock", ExternalID: "9", Title: "T"}}
+	p := &MockProvider{PresetDetail: Detail{Provider: "mock", ExternalID: "9", Title: "T"}}
 	d, err := p.Detail(context.Background(), "9", "en-US")
 	require.NoError(t, err)
 	require.Equal(t, "T", d.Title)

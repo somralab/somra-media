@@ -9,8 +9,13 @@ vi.mock('@/api/hooks/useLibraries', () => ({
   useLibrary: () => ({
     data: { id: 1, name: 'Movies', kind: 'movie', paths: ['/media'], watchEnabled: true },
   }),
-  useScanHistory: () => ({ data: [{ id: 1, scanType: 'full', status: 'succeeded', filesTotal: 1, filesDone: 1 }] }),
-  useMediaItems: () => ({ data: [{ id: 1, title: 'Inception', year: 2010, matchStatus: 'unmatched' }], refetch: vi.fn() }),
+  useScanHistory: () => ({
+    data: [{ id: 1, scanType: 'full', status: 'succeeded', filesTotal: 1, filesDone: 1 }],
+  }),
+  useMediaItems: () => ({
+    data: [{ id: 1, title: 'Inception', year: 2010, matchStatus: 'unmatched' }],
+    refetch: vi.fn(),
+  }),
   useTriggerScan: () => ({ mutate: vi.fn(), isPending: false }),
   useAutoMatch: () => ({ mutate: vi.fn(), isPending: false }),
   useMatchCandidates: () => ({ data: [] }),
