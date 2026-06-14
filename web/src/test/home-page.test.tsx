@@ -11,7 +11,14 @@ vi.mock('@/api/hooks/useBrowse', () => ({
         {
           id: 'continueWatching',
           titleKey: 'shelves.continueWatching',
-          items: [{ id: 1, libraryId: 2, title: 'In Progress', watchState: { positionMs: 1000, completed: false } }],
+          items: [
+            {
+              id: 1,
+              libraryId: 2,
+              title: 'In Progress',
+              watchState: { positionMs: 1000, completed: false },
+            },
+          ],
         },
         {
           id: 'recentlyAdded',

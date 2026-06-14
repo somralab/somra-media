@@ -29,9 +29,13 @@ describe('browse endpoints', () => {
   });
 
   it('getDiscoverHome fetches shelves', async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      jsonResponse(200, { shelves: [{ id: 'recentlyAdded', titleKey: 'shelves.recentlyAdded', items: [] }] }),
-    ) as unknown as typeof fetch;
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(
+        jsonResponse(200, {
+          shelves: [{ id: 'recentlyAdded', titleKey: 'shelves.recentlyAdded', items: [] }],
+        }),
+      ) as unknown as typeof fetch;
 
     const home = await getDiscoverHome();
     expect(home.shelves).toHaveLength(1);
@@ -41,7 +45,11 @@ describe('browse endpoints', () => {
   });
 
   it('searchMedia encodes query params', async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(jsonResponse(200, { results: [], query: 'test' })) as unknown as typeof fetch;
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(
+        jsonResponse(200, { results: [], query: 'test' }),
+      ) as unknown as typeof fetch;
 
     await searchMedia('inception', 10);
     const url = String((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0]?.[0]);
@@ -52,9 +60,16 @@ describe('browse endpoints', () => {
   it('listMediaItemsPaginated builds filter query string', async () => {
     globalThis.fetch = vi
       .fn()
-      .mockResolvedValue(jsonResponse(200, { items: [], total: 0, offset: 0, limit: 50 })) as unknown as typeof fetch;
+      .mockResolvedValue(
+        jsonResponse(200, { items: [], total: 0, offset: 0, limit: 50 }),
+      ) as unknown as typeof fetch;
 
-    await listMediaItemsPaginated(3, { sort: 'year', genre: 'Action', year: 2010, watchStatus: 'unwatched' });
+    await listMediaItemsPaginated(3, {
+      sort: 'year',
+      genre: 'Action',
+      year: 2010,
+      watchStatus: 'unwatched',
+    });
     const url = String((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0]?.[0]);
     expect(url).toContain('/libraries/3/items');
     expect(url).toContain('sort=year');
@@ -66,7 +81,17 @@ describe('browse endpoints', () => {
   it('getMediaDetail and watchlist mutations hit expected paths', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(jsonResponse(200, { id: 9, title: 'Film', genres: [], cast: [], images: [], isFavorite: false, inWatchlist: false }))
+      .mockResolvedValueOnce(
+        jsonResponse(200, {
+          id: 9,
+          title: 'Film',
+          genres: [],
+          cast: [],
+          images: [],
+          isFavorite: false,
+          inWatchlist: false,
+        }),
+      )
       .mockResolvedValueOnce(new Response(null, { status: 204 }))
       .mockResolvedValueOnce(new Response(null, { status: 204 }));
     globalThis.fetch = fetchMock as unknown as typeof fetch;
