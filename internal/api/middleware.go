@@ -144,7 +144,7 @@ func ContentTypeMiddleware(next http.Handler) http.Handler {
 			ct = ct[:i]
 		}
 		ct = strings.TrimSpace(strings.ToLower(ct))
-		if ct != "application/json" && ct != "" {
+		if ct != "application/json" && ct != "multipart/form-data" && ct != "" {
 			apiErr := platformerrors.New(http.StatusUnsupportedMediaType, platformerrors.CodeUnsupportedMedia, "")
 			status, env := platformerrors.ToEnvelope(apiErr, RequestID(r.Context()))
 			_ = platformerrors.WriteEnvelope(w, status, env)

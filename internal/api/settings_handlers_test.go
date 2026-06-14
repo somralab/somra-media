@@ -64,6 +64,24 @@ func TestSettingsAndOnboardingHandlers(t *testing.T) {
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusOK, rec.Code)
+
+	patchBody, _ := json.Marshal(map[string]any{"defaultLocale": "tr-TR"})
+	req = httptest.NewRequest(http.MethodPatch, "/api/v1/settings/general", bytes.NewReader(patchBody))
+	req.Header.Set("Authorization", "Bearer "+token)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	req = httptest.NewRequest(http.MethodPost, "/api/v1/onboarding/complete", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusNoContent, rec.Code)
+
+	req = httptest.NewRequest(http.MethodGet, "/api/v1/onboarding/status", nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
 }
 
 func TestSettingsServiceIntegration(t *testing.T) {
