@@ -21,6 +21,7 @@ type Config struct {
 	CORS     CORSConfig
 	Data     DataConfig
 	Web      WebConfig
+	Auth     AuthConfig
 	Shutdown ShutdownConfig
 }
 
@@ -70,6 +71,15 @@ type WebConfig struct {
 	Dir string
 }
 
+// AuthConfig holds JWT and refresh-token settings.
+type AuthConfig struct {
+	JWTSecret     string
+	RefreshPepper string
+	AccessTTL     time.Duration
+	RefreshTTL    time.Duration
+	SecureCookie  bool
+}
+
 // ShutdownConfig bounds the graceful shutdown window.
 type ShutdownConfig struct {
 	Timeout time.Duration
@@ -101,6 +111,10 @@ func Default() Config {
 		},
 		Web: WebConfig{
 			Dir: "",
+		},
+		Auth: AuthConfig{
+			AccessTTL:  15 * time.Minute,
+			RefreshTTL: 7 * 24 * time.Hour,
 		},
 		Shutdown: ShutdownConfig{
 			Timeout: 10 * time.Second,
@@ -156,6 +170,22 @@ func loadFrom(lookup func(string) (string, bool)) (Config, error) {
 
 	if v, ok := lookup("SOMRA_WEB_DIR"); ok {
 		cfg.Web.Dir = v
+	}
+
+	if v, ok := lookup("SOMRA_JWT_SECRET"); ok {
+		cfg.Auth.JWTSecret = v
+	}
+	if v, ok := lookup("SOMRA_REFRESH_PEPPER"); ok {
+		cfg.Auth.RefreshPepper = v
+	}
+	if err := durationFromEnv(lookup, "SOMRA_JWT_ACCESS_TTL", &cfg.Auth.AccessTTL); err != nil {
+		return Config{}, err
+	}
+	if err := durationFromEnv(lookup, "SOMRA_JWT_REFRESH_TTL", &cfg.Auth.RefreshTTL); err != nil {
+		return Config{}, err
+	}
+	if v, ok := lookup("SOMRA_AUTH_SECURE_COOKIE"); ok {
+		cfg.Auth.SecureCookie = strings.EqualFold(v, "true") || v == "1"
 	}
 
 	if err := durationFromEnv(lookup, "SOMRA_SHUTDOWN_TIMEOUT", &cfg.Shutdown.Timeout); err != nil {

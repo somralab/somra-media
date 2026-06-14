@@ -13,16 +13,16 @@
 ## Epikler ve Görevler
 
 ### Epik A: Kimlik güvenliği
-- [ ] A1 — Güçlü parola hash + politika | Kabul: zayıf parola reddedilir.
-- [ ] A2 — Brute-force koruması (rate limit, kilitleme) | Kabul: tekrarlı başarısız giriş sınırlanır.
-- [ ] A3 — Güvenli oturum/token (süre, iptal, yenileme) | Kabul: çalınan token iptal edilebilir.
+- [x] A1 — Güçlü parola hash + politika | Kabul: zayıf parola reddedilir.
+- [x] A2 — Brute-force koruması (rate limit, kilitleme) | Kabul: tekrarlı başarısız giriş sınırlanır.
+- [x] A3 — Güvenli oturum/token (süre, iptal, yenileme) | Kabul: çalınan token iptal edilebilir.
 
 ### Epik B: Yetki güvenliği
-- [ ] B1 — Tüm korumalı uçlarda yetki kontrolü zorunluluğu | Kabul: yetkisiz erişim engellenir, test edilir.
-- [ ] B2 — Girdi doğrulama ve enjeksiyon koruması | Kabul: parametreli sorgular, doğrulama.
+- [x] B1 — Tüm korumalı uçlarda yetki kontrolü zorunluluğu | Kabul: yetkisiz erişim engellenir, test edilir.
+- [x] B2 — Girdi doğrulama ve enjeksiyon koruması | Kabul: parametreli sorgular, doğrulama.
 
 ### Epik C: Sır yönetimi
-- [ ] C1 — Sağlayıcı anahtarları ve sırların güvenli saklanması | Kabul: koda gömülü sır yok.
+- [x] C1 — Sağlayıcı anahtarları ve sırların güvenli saklanması | Kabul: koda gömülü sır yok.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Kimlik/yetki katmanı güvenli varsayılanlarla çalışır; temel saldırı senaryolarına dayanıklı.

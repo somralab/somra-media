@@ -20,18 +20,19 @@ const (
 
 // MediaItem is a logical work (movie, series, album) within a library.
 type MediaItem struct {
-	ID          int64       `json:"id"`
-	LibraryID   int64       `json:"libraryId"`
-	Kind        LibraryKind `json:"kind"`
-	SortTitle   string      `json:"sortTitle,omitempty"`
-	Year        *int        `json:"year,omitempty"`
-	MatchStatus MatchStatus `json:"matchStatus"`
-	MatchScore  *float64    `json:"matchScore,omitempty"`
-	Title       string      `json:"title"`
-	Overview    string      `json:"overview,omitempty"`
-	PosterURL   string      `json:"posterUrl,omitempty"`
-	CreatedAt   time.Time   `json:"createdAt,omitempty"`
-	UpdatedAt   time.Time   `json:"updatedAt,omitempty"`
+	ID            int64       `json:"id"`
+	LibraryID     int64       `json:"libraryId"`
+	Kind          LibraryKind `json:"kind"`
+	SortTitle     string      `json:"sortTitle,omitempty"`
+	Year          *int        `json:"year,omitempty"`
+	MatchStatus   MatchStatus `json:"matchStatus"`
+	MatchScore    *float64    `json:"matchScore,omitempty"`
+	Title         string      `json:"title"`
+	Overview      string      `json:"overview,omitempty"`
+	PosterURL     string      `json:"posterUrl,omitempty"`
+	ContentRating *string     `json:"contentRating,omitempty"`
+	CreatedAt     time.Time   `json:"createdAt,omitempty"`
+	UpdatedAt     time.Time   `json:"updatedAt,omitempty"`
 }
 
 // MediaFile is an on-disk file tracked by a scan.
@@ -155,7 +156,8 @@ func (r *MediaRepo) ListItemsByLibrary(ctx context.Context, libraryID int64, loc
 		       mi.match_status, mi.match_score, mi.created_at, mi.updated_at,
 		       COALESCE(lt.value, mi.sort_title, '') AS title,
 		       COALESCE(lo.value, '') AS overview,
-		       COALESCE(a.source_url, a.local_path, '') AS poster
+		       COALESCE(a.source_url, a.local_path, '') AS poster,
+		       mi.content_rating
 		FROM media_item mi
 		LEFT JOIN localized_text lt ON lt.media_item_id = mi.id AND lt.locale = ? AND lt.field = 'title'
 		LEFT JOIN localized_text lo ON lo.media_item_id = mi.id AND lo.locale = ? AND lo.field = 'overview'
@@ -178,7 +180,8 @@ func (r *MediaRepo) GetItemByID(ctx context.Context, id int64, locale string) (M
 		       mi.match_status, mi.match_score, mi.created_at, mi.updated_at,
 		       COALESCE(lt.value, mi.sort_title, '') AS title,
 		       COALESCE(lo.value, '') AS overview,
-		       COALESCE(a.source_url, a.local_path, '') AS poster
+		       COALESCE(a.source_url, a.local_path, '') AS poster,
+		       mi.content_rating
 		FROM media_item mi
 		LEFT JOIN localized_text lt ON lt.media_item_id = mi.id AND lt.locale = ? AND lt.field = 'title'
 		LEFT JOIN localized_text lo ON lo.media_item_id = mi.id AND lo.locale = ? AND lo.field = 'overview'
@@ -327,11 +330,12 @@ func scanMediaItems(rows *sql.Rows) ([]MediaItem, error) {
 		var sortTitle, matchStatus sql.NullString
 		var year sql.NullInt64
 		var score sql.NullFloat64
+		var contentRating sql.NullString
 		var created, updated string
 		if err := rows.Scan(
 			&mi.ID, &mi.LibraryID, &mi.Kind, &sortTitle, &year,
 			&matchStatus, &score, &created, &updated,
-			&mi.Title, &mi.Overview, &mi.PosterURL,
+			&mi.Title, &mi.Overview, &mi.PosterURL, &contentRating,
 		); err != nil {
 			return nil, fmt.Errorf("db media scan item: %w", err)
 		}
@@ -339,6 +343,10 @@ func scanMediaItems(rows *sql.Rows) ([]MediaItem, error) {
 		mi.Year = nullIntPtr(year)
 		mi.MatchStatus = MatchStatus(matchStatus.String)
 		mi.MatchScore = nullFloatPtr(score)
+		if contentRating.Valid {
+			s := contentRating.String
+			mi.ContentRating = &s
+		}
 		mi.CreatedAt, _ = time.Parse(time.RFC3339, created)
 		mi.UpdatedAt, _ = time.Parse(time.RFC3339, updated)
 		out = append(out, mi)

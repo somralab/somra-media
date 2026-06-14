@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -33,10 +34,10 @@ func TestLibraryHandlers_CRUD(t *testing.T) {
 	reg.Register(&metadata.MockProvider{})
 	meta := &metadata.Service{DB: &metadata.DBStore{DB: d}, Registry: reg, Matcher: &metadata.Matcher{Registry: reg}}
 
-	h := New(Options{
+	h := testRouterWithAuth(New(Options{
 		LibraryHandlers: &LibraryHandlers{Service: svc},
 		MediaHandlers:   &MediaHandlers{DB: d, Metadata: meta},
-	})
+	}))
 
 	body, _ := json.Marshal(map[string]any{
 		"name": "Films", "kind": "movie", "paths": []string{dir}, "watchEnabled": false,
@@ -56,7 +57,7 @@ func TestLibraryHandlers_CRUD(t *testing.T) {
 	require.Equal(t, http.StatusOK, rec.Code)
 
 	updateBody, _ := json.Marshal(map[string]any{
-		"name": "Films Updated", "kind": "movie", "paths": []string{dir}, "watchEnabled": true,
+		"name": "Films Updated", "kind": "movie", "paths": []string{dir}, "watchEnabled": false,
 	})
 	req = httptest.NewRequest(http.MethodPut, "/api/v1/libraries/"+jsonNumber(id), bytes.NewReader(updateBody))
 	rec = httptest.NewRecorder()
@@ -71,7 +72,10 @@ func TestLibraryHandlers_CRUD(t *testing.T) {
 	req = httptest.NewRequest(http.MethodPost, "/api/v1/libraries/"+jsonNumber(id)+"/scan", bytes.NewReader([]byte(`{"type":"full"}`)))
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
-	assert.Equal(t, http.StatusAccepted, rec.Code)
+	require.Equal(t, http.StatusAccepted, rec.Code)
+	var scan1 scanResponse
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &scan1))
+	waitLibraryScan(t, ctx, queue, svc, scan1.TaskID, scan1.ScanRunID)
 
 	req = httptest.NewRequest(http.MethodGet, "/api/v1/libraries/"+jsonNumber(id)+"/scans", nil)
 	rec = httptest.NewRecorder()
@@ -81,7 +85,10 @@ func TestLibraryHandlers_CRUD(t *testing.T) {
 	req = httptest.NewRequest(http.MethodPost, "/api/v1/libraries/"+jsonNumber(id)+"/scan", bytes.NewReader([]byte(`{"type":"incremental"}`)))
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
-	assert.Equal(t, http.StatusAccepted, rec.Code)
+	require.Equal(t, http.StatusAccepted, rec.Code)
+	var scan2 scanResponse
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &scan2))
+	waitLibraryScan(t, ctx, queue, svc, scan2.TaskID, scan2.ScanRunID)
 
 	req = httptest.NewRequest(http.MethodGet, "/api/v1/libraries/not-a-number", nil)
 	rec = httptest.NewRecorder()
@@ -120,4 +127,23 @@ func openTestDB(t *testing.T) *db.DB {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = d.Close() })
 	return d
+}
+
+func testRouterWithAuth(h http.Handler) http.Handler {
+	return testAuthMiddleware(h)
+}
+
+func waitLibraryScan(t *testing.T, ctx context.Context, queue *jobs.MemoryQueue, svc *library.Service, task jobs.TaskID, runID int64) {
+	t.Helper()
+	for i := 0; i < 100; i++ {
+		st, err := queue.Status(ctx, task)
+		require.NoError(t, err)
+		run, err := svc.GetScanRun(ctx, runID)
+		require.NoError(t, err)
+		if st == jobs.TaskSucceeded && run.Status == db.ScanSucceeded {
+			return
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	t.Fatal("scan did not finish")
 }

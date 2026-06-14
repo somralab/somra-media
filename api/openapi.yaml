@@ -35,6 +35,8 @@ security:
 tags:
   - name: system
     description: System-level endpoints (health, version, diagnostics).
+  - name: auth
+    description: Authentication, users, profile, and watch state.
   - name: library
     description: Media library definition and scanning.
   - name: media
@@ -112,11 +114,173 @@ paths:
                     commit: 466b6eccd4007f1535820ee1e4f0514ac9581827
                     builtAt: "2025-01-01T12:00:00Z"
 
+  /events/stream:
+    get:
+      tags: [system]
+      summary: Server-sent events stream
+      operationId: streamEvents
+      responses:
+        "200":
+          description: SSE stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
+  /setup/status:
+    get:
+      tags: [auth]
+      summary: First-run setup status
+      operationId: getSetupStatus
+      responses:
+        "200":
+          description: Setup status
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [setupRequired]
+                properties:
+                  setupRequired:
+                    type: boolean
+
+  /setup/admin:
+    post:
+      tags: [auth]
+      summary: Create first admin (one-time)
+      operationId: setupAdmin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetupAdminRequest"
+      responses:
+        "201":
+          description: Admin created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Login
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+
+  /auth/refresh:
+    post:
+      tags: [auth]
+      summary: Refresh access token
+      operationId: refreshToken
+      responses:
+        "200":
+          description: New access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshResponse"
+
+  /auth/logout:
+    post:
+      tags: [auth]
+      summary: Logout current session
+      operationId: logout
+      responses:
+        "204":
+          description: Logged out
+
+  /profile:
+    get:
+      tags: [auth]
+      summary: Get current user profile
+      operationId: getProfile
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+    put:
+      tags: [auth]
+      summary: Update profile
+      operationId: updateProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserProfileUpdate"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /users:
+    get:
+      tags: [auth]
+      summary: List users (admin)
+      operationId: listUsers
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      tags: [auth]
+      summary: Create user (admin)
+      operationId: createUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
   /libraries:
     get:
       tags: [library]
       summary: List libraries
       operationId: listLibraries
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Libraries
@@ -303,19 +467,6 @@ paths:
       responses:
         "204":
           description: Rematched
-
-  /events/stream:
-    get:
-      tags: [system]
-      summary: Server-sent events stream
-      operationId: streamEvents
-      responses:
-        "200":
-          description: SSE stream
-          content:
-            text/event-stream:
-              schema:
-                type: string
 
 components:
   securitySchemes:
@@ -571,6 +722,110 @@ components:
           type: string
         externalId:
           type: string
+
+    SetupAdminRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        deviceLabel:
+          type: string
+
+    TokenResponse:
+      type: object
+      required: [accessToken, expiresAt, user]
+      properties:
+        accessToken:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        user:
+          $ref: "#/components/schemas/User"
+
+    RefreshResponse:
+      type: object
+      required: [accessToken, expiresAt]
+      properties:
+        accessToken:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        disabled:
+          type: boolean
+
+    CreateUserRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+
+    UserProfile:
+      type: object
+      properties:
+        userId:
+          type: string
+        locale:
+          type: string
+          enum: [en-US, tr-TR]
+        theme:
+          type: string
+          enum: [cinematic, aurora, noir, minimal]
+        avatarUrl:
+          type: string
+        maxContentRating:
+          type: string
+          enum: [G, PG, PG-13, R, NC-17]
+          nullable: true
+        isChild:
+          type: boolean
+
+    UserProfileUpdate:
+      type: object
+      properties:
+        locale:
+          type: string
+        theme:
+          type: string
+        avatarUrl:
+          type: string
+        maxContentRating:
+          type: string
+          nullable: true
+        isChild:
+          type: boolean
 
   parameters:
     libraryId:

@@ -1,12 +1,14 @@
 import i18n from '@/i18n';
+import { clearAuthSession, getAccessToken, setAuthSession, useAuthStore } from '@/stores/auth';
 import { ApiError, type ErrorEnvelope } from './ApiError';
 
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   signal?: AbortSignal;
   headers?: Record<string, string>;
-  /** JSON body — will be serialized and `Content-Type` set automatically. */
   body?: unknown;
+  credentials?: RequestCredentials;
+  _retry?: boolean;
 }
 
 const DEFAULT_BASE_URL = '/api/v1';
@@ -45,13 +47,18 @@ function looksLikeErrorEnvelope(value: unknown): value is ErrorEnvelope {
  * endpoint wrappers to keep the contract honest).
  */
 export async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', signal, headers = {}, body } = options;
+  const { method = 'GET', signal, headers = {}, body, credentials, _retry } = options;
 
   const finalHeaders: Record<string, string> = {
     Accept: 'application/json',
     'Accept-Language': i18n.language || 'en-US',
     ...headers,
   };
+
+  const token = getAccessToken();
+  if (token && !finalHeaders.Authorization) {
+    finalHeaders.Authorization = `Bearer ${token}`;
+  }
 
   let serializedBody: BodyInit | undefined;
   if (body !== undefined) {
@@ -65,6 +72,7 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
     response = await fetch(url, {
       method,
       headers: finalHeaders,
+      credentials: credentials ?? 'same-origin',
       ...(serializedBody !== undefined ? { body: serializedBody } : {}),
       ...(signal !== undefined ? { signal } : {}),
     });
@@ -105,6 +113,29 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
   }
 
   if (!response.ok) {
+    if (response.status === 401 && !_retry && !path.includes('/auth/')) {
+      try {
+        const refreshResp = await fetch(buildURL('/auth/refresh'), {
+          method: 'POST',
+          credentials: 'include',
+          headers: { Accept: 'application/json' },
+        });
+        if (refreshResp.ok) {
+          const refreshed = (await refreshResp.json()) as {
+            accessToken: string;
+            expiresAt: string;
+          };
+          const user = useAuthStore.getState().user;
+          if (user) {
+            setAuthSession(refreshed.accessToken, refreshed.expiresAt, user);
+            return apiFetch<T>(path, { ...options, _retry: true });
+          }
+        }
+        clearAuthSession();
+      } catch {
+        clearAuthSession();
+      }
+    }
     if (looksLikeErrorEnvelope(parsed)) {
       const envelope = parsed as ErrorEnvelope;
       if (envelope.requestId === undefined && requestId !== undefined) {

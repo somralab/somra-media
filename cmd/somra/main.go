@@ -85,12 +85,22 @@ func run() error {
 	}()
 
 	libBundle := bootstrap.WireLibrary(components)
+	authBundle, err := bootstrap.WireAuth(components, cfg.Auth, logger)
+	if err != nil {
+		return fmt.Errorf("bootstrap auth: %w", err)
+	}
+
 	localeFn := func(r *http.Request) string {
+		if loc, ok := api.AcceptLanguageFromContext(r.Context()); ok && loc != "" {
+			return loc
+		}
 		if loc := i18npkg.FromContext(r.Context()); loc != nil {
 			return loc.Tag().String()
 		}
 		return "en-US"
 	}
+
+	authMW := &api.AuthMiddleware{Service: authBundle.Service}
 
 	handler := api.New(api.Options{
 		Logger: logger,
@@ -104,6 +114,21 @@ func run() error {
 		LocalizerMiddleware: components.I18n.Middleware(),
 		HealthAggregator:    api.NewDiagnosticsAggregator(components.Diagnostics),
 		EventBus:            libBundle.EventBus,
+		AuthHandlers: &api.AuthHandlers{
+			Service:      authBundle.Service,
+			SecureCookie: cfg.Auth.SecureCookie,
+		},
+		AuthMiddleware: authMW,
+		UserHandlers: &api.UserHandlers{
+			Service: authBundle.Service,
+			Users:   authBundle.Users,
+		},
+		ProfileHandlers: &api.ProfileHandlers{
+			Profiles: db.NewProfileRepo(components.DB.Querier()),
+		},
+		WatchHandlers: &api.WatchHandlers{
+			Watch: db.NewWatchRepo(components.DB.Querier()),
+		},
 		LibraryHandlers: &api.LibraryHandlers{
 			Service: libBundle.Library,
 			Locale:  localeFn,
