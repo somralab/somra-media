@@ -1,0 +1,23 @@
+# Turkish (tr-TR) message catalog for the errors namespace.
+# Message IDs must mirror active.en-US.toml exactly; parity tests enforce this.
+
+["errors.internal"]
+other = "Beklenmeyen bir sunucu hatası oluştu."
+
+["errors.bad_request"]
+other = "İstek geçersiz."
+
+["errors.not_found"]
+other = "İstenen kaynak bulunamadı."
+
+["errors.unauthorized"]
+other = "Kimlik doğrulama gerekli."
+
+["errors.forbidden"]
+other = "Bu işlem için yetkiniz yok."
+
+["errors.rate_limited"]
+other = "Çok fazla istek, lütfen yavaşlayın."
+
+["errors.validation.required"]
+other = "{{.Field}} alanı zorunludur."

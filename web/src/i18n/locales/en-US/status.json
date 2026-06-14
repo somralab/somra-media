@@ -1,0 +1,45 @@
+{
+  "title": "System status",
+  "subtitle": "Live state of the Somra backend.",
+  "fields": {
+    "version": "Version",
+    "uptime": "Uptime",
+    "lastChecked": "Last checked"
+  },
+  "label": "Health",
+  "health": {
+    "label": "Status",
+    "ok": "Healthy",
+    "degraded": "Degraded",
+    "unavailable": "Unavailable",
+    "down": "Offline"
+  },
+  "checks": {
+    "title": "Dependency checks",
+    "empty": "No additional checks reported."
+  },
+  "version": {
+    "label": "Version",
+    "commit": "Commit",
+    "builtAt": "Built at"
+  },
+  "uptime": {
+    "label": "Since",
+    "format": "{{relative}}"
+  },
+  "lastUpdated": "Last updated {{at}}",
+  "events": {
+    "title": "Realtime events",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "reconnecting": "Reconnecting (attempt {{attempt}})",
+    "none": "No events received yet.",
+    "last": "Last event: {{name}} @ {{at}}"
+  },
+  "actions": {
+    "refresh": "Refresh"
+  },
+  "errors": {
+    "load": "Could not load system status."
+  }
+}

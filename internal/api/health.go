@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -30,10 +31,20 @@ type HealthResponse struct {
 	Checks map[string]HealthStatus `json:"checks,omitempty"`
 }
 
-// healthHandler builds /api/v1/health. checks is optional; nil yields the
-// minimal {status: ok, time} payload defined in the Sprint 01 acceptance
-// criteria.
-func healthHandler(now func() time.Time, checks []HealthCheck) http.HandlerFunc {
+// HealthAggregator is the registry contract the api package uses to
+// surface aggregated diagnostics on /api/v1/health. The platform's
+// diagnostics.Registry satisfies it via the small adapter constructed
+// in cmd/somra; tests can stub it.
+type HealthAggregator interface {
+	Aggregate(ctx context.Context) (overall string, checks map[string]HealthStatus)
+}
+
+// healthHandler builds /api/v1/health. Both checks and aggregator are
+// optional; the minimal {status: ok, time} payload from the Sprint 01
+// acceptance criteria is returned when neither is supplied. When both
+// are supplied the aggregator runs first and per-check entries are
+// merged in on top.
+func healthHandler(now func() time.Time, checks []HealthCheck, agg HealthAggregator) http.HandlerFunc {
 	if now == nil {
 		now = time.Now
 	}
@@ -42,8 +53,22 @@ func healthHandler(now func() time.Time, checks []HealthCheck) http.HandlerFunc 
 			Status: "ok",
 			Time:   now().UTC().Format(time.RFC3339Nano),
 		}
+		if agg != nil {
+			overall, aggChecks := agg.Aggregate(r.Context())
+			if overall != "" && overall != "ok" {
+				resp.Status = overall
+			}
+			if len(aggChecks) > 0 {
+				resp.Checks = make(map[string]HealthStatus, len(aggChecks))
+				for k, v := range aggChecks {
+					resp.Checks[k] = v
+				}
+			}
+		}
 		if len(checks) > 0 {
-			resp.Checks = make(map[string]HealthStatus, len(checks))
+			if resp.Checks == nil {
+				resp.Checks = make(map[string]HealthStatus, len(checks))
+			}
 			for _, c := range checks {
 				if c == nil {
 					continue

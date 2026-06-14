@@ -1,0 +1,20 @@
+# Ignore artefacts that should be rebuilt inside the multi-stage build.
+**/node_modules
+**/dist
+**/coverage
+bin/
+*.out
+*.test
+.git
+.github
+.cache
+.idea
+.vscode
+.editorconfig
+.env
+.env.*
+plan
+docs
+*.md
+!web/README.md
+!README.md

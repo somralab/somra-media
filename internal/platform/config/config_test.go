@@ -22,6 +22,7 @@ func TestDefault(t *testing.T) {
 	assert.Equal(t, "json", cfg.Log.Format)
 	assert.Equal(t, 10*time.Second, cfg.Shutdown.Timeout)
 	assert.Equal(t, "./data", cfg.Data.Dir)
+	assert.Empty(t, cfg.Web.Dir)
 	assert.NotEmpty(t, cfg.CORS.AllowedOrigins)
 }
 
@@ -33,6 +34,7 @@ func TestLoadFrom_Overrides(t *testing.T) {
 		"SOMRA_CORS_ORIGINS":     "https://a.example, https://b.example",
 		"SOMRA_CORS_MAX_AGE":     "60s",
 		"SOMRA_DATA_DIR":         "/var/lib/somra",
+		"SOMRA_WEB_DIR":          "/web/static",
 		"SOMRA_SHUTDOWN_TIMEOUT": "15",
 	}
 	cfg, err := loadFrom(lookupFromMap(env))
@@ -43,6 +45,7 @@ func TestLoadFrom_Overrides(t *testing.T) {
 	assert.Equal(t, []string{"https://a.example", "https://b.example"}, cfg.CORS.AllowedOrigins)
 	assert.Equal(t, 60*time.Second, cfg.CORS.MaxAge)
 	assert.Equal(t, "/var/lib/somra", cfg.Data.Dir)
+	assert.Equal(t, "/web/static", cfg.Web.Dir)
 	assert.Equal(t, 15*time.Second, cfg.Shutdown.Timeout)
 }
 

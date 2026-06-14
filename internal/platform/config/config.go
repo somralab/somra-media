@@ -20,6 +20,7 @@ type Config struct {
 	Log      LogConfig
 	CORS     CORSConfig
 	Data     DataConfig
+	Web      WebConfig
 	Shutdown ShutdownConfig
 }
 
@@ -62,6 +63,13 @@ type DataConfig struct {
 	Dir string
 }
 
+// WebConfig points at an optional directory of pre-built SPA assets that the
+// Go binary serves alongside the API. Empty means "no SPA"; the Docker image
+// sets it to the location where the build pipeline copied the bundle.
+type WebConfig struct {
+	Dir string
+}
+
 // ShutdownConfig bounds the graceful shutdown window.
 type ShutdownConfig struct {
 	Timeout time.Duration
@@ -90,6 +98,9 @@ func Default() Config {
 		},
 		Data: DataConfig{
 			Dir: "./data",
+		},
+		Web: WebConfig{
+			Dir: "",
 		},
 		Shutdown: ShutdownConfig{
 			Timeout: 10 * time.Second,
@@ -141,6 +152,10 @@ func loadFrom(lookup func(string) (string, bool)) (Config, error) {
 
 	if v, ok := lookup("SOMRA_DATA_DIR"); ok {
 		cfg.Data.Dir = v
+	}
+
+	if v, ok := lookup("SOMRA_WEB_DIR"); ok {
+		cfg.Web.Dir = v
 	}
 
 	if err := durationFromEnv(lookup, "SOMRA_SHUTDOWN_TIMEOUT", &cfg.Shutdown.Timeout); err != nil {

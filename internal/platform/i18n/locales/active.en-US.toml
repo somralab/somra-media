@@ -1,0 +1,24 @@
+# Source-locale (en-US) message catalog for the errors namespace.
+# Keys follow the `domain.context.key` convention from plan/i18n-localization.md §4.1.
+# Quoted table headers preserve dot-delimited message IDs.
+
+["errors.internal"]
+other = "An internal error occurred."
+
+["errors.bad_request"]
+other = "The request is invalid."
+
+["errors.not_found"]
+other = "The requested resource was not found."
+
+["errors.unauthorized"]
+other = "Authentication is required."
+
+["errors.forbidden"]
+other = "You do not have permission."
+
+["errors.rate_limited"]
+other = "Too many requests, please slow down."
+
+["errors.validation.required"]
+other = "Field {{.Field}} is required."

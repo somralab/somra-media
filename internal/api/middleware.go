@@ -116,10 +116,10 @@ func RecoverMiddleware(next http.Handler) http.Handler {
 			)
 
 			_, env := platformerrors.ToEnvelope(
-				platformerrors.New(http.StatusInternalServerError, platformerrors.CodeInternal, http.StatusText(http.StatusInternalServerError)),
+				platformerrors.New(http.StatusInternalServerError, platformerrors.CodeInternal, ""),
 				RequestID(r.Context()),
 			)
-			_ = platformerrors.WriteJSON(w, http.StatusInternalServerError, env)
+			_ = platformerrors.WriteEnvelope(w, http.StatusInternalServerError, env)
 		}()
 		next.ServeHTTP(w, r)
 	})
@@ -145,9 +145,9 @@ func ContentTypeMiddleware(next http.Handler) http.Handler {
 		}
 		ct = strings.TrimSpace(strings.ToLower(ct))
 		if ct != "application/json" && ct != "" {
-			apiErr := platformerrors.New(http.StatusUnsupportedMediaType, platformerrors.CodeUnsupportedMedia, "Content-Type must be application/json")
+			apiErr := platformerrors.New(http.StatusUnsupportedMediaType, platformerrors.CodeUnsupportedMedia, "")
 			status, env := platformerrors.ToEnvelope(apiErr, RequestID(r.Context()))
-			_ = platformerrors.WriteJSON(w, status, env)
+			_ = platformerrors.WriteEnvelope(w, status, env)
 			return
 		}
 		next.ServeHTTP(w, r)

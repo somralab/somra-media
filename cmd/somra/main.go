@@ -15,7 +15,9 @@ import (
 	"syscall"
 
 	"github.com/somralab/somra-media/internal/api"
+	"github.com/somralab/somra-media/internal/platform/bootstrap"
 	"github.com/somralab/somra-media/internal/platform/config"
+	"github.com/somralab/somra-media/internal/platform/db"
 	platformlog "github.com/somralab/somra-media/internal/platform/log"
 )
 
@@ -55,6 +57,32 @@ func run() error {
 		slog.String("addr", cfg.HTTP.Addr),
 	)
 
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	dbCfg := db.Default()
+	if cfg.Data.Dir != "" {
+		dbCfg.DataDir = cfg.Data.Dir
+	}
+	components, err := bootstrap.NewWithStorage(ctx, logger, dbCfg)
+	if err != nil {
+		return fmt.Errorf("bootstrap platform: %w", err)
+	}
+	defer func() {
+		if cerr := components.Close(); cerr != nil {
+			logger.Error("close components", slog.Any("error", cerr))
+		}
+	}()
+
+	components.Scheduler.Start(ctx)
+	defer func() {
+		stopCtx, cancel := context.WithTimeout(context.Background(), cfg.Shutdown.Timeout)
+		defer cancel()
+		if serr := components.Scheduler.Stop(stopCtx); serr != nil {
+			logger.Error("stop scheduler", slog.Any("error", serr))
+		}
+	}()
+
 	handler := api.New(api.Options{
 		Logger: logger,
 		Build: api.BuildInfo{
@@ -62,7 +90,10 @@ func run() error {
 			Commit:  commit,
 			BuiltAt: builtAt,
 		},
-		CORS: cfg.CORS,
+		CORS:                cfg.CORS,
+		WebDir:              cfg.Web.Dir,
+		LocalizerMiddleware: components.I18n.Middleware(),
+		HealthAggregator:    api.NewDiagnosticsAggregator(components.Diagnostics),
 	})
 
 	srv := &http.Server{
@@ -76,9 +107,6 @@ func run() error {
 			return platformlog.WithLogger(context.Background(), logger)
 		},
 	}
-
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
 
 	serverErr := make(chan error, 1)
 	go func() {
