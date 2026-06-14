@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -31,6 +32,8 @@ func newDirectNotificationHandlers(t *testing.T) (*NotificationHandlers, auth.Au
 		Queue:    queue,
 	})
 	ac := adminAuthContext(t, d)
+	_, err = db.NewUserRepo(q).Create(context.Background(), ac.Claims.UserID, "notify-admin", "hash", []string{auth.RoleAdmin})
+	require.NoError(t, err)
 	return &NotificationHandlers{
 		Channels:   db.NewNotificationChannelRepo(q),
 		Prefs:      db.NewNotificationPreferenceRepo(q),
@@ -89,5 +92,36 @@ func TestNotificationHandlers_DirectValidationPaths(t *testing.T) {
 		}},
 	})
 	rec = serveNotificationRoute(t, h, http.MethodPatch, "/notifications/preferences", badPatch, &ac)
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestNotificationHandlers_CreateAndTestWebhook(t *testing.T) {
+	h, ac := newDirectNotificationHandlers(t)
+
+	createBody, _ := json.Marshal(map[string]any{
+		"channelType": "webhook",
+		"name":        "Test hook",
+		"config":      map[string]any{"url": "https://example.com/hook"},
+		"enabled":     true,
+	})
+	rec := serveNotificationRoute(t, h, http.MethodPost, "/notifications/channels", createBody, &ac)
+	require.Equal(t, http.StatusCreated, rec.Code)
+
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	chID := int64(created["id"].(float64))
+
+	goodPatch, _ := json.Marshal(map[string]any{
+		"preferences": []map[string]any{{
+			"eventType":       "request.created",
+			"channelId":       chID,
+			"enabled":         true,
+			"debounceSeconds": 10,
+		}},
+	})
+	rec = serveNotificationRoute(t, h, http.MethodPatch, "/notifications/preferences", goodPatch, &ac)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	rec = serveNotificationRoute(t, h, http.MethodPost, "/notifications/channels/not-a-id/test", nil, &ac)
 	require.Equal(t, http.StatusBadRequest, rec.Code)
 }

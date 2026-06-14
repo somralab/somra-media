@@ -247,3 +247,71 @@ func TestRequestHandlers_NowAndLocaleHelpers(t *testing.T) {
 	assert.False(t, plain.now().IsZero())
 	assert.Equal(t, "en-US", plain.locale(req))
 }
+
+func TestRequestHandlers_PoliciesPatchAndReject(t *testing.T) {
+	h, d := newDirectRequestHandlers(t)
+	admin := adminAuthContext(t, d)
+	ctx := context.Background()
+
+	rec := serveRequestRoute(t, h, http.MethodGet, "/requests/policies", nil, &admin)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	patch, _ := json.Marshal(map[string]any{
+		"autoApproveRoles":  []string{"admin", "user"},
+		"userQuotaPerMonth": 15,
+		"adminSettings":     map[string]any{"notifyOnCreate": true},
+	})
+	rec = serveRequestRoute(t, h, http.MethodPatch, "/requests/policies", patch, &admin)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	users := db.NewUserRepo(d.Querier())
+	ownerID := uuid.NewString()
+	_, err := users.Create(ctx, ownerID, "reject-owner", "hash", []string{auth.RoleUser})
+	require.NoError(t, err)
+
+	id, err := h.Repo.Create(ctx, db.Request{
+		UserID: ownerID, MediaKind: db.RequestMediaKindMovie,
+		Provider: "tmdb", ExternalID: "reject-1", Title: "Reject Me",
+	})
+	require.NoError(t, err)
+
+	noteBody, _ := json.Marshal(map[string]string{"adminNote": "not available"})
+	rec = serveRequestRoute(t, h, http.MethodPost, "/requests/"+jsonNumber(id)+"/reject", noteBody, &admin)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	res := db.RequestQuality1080p
+	qualPatch, _ := json.Marshal(map[string]string{"qualityResolution": string(res)})
+	owner := userAuthContextWithPerms(ownerID, permissionsForRoles(t, d, []string{auth.RoleUser}))
+	rec = serveRequestRoute(t, h, http.MethodPatch, "/requests/"+jsonNumber(id), qualPatch, &owner)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	rec = serveRequestRoute(t, h, http.MethodPost, "/requests/"+jsonNumber(id)+"/cancel", nil, &owner)
+	require.Equal(t, http.StatusConflict, rec.Code)
+}
+
+func TestRequestHandlers_CancelUnauthorized(t *testing.T) {
+	h, d := newDirectRequestHandlers(t)
+	admin := adminAuthContext(t, d)
+	ctx := context.Background()
+
+	users := db.NewUserRepo(d.Querier())
+	ownerID := uuid.NewString()
+	otherID := uuid.NewString()
+	_, err := users.Create(ctx, ownerID, "cancel-owner", "hash", []string{auth.RoleUser})
+	require.NoError(t, err)
+	_, err = users.Create(ctx, otherID, "cancel-other", "hash", []string{auth.RoleUser})
+	require.NoError(t, err)
+
+	id, err := h.Repo.Create(ctx, db.Request{
+		UserID: ownerID, MediaKind: db.RequestMediaKindMovie,
+		Provider: "tmdb", ExternalID: "cancel-1", Title: "Cancel Me",
+	})
+	require.NoError(t, err)
+
+	other := userAuthContextWithPerms(otherID, permissionsForRoles(t, d, []string{auth.RoleUser}))
+	rec := serveRequestRoute(t, h, http.MethodPost, "/requests/"+jsonNumber(id)+"/cancel", nil, &other)
+	require.Equal(t, http.StatusForbidden, rec.Code)
+
+	rec = serveRequestRoute(t, h, http.MethodPost, "/requests/99999/cancel", nil, &admin)
+	require.Equal(t, http.StatusNotFound, rec.Code)
+}
