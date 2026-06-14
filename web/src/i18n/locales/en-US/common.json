@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Somra",
+    "tagline": "Self-hosted media server"
+  },
+  "nav": {
+    "status": "Status",
+    "settings": "Settings"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "retry": "Retry",
+    "open": "Open"
+  },
+  "states": {
+    "loading": "Loading…",
+    "error": "Something went wrong.",
+    "empty": "Nothing to show yet."
+  },
+  "api": {
+    "errors": {
+      "network": "Network request failed. Check your connection and try again.",
+      "http": "The server returned an unexpected error.",
+      "invalidJson": "The server response could not be decoded."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Personalize the appearance and language of Somra.",
+    "language": {
+      "label": "Language",
+      "description": "Choose the language used across the interface.",
+      "options": {
+        "en-US": "English (US)",
+        "tr-TR": "Türkçe (TR)"
+      }
+    },
+    "theme": {
+      "label": "Theme",
+      "description": "Pick a visual theme. Changes apply instantly.",
+      "options": {
+        "cinematic": "Cinematic",
+        "aurora": "Aurora",
+        "noir": "Noir",
+        "minimal": "Minimal"
+      }
+    },
+    "demo": {
+      "title": "Locale-aware formatting",
+      "description": "These values are formatted with the active locale via Intl.",
+      "todayLabel": "Today",
+      "now": "Now",
+      "numberLabel": "Sample number"
+    }
+  }
+}

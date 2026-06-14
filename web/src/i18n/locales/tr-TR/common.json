@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Somra",
+    "tagline": "Kendi sunucunuzda medya"
+  },
+  "nav": {
+    "status": "Durum",
+    "settings": "Ayarlar"
+  },
+  "actions": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "close": "Kapat",
+    "retry": "Tekrar dene",
+    "open": "Aç"
+  },
+  "states": {
+    "loading": "Yükleniyor…",
+    "error": "Bir şeyler ters gitti.",
+    "empty": "Henüz gösterecek bir şey yok."
+  },
+  "api": {
+    "errors": {
+      "network": "Ağ isteği başarısız oldu. Bağlantınızı kontrol edin ve tekrar deneyin.",
+      "http": "Sunucu beklenmedik bir hata döndürdü.",
+      "invalidJson": "Sunucu yanıtı çözümlenemedi."
+    }
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "subtitle": "Somra'nın görünümünü ve dilini kişiselleştirin.",
+    "language": {
+      "label": "Dil",
+      "description": "Arayüzde kullanılacak dili seçin.",
+      "options": {
+        "en-US": "İngilizce (ABD)",
+        "tr-TR": "Türkçe (TR)"
+      }
+    },
+    "theme": {
+      "label": "Tema",
+      "description": "Görsel tema seçin. Değişiklikler anında uygulanır.",
+      "options": {
+        "cinematic": "Sinematik",
+        "aurora": "Aurora",
+        "noir": "Noir",
+        "minimal": "Minimal"
+      }
+    },
+    "demo": {
+      "title": "Yerel ayara duyarlı biçimlendirme",
+      "description": "Bu değerler Intl ile aktif yerel ayara göre biçimlendirilir.",
+      "todayLabel": "Bugün",
+      "now": "Şimdi",
+      "numberLabel": "Örnek sayı"
+    }
+  }
+}

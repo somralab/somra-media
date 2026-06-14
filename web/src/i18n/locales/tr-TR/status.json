@@ -1,0 +1,45 @@
+{
+  "title": "Sistem durumu",
+  "subtitle": "Somra arka ucunun canlı durumu.",
+  "fields": {
+    "version": "Sürüm",
+    "uptime": "Çalışma süresi",
+    "lastChecked": "Son kontrol"
+  },
+  "label": "Sağlık",
+  "health": {
+    "label": "Durum",
+    "ok": "Sağlıklı",
+    "degraded": "Düşük performans",
+    "unavailable": "Hizmet dışı",
+    "down": "Çevrimdışı"
+  },
+  "checks": {
+    "title": "Bağımlılık kontrolleri",
+    "empty": "Ek kontrol bildirilmedi."
+  },
+  "version": {
+    "label": "Sürüm",
+    "commit": "Commit",
+    "builtAt": "Derleme zamanı"
+  },
+  "uptime": {
+    "label": "Çalışmaya başladı",
+    "format": "{{relative}}"
+  },
+  "lastUpdated": "Son güncelleme {{at}}",
+  "events": {
+    "title": "Anlık olaylar",
+    "connected": "Bağlı",
+    "disconnected": "Bağlantı yok",
+    "reconnecting": "Yeniden bağlanılıyor ({{attempt}}. deneme)",
+    "none": "Henüz olay alınmadı.",
+    "last": "Son olay: {{name}} @ {{at}}"
+  },
+  "actions": {
+    "refresh": "Yenile"
+  },
+  "errors": {
+    "load": "Sistem durumu yüklenemedi."
+  }
+}
