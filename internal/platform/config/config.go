@@ -157,6 +157,8 @@ func loadFrom(lookup func(string) (string, bool)) (Config, error) {
 
 	if v, ok := lookup("SOMRA_HTTP_ADDR"); ok {
 		cfg.HTTP.Addr = v
+	} else if v, ok := lookup("SOMRA_LISTEN_ADDR"); ok {
+		cfg.HTTP.Addr = v
 	}
 	if err := durationFromEnv(lookup, "SOMRA_HTTP_READ_HEADER_TIMEOUT", &cfg.HTTP.ReadHeaderTimeout); err != nil {
 		return Config{}, err

@@ -42,6 +42,11 @@ web/.playwright/
 # --- Application data ---
 data/
 /data/
+cache/
+/cache/
+deploy/cache/
+deploy/media/*
+!deploy/media/README.md
 
 # --- OS ---
 .DS_Store

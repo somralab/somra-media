@@ -49,6 +49,23 @@ func TestLoadFrom_Overrides(t *testing.T) {
 	assert.Equal(t, 15*time.Second, cfg.Shutdown.Timeout)
 }
 
+func TestLoadFrom_ListenAddrAlias(t *testing.T) {
+	env := map[string]string{"SOMRA_LISTEN_ADDR": "127.0.0.1:3000"}
+	cfg, err := loadFrom(lookupFromMap(env))
+	require.NoError(t, err)
+	assert.Equal(t, "127.0.0.1:3000", cfg.HTTP.Addr)
+}
+
+func TestLoadFrom_HttpAddrOverridesListenAddr(t *testing.T) {
+	env := map[string]string{
+		"SOMRA_HTTP_ADDR":   ":9090",
+		"SOMRA_LISTEN_ADDR": ":8080",
+	}
+	cfg, err := loadFrom(lookupFromMap(env))
+	require.NoError(t, err)
+	assert.Equal(t, ":9090", cfg.HTTP.Addr)
+}
+
 func TestLoadFrom_InvalidDuration(t *testing.T) {
 	env := map[string]string{"SOMRA_SHUTDOWN_TIMEOUT": "not-a-duration"}
 	_, err := loadFrom(lookupFromMap(env))

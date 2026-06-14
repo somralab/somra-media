@@ -42,6 +42,7 @@ help:
 ## dev: run backend + frontend dev servers concurrently
 dev:
 	@trap 'kill 0' EXIT INT TERM; \
+	set -a; [ -f .env ] && . ./.env; set +a; \
 	echo ">> $(GO) run ./cmd/somra (background)"; \
 	$(GO) run ./cmd/somra & \
 	echo ">> $(PNPM) --dir $(WEB_DIR) run dev"; \
@@ -50,6 +51,7 @@ dev:
 
 ## dev-backend: run only the Go backend
 dev-backend:
+	@set -a; [ -f .env ] && . ./.env; set +a; \
 	$(GO) run ./cmd/somra
 
 ## dev-frontend: run only the Vite dev server

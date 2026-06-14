@@ -35,6 +35,8 @@ services:
       SOMRA_WEB_DIR: /web/static
       SOMRA_LOG_LEVEL: info
       SOMRA_LOG_FORMAT: json
+      # Dev-only JWT secret — override via shell env for production-like tests.
+      SOMRA_JWT_SECRET: ${SOMRA_JWT_SECRET:-change-me-in-production-use-32-plus-chars}
     volumes:
       - ./config:/config
       - ./data:/data
