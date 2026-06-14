@@ -7,7 +7,8 @@
     "home": "Home",
     "status": "Status",
     "settings": "Settings",
-    "libraries": "Libraries"
+    "libraries": "Libraries",
+    "requests": "Requests"
   },
   "actions": {
     "save": "Save",

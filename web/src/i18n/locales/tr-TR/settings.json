@@ -13,7 +13,9 @@
     "library": "Kütüphane",
     "playback": "Oynatma",
     "subtitles": "Altyazılar",
-    "users": "Kullanıcılar"
+    "users": "Kullanıcılar",
+    "notifications": "Bildirimler",
+    "requests": "İstekler"
   },
   "general": {
     "defaultLocale": {
@@ -78,5 +80,13 @@
   "users": {
     "manageLink": "Kullanıcıları yönet",
     "description": "Yönetici panelinden kullanıcı hesapları oluşturun ve yönetin."
+  },
+  "notifications": {
+    "manageLink": "Bildirim tercihleri",
+    "description": "Hangi olayların sizi bilgilendireceğini ve geciktirme aralıklarını yapılandırın."
+  },
+  "requests": {
+    "manageLink": "İstek politikaları",
+    "description": "İçerik istekleri için aylık kotaları ve otomatik onay rollerini ayarlayın."
   }
 }

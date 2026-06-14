@@ -94,6 +94,12 @@ type Options struct {
 	// SubtitleHandlers mounts subtitle management endpoints.
 	SubtitleHandlers *SubtitleHandlers
 
+	// RequestHandlers mounts content request workflow endpoints.
+	RequestHandlers *RequestHandlers
+
+	// NotificationHandlers mounts notification preference/channel endpoints.
+	NotificationHandlers *NotificationHandlers
+
 	// Onboarding, when set, is notified after first admin creation.
 	Onboarding *settings.Onboarding
 }
@@ -193,6 +199,12 @@ func mountProtectedRoutes(r chi.Router, opts Options) {
 	}
 	if opts.SubtitleHandlers != nil {
 		opts.SubtitleHandlers.Mount(r)
+	}
+	if opts.RequestHandlers != nil {
+		opts.RequestHandlers.Mount(r)
+	}
+	if opts.NotificationHandlers != nil {
+		opts.NotificationHandlers.Mount(r)
 	}
 }
 

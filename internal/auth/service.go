@@ -15,10 +15,14 @@ import (
 
 // Permission names used by RBAC middleware.
 const (
-	PermLibraryRead  = "library:read"
-	PermLibraryWrite = "library:write"
-	PermUsersManage  = "users:manage"
-	PermProfileEdit  = "profile:edit"
+	PermLibraryRead         = "library:read"
+	PermLibraryWrite        = "library:write"
+	PermUsersManage         = "users:manage"
+	PermProfileEdit         = "profile:edit"
+	PermRequestsCreate      = "requests:create"
+	PermRequestsRead        = "requests:read"
+	PermRequestsManage      = "requests:manage"
+	PermNotificationsManage = "notifications:manage"
 )
 
 // Role names.

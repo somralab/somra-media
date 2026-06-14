@@ -1,8 +1,13 @@
-import type { APIRequestContext, Page } from '@playwright/test';
+import { expect, type APIRequestContext, type Page } from '@playwright/test';
 
 export const E2E_ADMIN = {
   username: 'e2e-admin',
   password: 'E2eAdmin1',
+} as const;
+
+export const E2E_USER = {
+  username: 'e2e-user',
+  password: 'E2eUserPass1',
 } as const;
 
 export async function ensureAdmin(request: APIRequestContext): Promise<void> {
@@ -58,4 +63,46 @@ export async function login(page: Page): Promise<void> {
   await page.getByLabel(/username|kullanıcı/i).fill(E2E_ADMIN.username);
   await page.getByLabel(/password|şifre|parola/i).fill(E2E_ADMIN.password);
   await page.getByRole('button', { name: /sign in|giriş/i }).click();
+}
+
+export async function getAdminToken(request: APIRequestContext): Promise<string> {
+  await ensureAdmin(request);
+  const login = await request.post('/api/v1/auth/login', { data: E2E_ADMIN });
+  if (!login.ok()) {
+    throw new Error(`admin login failed: ${login.status()}`);
+  }
+  const tok = (await login.json()) as { accessToken: string };
+  return tok.accessToken;
+}
+
+export async function ensureRegularUser(request: APIRequestContext): Promise<void> {
+  const token = await getAdminToken(request);
+  const users = await request.get('/api/v1/users', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!users.ok()) {
+    throw new Error(`list users failed: ${users.status()}`);
+  }
+  const list = (await users.json()) as Array<{ username: string }>;
+  if (list.some((u) => u.username === E2E_USER.username)) {
+    return;
+  }
+  const created = await request.post('/api/v1/users', {
+    headers: { Authorization: `Bearer ${token}` },
+    data: { username: E2E_USER.username, password: E2E_USER.password, roles: ['user'] },
+  });
+  if (!created.ok()) {
+    throw new Error(`create user failed: ${created.status()}`);
+  }
+}
+
+export async function loginAs(
+  page: Page,
+  creds: { username: string; password: string },
+): Promise<void> {
+  await page.goto('/login');
+  await page.getByLabel(/username|kullanıcı/i).fill(creds.username);
+  await page.getByLabel(/password|şifre|parola/i).fill(creds.password);
+  await page.getByRole('button', { name: /sign in|giriş/i }).click();
+  await expect(page).not.toHaveURL(/\/login/);
 }

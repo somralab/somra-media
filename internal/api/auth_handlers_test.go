@@ -47,7 +47,13 @@ func TestRBACMatrix(t *testing.T) {
 	}{
 		{"admin library read", []string{auth.RoleAdmin}, auth.PermLibraryRead, true},
 		{"admin users manage", []string{auth.RoleAdmin}, auth.PermUsersManage, true},
+		{"admin requests manage", []string{auth.RoleAdmin}, auth.PermRequestsManage, true},
+		{"admin notifications manage", []string{auth.RoleAdmin}, auth.PermNotificationsManage, true},
 		{"user library write", []string{auth.RoleUser}, auth.PermLibraryWrite, true},
+		{"user requests create", []string{auth.RoleUser}, auth.PermRequestsCreate, true},
+		{"user requests read", []string{auth.RoleUser}, auth.PermRequestsRead, true},
+		{"user requests manage", []string{auth.RoleUser}, auth.PermRequestsManage, false},
+		{"user notifications manage", []string{auth.RoleUser}, auth.PermNotificationsManage, false},
 		{"user users manage", []string{auth.RoleUser}, auth.PermUsersManage, false},
 		{"child library read", []string{auth.RoleChild}, auth.PermLibraryRead, true},
 		{"child library write", []string{auth.RoleChild}, auth.PermLibraryWrite, false},

@@ -42,6 +42,8 @@ func WireLibrary(c *Components) *LibraryBundle {
 	reg.Register(&metadata.FanartProvider{})
 	if key := os.Getenv("SOMRA_TMDB_API_KEY"); key != "" {
 		reg.Register(metadata.NewTMDBProvider(key, nil))
+	} else if os.Getenv("SOMRA_USE_TEST_METADATA") == "1" {
+		reg.Register(metadata.TestProvider{})
 	}
 
 	metaSvc := &metadata.Service{

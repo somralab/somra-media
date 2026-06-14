@@ -1,0 +1,75 @@
+{
+  "nav": {
+    "requests": "Requests",
+    "discover": "Discover",
+    "myRequests": "My requests",
+    "aria": "Request navigation",
+    "admin": "Approve requests"
+  },
+  "discover": {
+    "title": "Request content",
+    "subtitle": "Search for movies and series that are not in your library yet.",
+    "searchPlaceholder": "Search by title…",
+    "search": "Search",
+    "kindFilter": "Media type filter",
+    "kindAll": "All types",
+    "empty": "No results found. Try a different search term.",
+    "noPoster": "No image",
+    "inLibrary": "Already in library",
+    "requestButton": "Request",
+    "modalTitle": "Confirm request",
+    "modalDescription": "Request \"{{title}}\" with your preferred quality.",
+    "confirmRequest": "Submit request",
+    "createFailed": "Could not create the request. Please try again."
+  },
+  "myRequests": {
+    "title": "My requests",
+    "subtitle": "Track the status of your content requests.",
+    "empty": "You have not submitted any requests yet.",
+    "cancel": "Cancel",
+    "live": "Live updates",
+    "liveConnected": "Connected to live event stream",
+    "livePolling": "Using periodic refresh",
+    "polling": "Refreshing every 30s"
+  },
+  "admin": {
+    "title": "Request management",
+    "subtitle": "Review pending requests and configure approval policies.",
+    "tabs": {
+      "queue": "Pending queue",
+      "policies": "Policies"
+    },
+    "queueEmpty": "No pending requests.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "rejectNotePlaceholder": "Optional note for the requester…",
+    "confirmReject": "Confirm reject",
+    "policies": {
+      "quotaLabel": "Monthly quota per user",
+      "quotaDescription": "Maximum number of requests a user can submit per month (0 = unlimited).",
+      "autoApproveLabel": "Auto-approve roles",
+      "autoApprovePlaceholder": "e.g. admin, power_user",
+      "autoApproveDescription": "Comma-separated role names that skip manual approval.",
+      "saved": "Policies saved."
+    }
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "mediaKind": {
+    "movie": "Movie",
+    "tv": "TV series"
+  },
+  "quality": {
+    "label": "Preferred quality",
+    "options": {
+      "1080p": "1080p",
+      "720p": "720p",
+      "any": "Any"
+    }
+  }
+}

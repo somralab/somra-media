@@ -13,6 +13,7 @@ export default function SettingsPage(): ReactNode {
   const { t } = useTranslation('settings');
   const { t: tc } = useTranslation();
   const accessToken = useAuthStore((s) => s.accessToken);
+  const isAdmin = useAuthStore((s) => s.isAdmin());
   const { data: settings, isLoading, isError } = useSettings(Boolean(accessToken));
   const [advanced, setAdvanced] = useState(false);
   const patchGeneral = usePatchSettings('general');
@@ -210,6 +211,32 @@ export default function SettingsPage(): ReactNode {
                 </CardContent>
               </Card>
             </>
+          ) : null}
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('categories.notifications')}</CardTitle>
+              <CardDescription>{t('notifications.description')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/settings/notifications" className="text-sm text-primary hover:underline">
+                {t('notifications.manageLink')}
+              </Link>
+            </CardContent>
+          </Card>
+
+          {isAdmin ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('categories.requests')}</CardTitle>
+                <CardDescription>{t('requests.description')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link to="/admin/requests" className="text-sm text-primary hover:underline">
+                  {t('requests.manageLink')}
+                </Link>
+              </CardContent>
+            </Card>
           ) : null}
 
           <Card>

@@ -12,6 +12,7 @@ const sharedEnv = {
   SOMRA_LOG_LEVEL: 'info',
   SOMRA_DATA_DIR: process.env.SOMRA_E2E_DATA_DIR ?? '/tmp/somra-e2e-data',
   SOMRA_WEB_DIR: process.env.SOMRA_E2E_WEB_DIR ?? `${repoRoot}/web/dist`,
+  SOMRA_USE_TEST_METADATA: '1',
   PATH: process.env.PATH ?? '',
 } satisfies Record<string, string>;
 
