@@ -161,3 +161,40 @@ func TestPlaybackRepo_ExpiredSessions(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, PlaybackExpired, got.Status)
 }
+
+func TestPlaybackRepo_CreateValidation(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+	repo := NewPlaybackRepo(d.Querier())
+	require.Error(t, repo.Create(ctx, PlaybackSession{}))
+	require.ErrorIs(t, repo.UpdateStatus(ctx, "missing", PlaybackFailed, "boom"), ErrPlaybackSessionNotFound)
+}
+
+func TestRequestRepo_ListWithStatusFilter(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	users := NewUserRepo(d.Querier())
+	userID := uuid.NewString()
+	_, err := users.Create(ctx, userID, "status-user", "hash", []string{"user"})
+	require.NoError(t, err)
+
+	repo := NewRequestRepo(d.Querier())
+	_, err = repo.Create(ctx, Request{
+		UserID: userID, MediaKind: RequestMediaKindMovie,
+		Provider: "tmdb", ExternalID: "st-1", Title: "Pending",
+	})
+	require.NoError(t, err)
+	_, err = repo.Create(ctx, Request{
+		UserID: userID, MediaKind: RequestMediaKindMovie,
+		Provider: "tmdb", ExternalID: "st-2", Title: "Done",
+		Status: RequestStatusCompleted,
+	})
+	require.NoError(t, err)
+
+	pending, err := repo.List(ctx, RequestListFilter{UserID: userID, Status: RequestStatusPending})
+	require.NoError(t, err)
+	require.Len(t, pending, 1)
+}

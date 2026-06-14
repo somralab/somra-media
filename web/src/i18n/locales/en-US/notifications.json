@@ -1,0 +1,23 @@
+{
+  "page": {
+    "title": "Notification preferences",
+    "subtitle": "Choose which events notify you and how often.",
+    "empty": "No notification preferences configured yet.",
+    "loadFailed": "Could not load notification preferences.",
+    "saved": "Preferences saved."
+  },
+  "backToSettings": "Back to settings",
+  "pref": {
+    "enabled": "Enabled",
+    "debounceLabel": "Debounce (seconds)",
+    "debounceDescription": "Minimum seconds between repeated notifications for the same event.",
+    "channelLabel": "Channel #{{channelId}}"
+  },
+  "events": {
+    "requestCreated": "Request submitted",
+    "requestApproved": "Request approved",
+    "requestRejected": "Request rejected",
+    "requestCompleted": "Request fulfilled",
+    "unknown": "Notification"
+  }
+}

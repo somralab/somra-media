@@ -13,15 +13,15 @@
 ## Epikler ve Görevler
 
 ### Epik A: İstek akışı
-- [ ] A1 — İstek oluştur → onay/ret → durum e2e | Kabul: tüm geçişler doğru.
-- [ ] A2 — Çakışma/kota/yetki testleri | Kabul: politikalar uygulanır.
+- [x] A1 — İstek oluştur → onay/ret → durum e2e | Kabul: tüm geçişler doğru.
+- [x] A2 — Çakışma/kota/yetki testleri | Kabul: politikalar uygulanır.
 
 ### Epik B: Bildirim
-- [ ] B1 — Her kanal için tetikleme testi | Kabul: doğru olayda iletilir.
-- [ ] B2 — Tercih/abonelik testi | Kabul: istenmeyen bildirim gitmez.
+- [x] B1 — Her kanal için tetikleme testi | Kabul: doğru olayda iletilir.
+- [x] B2 — Tercih/abonelik testi | Kabul: istenmeyen bildirim gitmez.
 
 ### Epik C: Regresyon
-- [ ] C1 — Sprint 08 regresyon paketi | Kabul: CI'da koşar.
+- [x] C1 — Sprint 08 regresyon paketi | Kabul: CI'da koşar.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - İstek ve bildirim akışları test kapsamında; kritik hata yok.

@@ -76,3 +76,23 @@ func (p ScanProgressPublisher) PublishScanProgress(_ context.Context, ev library
 	}
 	p.Bus.Publish("scan.progress", ev)
 }
+
+// RequestStatusEvent is the SSE payload for request lifecycle updates.
+type RequestStatusEvent struct {
+	RequestID int64  `json:"requestId"`
+	Status    string `json:"status"`
+	UpdatedAt string `json:"updatedAt"`
+}
+
+// RequestStatusPublisher emits request.status over SSE.
+type RequestStatusPublisher struct {
+	Bus *EventBus
+}
+
+// PublishRequestStatus broadcasts a request status change.
+func (p RequestStatusPublisher) PublishRequestStatus(ev RequestStatusEvent) {
+	if p.Bus == nil {
+		return
+	}
+	p.Bus.Publish("request.status", ev)
+}

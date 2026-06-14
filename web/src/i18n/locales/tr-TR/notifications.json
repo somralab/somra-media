@@ -1,0 +1,23 @@
+{
+  "page": {
+    "title": "Bildirim tercihleri",
+    "subtitle": "Hangi olayların sizi bilgilendireceğini ve ne sıklıkta olduğunu seçin.",
+    "empty": "Henüz bildirim tercihi yapılandırılmamış.",
+    "loadFailed": "Bildirim tercihleri yüklenemedi.",
+    "saved": "Tercihler kaydedildi."
+  },
+  "backToSettings": "Ayarlara dön",
+  "pref": {
+    "enabled": "Etkin",
+    "debounceLabel": "Geciktirme (saniye)",
+    "debounceDescription": "Aynı olay için tekrarlayan bildirimler arasındaki minimum süre.",
+    "channelLabel": "Kanal #{{channelId}}"
+  },
+  "events": {
+    "requestCreated": "İstek gönderildi",
+    "requestApproved": "İstek onaylandı",
+    "requestRejected": "İstek reddedildi",
+    "requestCompleted": "İstek karşılandı",
+    "unknown": "Bildirim"
+  }
+}

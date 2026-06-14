@@ -69,3 +69,123 @@ other = "Medya kaynağı doğrulanamadı."
 
 ["streaming.source.forbidden"]
 other = "Medya kaynağına erişim reddedildi."
+
+["notifications.request.created.subject"]
+other = "Yeni içerik isteği: {{.Title}}"
+
+["notifications.request.created.body"]
+other = "{{.Title}} için yeni bir istek gönderildi. {{.Detail}}"
+
+["notifications.request.approved.subject"]
+other = "İstek onaylandı: {{.Title}}"
+
+["notifications.request.approved.body"]
+other = "{{.Title}} isteğiniz onaylandı. {{.Detail}}"
+
+["notifications.request.rejected.subject"]
+other = "İstek reddedildi: {{.Title}}"
+
+["notifications.request.rejected.body"]
+other = "{{.Title}} isteğiniz reddedildi. {{.Detail}}"
+
+["notifications.request.completed.subject"]
+other = "İstek tamamlandı: {{.Title}}"
+
+["notifications.request.completed.body"]
+other = "{{.Title}} isteğiniz artık kullanılabilir. {{.Detail}}"
+
+["notifications.system.error.subject"]
+other = "Sistem hatası"
+
+["notifications.system.error.body"]
+other = "Bir sistem hatası oluştu: {{.Error}}"
+
+["requests.create.invalid"]
+other = "İstek gövdesi geçersiz."
+
+["requests.create.failed"]
+other = "İçerik isteği oluşturulamadı."
+
+["requests.list.failed"]
+other = "İçerik istekleri listelenemedi."
+
+["requests.get.failed"]
+other = "İçerik isteği yüklenemedi."
+
+["requests.patch.failed"]
+other = "İçerik isteği güncellenemedi."
+
+["requests.patch.invalid"]
+other = "Güncelleme gövdesi geçersiz."
+
+["requests.not_found"]
+other = "İçerik isteği bulunamadı."
+
+["requests.id.invalid"]
+other = "Geçersiz istek kimliği."
+
+["requests.collision.in_library"]
+other = "Bu başlık zaten kütüphanenizde."
+
+["requests.collision.duplicate_pending"]
+other = "Bu başlık için bekleyen bir istek zaten var."
+
+["requests.quota.exceeded"]
+other = "Aylık istek kotanıza ulaştınız."
+
+["requests.transition.invalid"]
+other = "Bu durum değişikliğine izin verilmiyor."
+
+["requests.transition.failed"]
+other = "İstek durumu güncellenemedi."
+
+["requests.cancel.failed"]
+other = "İstek iptal edilemedi."
+
+["requests.handoff.failed"]
+other = "Onaylanan istek otomasyona devredilemedi."
+
+["requests.discover.query_required"]
+other = "Arama sorgusu gerekli."
+
+["requests.discover.failed"]
+other = "İstenebilir içerik aranamadı."
+
+["requests.discover.unavailable"]
+other = "İçerik keşfi yapılandırılmamış."
+
+["requests.policies.get.failed"]
+other = "İstek politikaları yüklenemedi."
+
+["requests.policies.patch.failed"]
+other = "İstek politikaları güncellenemedi."
+
+["requests.policies.patch.invalid"]
+other = "Politika güncelleme gövdesi geçersiz."
+
+["notifications.preferences.list.failed"]
+other = "Bildirim tercihleri yüklenemedi."
+
+["notifications.preferences.patch.failed"]
+other = "Bildirim tercihleri güncellenemedi."
+
+["notifications.preferences.patch.invalid"]
+other = "Tercih gövdesi geçersiz."
+
+["notifications.channels.list.failed"]
+other = "Bildirim kanalları listelenemedi."
+
+["notifications.channels.create.failed"]
+other = "Bildirim kanalı oluşturulamadı."
+
+["notifications.channels.create.invalid"]
+other = "Kanal gövdesi geçersiz."
+
+["notifications.channel.not_found"]
+other = "Bildirim kanalı bulunamadı."
+
+["notifications.channel.id.invalid"]
+other = "Geçersiz bildirim kanalı kimliği."
+
+["notifications.channel.test.failed"]
+other = "Test bildirimi gönderilemedi."

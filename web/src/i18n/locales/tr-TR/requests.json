@@ -1,0 +1,75 @@
+{
+  "nav": {
+    "requests": "İstekler",
+    "discover": "Keşfet",
+    "myRequests": "İsteklerim",
+    "aria": "İstek gezinmesi",
+    "admin": "İstekleri onayla"
+  },
+  "discover": {
+    "title": "İçerik iste",
+    "subtitle": "Kütüphanenizde henüz olmayan film ve dizileri arayın.",
+    "searchPlaceholder": "Başlığa göre ara…",
+    "search": "Ara",
+    "kindFilter": "Medya türü filtresi",
+    "kindAll": "Tüm türler",
+    "empty": "Sonuç bulunamadı. Farklı bir arama deneyin.",
+    "noPoster": "Görsel yok",
+    "inLibrary": "Zaten kütüphanede",
+    "requestButton": "İste",
+    "modalTitle": "İsteği onayla",
+    "modalDescription": "\"{{title}}\" için tercih ettiğiniz kaliteyle istek gönderin.",
+    "confirmRequest": "İsteği gönder",
+    "createFailed": "İstek oluşturulamadı. Lütfen tekrar deneyin."
+  },
+  "myRequests": {
+    "title": "İsteklerim",
+    "subtitle": "İçerik isteklerinizin durumunu takip edin.",
+    "empty": "Henüz bir istek göndermediniz.",
+    "cancel": "İptal et",
+    "live": "Canlı güncellemeler",
+    "liveConnected": "Canlı olay akışına bağlı",
+    "livePolling": "Periyodik yenileme kullanılıyor",
+    "polling": "30 sn'de bir yenileniyor"
+  },
+  "admin": {
+    "title": "İstek yönetimi",
+    "subtitle": "Bekleyen istekleri inceleyin ve onay politikalarını yapılandırın.",
+    "tabs": {
+      "queue": "Bekleyen kuyruk",
+      "policies": "Politikalar"
+    },
+    "queueEmpty": "Bekleyen istek yok.",
+    "approve": "Onayla",
+    "reject": "Reddet",
+    "rejectNotePlaceholder": "İstek sahibi için isteğe bağlı not…",
+    "confirmReject": "Reddi onayla",
+    "policies": {
+      "quotaLabel": "Kullanıcı başına aylık kota",
+      "quotaDescription": "Bir kullanıcının ayda gönderebileceği maksimum istek sayısı (0 = sınırsız).",
+      "autoApproveLabel": "Otomatik onay rolleri",
+      "autoApprovePlaceholder": "ör. admin, power_user",
+      "autoApproveDescription": "Manuel onayı atlayan rol adları (virgülle ayrılmış).",
+      "saved": "Politikalar kaydedildi."
+    }
+  },
+  "status": {
+    "pending": "Beklemede",
+    "approved": "Onaylandı",
+    "rejected": "Reddedildi",
+    "completed": "Tamamlandı",
+    "cancelled": "İptal edildi"
+  },
+  "mediaKind": {
+    "movie": "Film",
+    "tv": "Dizi"
+  },
+  "quality": {
+    "label": "Tercih edilen kalite",
+    "options": {
+      "1080p": "1080p",
+      "720p": "720p",
+      "any": "Farketmez"
+    }
+  }
+}

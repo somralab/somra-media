@@ -70,3 +70,123 @@ other = "Could not validate media source."
 
 ["streaming.source.forbidden"]
 other = "Media source access denied."
+
+["notifications.request.created.subject"]
+other = "New content request: {{.Title}}"
+
+["notifications.request.created.body"]
+other = "A new request was submitted for {{.Title}}. {{.Detail}}"
+
+["notifications.request.approved.subject"]
+other = "Request approved: {{.Title}}"
+
+["notifications.request.approved.body"]
+other = "Your request for {{.Title}} was approved. {{.Detail}}"
+
+["notifications.request.rejected.subject"]
+other = "Request rejected: {{.Title}}"
+
+["notifications.request.rejected.body"]
+other = "Your request for {{.Title}} was rejected. {{.Detail}}"
+
+["notifications.request.completed.subject"]
+other = "Request completed: {{.Title}}"
+
+["notifications.request.completed.body"]
+other = "Your request for {{.Title}} is now available. {{.Detail}}"
+
+["notifications.system.error.subject"]
+other = "System error"
+
+["notifications.system.error.body"]
+other = "A system error occurred: {{.Error}}"
+
+["requests.create.invalid"]
+other = "The request payload is invalid."
+
+["requests.create.failed"]
+other = "Could not create the content request."
+
+["requests.list.failed"]
+other = "Could not list content requests."
+
+["requests.get.failed"]
+other = "Could not load the content request."
+
+["requests.patch.failed"]
+other = "Could not update the content request."
+
+["requests.patch.invalid"]
+other = "The update payload is invalid."
+
+["requests.not_found"]
+other = "Content request not found."
+
+["requests.id.invalid"]
+other = "Invalid request id."
+
+["requests.collision.in_library"]
+other = "This title is already in your library."
+
+["requests.collision.duplicate_pending"]
+other = "A pending request already exists for this title."
+
+["requests.quota.exceeded"]
+other = "You have reached your monthly request quota."
+
+["requests.transition.invalid"]
+other = "That status change is not allowed."
+
+["requests.transition.failed"]
+other = "Could not update request status."
+
+["requests.cancel.failed"]
+other = "Could not cancel the request."
+
+["requests.handoff.failed"]
+other = "Could not hand off the approved request."
+
+["requests.discover.query_required"]
+other = "Search query is required."
+
+["requests.discover.failed"]
+other = "Could not search for requestable content."
+
+["requests.discover.unavailable"]
+other = "Content discovery is not configured."
+
+["requests.policies.get.failed"]
+other = "Could not load request policies."
+
+["requests.policies.patch.failed"]
+other = "Could not update request policies."
+
+["requests.policies.patch.invalid"]
+other = "The policy update payload is invalid."
+
+["notifications.preferences.list.failed"]
+other = "Could not load notification preferences."
+
+["notifications.preferences.patch.failed"]
+other = "Could not update notification preferences."
+
+["notifications.preferences.patch.invalid"]
+other = "The preferences payload is invalid."
+
+["notifications.channels.list.failed"]
+other = "Could not list notification channels."
+
+["notifications.channels.create.failed"]
+other = "Could not create the notification channel."
+
+["notifications.channels.create.invalid"]
+other = "The channel payload is invalid."
+
+["notifications.channel.not_found"]
+other = "Notification channel not found."
+
+["notifications.channel.id.invalid"]
+other = "Invalid notification channel id."
+
+["notifications.channel.test.failed"]
+other = "Could not send the test notification."

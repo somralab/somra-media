@@ -67,8 +67,12 @@ func (TestProvider) Search(_ context.Context, q SearchQuery) ([]SearchResult, er
 	if q.Year != nil {
 		y = *q.Year
 	}
+	extID := q.Title
+	if extID == "" {
+		extID = "1"
+	}
 	return []SearchResult{{
-		Provider: "tmdb", ExternalID: "1", Title: q.Title, Year: &y, Score: 0.95,
+		Provider: "tmdb", ExternalID: extID, Title: q.Title, Year: &y, Score: 0.95,
 	}}, nil
 }
 

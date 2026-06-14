@@ -51,6 +51,10 @@ tags:
     description: First-run setup wizard state machine.
   - name: subtitles
     description: Subtitle search, download, and management.
+  - name: requests
+    description: Content request workflow and discovery.
+  - name: notifications
+    description: Notification channels and user preferences.
 
 paths:
   /health:
@@ -1042,6 +1046,336 @@ paths:
                 type: string
                 format: binary
 
+  /requests:
+    get:
+      tags: [requests]
+      summary: List content requests
+      operationId: listRequests
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/RequestStatus"
+        - name: userId
+          in: query
+          description: Filter by request owner (admin only).
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        "200":
+          description: Requests
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [requests]
+                properties:
+                  requests:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ContentRequest"
+    post:
+      tags: [requests]
+      summary: Create a content request
+      operationId: createRequest
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRequestInput"
+      responses:
+        "201":
+          description: Request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentRequest"
+
+  /requests/discover:
+    get:
+      tags: [requests]
+      summary: Search provider catalog for requestable content
+      operationId: discoverRequestableContent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - name: kind
+          in: query
+          schema:
+            $ref: "#/components/schemas/RequestMediaKind"
+      responses:
+        "200":
+          description: Discover results
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [results]
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RequestDiscoverResult"
+
+  /requests/policies:
+    get:
+      tags: [requests]
+      summary: Get request approval policies
+      operationId: getRequestPolicies
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Request policies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestPolicies"
+    patch:
+      tags: [requests]
+      summary: Update request approval policies
+      operationId: patchRequestPolicies
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestPoliciesPatch"
+      responses:
+        "200":
+          description: Updated policies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestPolicies"
+
+  /requests/{requestId}:
+    parameters:
+      - $ref: "#/components/parameters/requestId"
+    get:
+      tags: [requests]
+      summary: Get a content request
+      operationId: getRequest
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentRequest"
+    patch:
+      tags: [requests]
+      summary: Update a content request
+      operationId: patchRequest
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestPatch"
+      responses:
+        "200":
+          description: Updated request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentRequest"
+
+  /requests/{requestId}/approve:
+    parameters:
+      - $ref: "#/components/parameters/requestId"
+    post:
+      tags: [requests]
+      summary: Approve a pending request
+      operationId: approveRequest
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestActionInput"
+      responses:
+        "200":
+          description: Approved request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentRequest"
+
+  /requests/{requestId}/reject:
+    parameters:
+      - $ref: "#/components/parameters/requestId"
+    post:
+      tags: [requests]
+      summary: Reject a pending request
+      operationId: rejectRequest
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestActionInput"
+      responses:
+        "200":
+          description: Rejected request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentRequest"
+
+  /requests/{requestId}/cancel:
+    parameters:
+      - $ref: "#/components/parameters/requestId"
+    post:
+      tags: [requests]
+      summary: Cancel a request
+      operationId: cancelRequest
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Cancelled request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentRequest"
+
+  /notifications/preferences:
+    get:
+      tags: [notifications]
+      summary: List notification preferences for the current user
+      operationId: getNotificationPreferences
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Preferences
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [preferences]
+                properties:
+                  preferences:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NotificationPreference"
+    patch:
+      tags: [notifications]
+      summary: Update notification preferences
+      operationId: patchNotificationPreferences
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationPreferencesPatch"
+      responses:
+        "200":
+          description: Updated preferences
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [preferences]
+                properties:
+                  preferences:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NotificationPreference"
+
+  /notifications/channels:
+    get:
+      tags: [notifications]
+      summary: List notification channels (admin)
+      operationId: listNotificationChannels
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Channels
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [channels]
+                properties:
+                  channels:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NotificationChannel"
+    post:
+      tags: [notifications]
+      summary: Create a notification channel (admin)
+      operationId: createNotificationChannel
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationChannelInput"
+      responses:
+        "201":
+          description: Channel created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationChannel"
+
+  /notifications/channels/{channelId}/test:
+    parameters:
+      - $ref: "#/components/parameters/channelId"
+    post:
+      tags: [notifications]
+      summary: Send a test notification through a channel (admin)
+      operationId: testNotificationChannel
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationTestInput"
+      responses:
+        "204":
+          description: Test notification sent
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1895,6 +2229,241 @@ components:
         isChild:
           type: boolean
 
+    RequestMediaKind:
+      type: string
+      enum: [movie, tv]
+
+    RequestStatus:
+      type: string
+      enum: [pending, approved, rejected, completed, cancelled]
+
+    RequestQualityResolution:
+      type: string
+      enum: [1080p, 720p, any]
+
+    ContentRequest:
+      type: object
+      required:
+        - id
+        - userId
+        - mediaKind
+        - provider
+        - externalId
+        - title
+        - qualityResolution
+        - status
+        - collisionFlag
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: string
+        mediaKind:
+          $ref: "#/components/schemas/RequestMediaKind"
+        provider:
+          type: string
+        externalId:
+          type: string
+        title:
+          type: string
+        posterUrl:
+          type: string
+        qualityResolution:
+          $ref: "#/components/schemas/RequestQualityResolution"
+        qualityProfile:
+          type: string
+        status:
+          $ref: "#/components/schemas/RequestStatus"
+        collisionFlag:
+          type: boolean
+        adminNote:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateRequestInput:
+      type: object
+      required: [mediaKind, provider, externalId, title]
+      properties:
+        mediaKind:
+          $ref: "#/components/schemas/RequestMediaKind"
+        provider:
+          type: string
+        externalId:
+          type: string
+        title:
+          type: string
+        posterUrl:
+          type: string
+        qualityResolution:
+          $ref: "#/components/schemas/RequestQualityResolution"
+        qualityProfile:
+          type: string
+
+    RequestPatch:
+      type: object
+      properties:
+        qualityResolution:
+          $ref: "#/components/schemas/RequestQualityResolution"
+        qualityProfile:
+          type: string
+        adminNote:
+          type: string
+
+    RequestActionInput:
+      type: object
+      properties:
+        adminNote:
+          type: string
+
+    RequestDiscoverResult:
+      type: object
+      required: [mediaKind, provider, externalId, title]
+      properties:
+        mediaKind:
+          $ref: "#/components/schemas/RequestMediaKind"
+        provider:
+          type: string
+        externalId:
+          type: string
+        title:
+          type: string
+        posterUrl:
+          type: string
+        inLibrary:
+          type: boolean
+          description: True when matching content already exists in the library.
+
+    RequestPolicies:
+      type: object
+      required: [autoApproveRoles, userQuotaPerMonth, adminSettings]
+      properties:
+        autoApproveRoles:
+          type: array
+          items:
+            type: string
+        userQuotaPerMonth:
+          type: integer
+          minimum: 0
+        adminSettings:
+          type: object
+          additionalProperties: true
+
+    RequestPoliciesPatch:
+      type: object
+      properties:
+        autoApproveRoles:
+          type: array
+          items:
+            type: string
+        userQuotaPerMonth:
+          type: integer
+          minimum: 0
+        adminSettings:
+          type: object
+          additionalProperties: true
+
+    NotificationChannelType:
+      type: string
+      enum: [webhook, discord, email]
+
+    NotificationChannel:
+      type: object
+      required: [id, channelType, name, config, enabled, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+          format: int64
+        channelType:
+          $ref: "#/components/schemas/NotificationChannelType"
+        name:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+        enabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    NotificationChannelInput:
+      type: object
+      required: [channelType, config]
+      properties:
+        channelType:
+          $ref: "#/components/schemas/NotificationChannelType"
+        name:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+        enabled:
+          type: boolean
+          default: true
+
+    NotificationPreference:
+      type: object
+      required: [id, userId, eventType, channelId, enabled, debounceSeconds]
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: string
+        eventType:
+          type: string
+          description: Event key (e.g. request.created, request.approved).
+        channelId:
+          type: integer
+          format: int64
+        enabled:
+          type: boolean
+        debounceSeconds:
+          type: integer
+          minimum: 0
+
+    NotificationPreferencesPatch:
+      type: object
+      required: [preferences]
+      properties:
+        preferences:
+          type: array
+          items:
+            type: object
+            required: [eventType, channelId]
+            properties:
+              id:
+                type: integer
+                format: int64
+              eventType:
+                type: string
+              channelId:
+                type: integer
+                format: int64
+              enabled:
+                type: boolean
+              debounceSeconds:
+                type: integer
+                minimum: 0
+
+    NotificationTestInput:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Optional override body for the test payload.
+
   parameters:
     libraryId:
       name: libraryId
@@ -1916,3 +2485,17 @@ components:
       required: true
       schema:
         type: string
+    requestId:
+      name: requestId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    channelId:
+      name: channelId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64

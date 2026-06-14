@@ -182,6 +182,12 @@ func run() error {
 			CacheRoot: cfg.Data.CacheDir,
 		}
 	}
+	requestsBundle, err := bootstrap.WireRequests(components, libBundle, localeFn)
+	if err != nil {
+		return fmt.Errorf("bootstrap requests: %w", err)
+	}
+	apiOpts.RequestHandlers = requestsBundle.Requests
+	apiOpts.NotificationHandlers = requestsBundle.Notifications
 	handler := api.New(apiOpts)
 
 	srv := &http.Server{

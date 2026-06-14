@@ -13,7 +13,9 @@
     "library": "Library",
     "playback": "Playback",
     "subtitles": "Subtitles",
-    "users": "Users"
+    "users": "Users",
+    "notifications": "Notifications",
+    "requests": "Requests"
   },
   "general": {
     "defaultLocale": {
@@ -78,5 +80,13 @@
   "users": {
     "manageLink": "Manage users",
     "description": "Create and manage user accounts from the admin panel."
+  },
+  "notifications": {
+    "manageLink": "Notification preferences",
+    "description": "Configure which events notify you and debounce intervals."
+  },
+  "requests": {
+    "manageLink": "Request policies",
+    "description": "Set monthly quotas and auto-approve roles for content requests."
   }
 }

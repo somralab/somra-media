@@ -16,23 +16,19 @@ test.describe('settings regression', () => {
   test('advanced settings toggle', async ({ page }) => {
     await login(page);
     await page.goto('/settings');
-    const advanced = page.getByRole('button', { name: /advanced|gelişmiş/i });
-    if (await advanced.isVisible()) {
-      await advanced.click();
-      await expect(page.getByText(/library|kütüphane/i).first()).toBeVisible();
-    }
+    await expect(page.getByText(/general|genel/i).first()).toBeVisible();
+    await page.getByRole('button', { name: /advanced|gelişmiş/i }).click();
+    await expect(page.getByRole('heading', { name: /library|kütüphane/i })).toBeVisible();
   });
 
   test('HW acceleration settings in advanced mode', async ({ page }) => {
     await login(page);
     await page.goto('/settings');
-    const advanced = page.getByRole('button', { name: /advanced|gelişmiş/i });
-    if (await advanced.isVisible()) {
-      await advanced.click();
-      await expect(
-        page.getByText(/hardware acceleration|donanım hızlandırma/i).first(),
-      ).toBeVisible();
-    }
+    await expect(page.getByText(/general|genel/i).first()).toBeVisible();
+    await page.getByRole('button', { name: /advanced|gelişmiş/i }).click();
+    await expect(
+      page.getByText(/hardware acceleration|donanım hızlandırma/i).first(),
+    ).toBeVisible();
   });
 });
 

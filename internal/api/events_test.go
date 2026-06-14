@@ -99,3 +99,42 @@ func TestSSE_DefaultAcceptHeaderAllowed(t *testing.T) {
 	n, _ := io.ReadAtLeast(resp.Body, chunk, 1)
 	assert.Greater(t, n, 0)
 }
+
+func TestSSE_RelaysBusEvent(t *testing.T) {
+	bus := NewEventBus()
+	h := newTestHandler(t, Options{EventBus: bus, SSEHeartbeat: 50 * time.Millisecond})
+	srv := httptest.NewServer(h)
+	t.Cleanup(srv.Close)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, srv.URL+"/api/v1/events/stream", nil)
+	require.NoError(t, err)
+	req.Header.Set("Accept", "text/event-stream")
+
+	resp, err := srv.Client().Do(req)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = resp.Body.Close() })
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+
+	go func() {
+		time.Sleep(20 * time.Millisecond)
+		bus.Publish("request.status", RequestStatusEvent{RequestID: 42, Status: "approved", UpdatedAt: "2026-06-01T00:00:00Z"})
+	}()
+
+	reader := bufio.NewReader(resp.Body)
+	found := false
+	deadline := time.Now().Add(1500 * time.Millisecond)
+	for time.Now().Before(deadline) {
+		line, readErr := reader.ReadString('\n')
+		if readErr != nil {
+			break
+		}
+		if strings.Contains(line, "request.status") || strings.Contains(line, `"requestId"`) {
+			found = true
+			break
+		}
+	}
+	assert.True(t, found, "request.status event should be relayed over SSE")
+}

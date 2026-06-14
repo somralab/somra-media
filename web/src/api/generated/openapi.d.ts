@@ -786,6 +786,191 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List content requests */
+        get: operations["listRequests"];
+        put?: never;
+        /** Create a content request */
+        post: operations["createRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests/discover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search provider catalog for requestable content */
+        get: operations["discoverRequestableContent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get request approval policies */
+        get: operations["getRequestPolicies"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update request approval policies */
+        patch: operations["patchRequestPolicies"];
+        trace?: never;
+    };
+    "/requests/{requestId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: components["parameters"]["requestId"];
+            };
+            cookie?: never;
+        };
+        /** Get a content request */
+        get: operations["getRequest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update a content request */
+        patch: operations["patchRequest"];
+        trace?: never;
+    };
+    "/requests/{requestId}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: components["parameters"]["requestId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve a pending request */
+        post: operations["approveRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests/{requestId}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: components["parameters"]["requestId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject a pending request */
+        post: operations["rejectRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests/{requestId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: components["parameters"]["requestId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a request */
+        post: operations["cancelRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notifications/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List notification preferences for the current user */
+        get: operations["getNotificationPreferences"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update notification preferences */
+        patch: operations["patchNotificationPreferences"];
+        trace?: never;
+    };
+    "/notifications/channels": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List notification channels (admin) */
+        get: operations["listNotificationChannels"];
+        put?: never;
+        /** Create a notification channel (admin) */
+        post: operations["createNotificationChannel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notifications/channels/{channelId}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                channelId: components["parameters"]["channelId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a test notification through a channel (admin) */
+        post: operations["testNotificationChannel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1247,12 +1432,130 @@ export interface components {
             maxContentRating?: string | null;
             isChild?: boolean;
         };
+        /** @enum {string} */
+        RequestMediaKind: "movie" | "tv";
+        /** @enum {string} */
+        RequestStatus: "pending" | "approved" | "rejected" | "completed" | "cancelled";
+        /** @enum {string} */
+        RequestQualityResolution: "1080p" | "720p" | "any";
+        ContentRequest: {
+            /** Format: int64 */
+            id: number;
+            userId: string;
+            mediaKind: components["schemas"]["RequestMediaKind"];
+            provider: string;
+            externalId: string;
+            title: string;
+            posterUrl?: string;
+            qualityResolution: components["schemas"]["RequestQualityResolution"];
+            qualityProfile?: string;
+            status: components["schemas"]["RequestStatus"];
+            collisionFlag: boolean;
+            adminNote?: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        CreateRequestInput: {
+            mediaKind: components["schemas"]["RequestMediaKind"];
+            provider: string;
+            externalId: string;
+            title: string;
+            posterUrl?: string;
+            qualityResolution?: components["schemas"]["RequestQualityResolution"];
+            qualityProfile?: string;
+        };
+        RequestPatch: {
+            qualityResolution?: components["schemas"]["RequestQualityResolution"];
+            qualityProfile?: string;
+            adminNote?: string;
+        };
+        RequestActionInput: {
+            adminNote?: string;
+        };
+        RequestDiscoverResult: {
+            mediaKind: components["schemas"]["RequestMediaKind"];
+            provider: string;
+            externalId: string;
+            title: string;
+            posterUrl?: string;
+            /** @description True when matching content already exists in the library. */
+            inLibrary?: boolean;
+        };
+        RequestPolicies: {
+            autoApproveRoles: string[];
+            userQuotaPerMonth: number;
+            adminSettings: {
+                [key: string]: unknown;
+            };
+        };
+        RequestPoliciesPatch: {
+            autoApproveRoles?: string[];
+            userQuotaPerMonth?: number;
+            adminSettings?: {
+                [key: string]: unknown;
+            };
+        };
+        /** @enum {string} */
+        NotificationChannelType: "webhook" | "discord" | "email";
+        NotificationChannel: {
+            /** Format: int64 */
+            id: number;
+            channelType: components["schemas"]["NotificationChannelType"];
+            name: string;
+            config: {
+                [key: string]: unknown;
+            };
+            enabled: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        NotificationChannelInput: {
+            channelType: components["schemas"]["NotificationChannelType"];
+            name?: string;
+            config: {
+                [key: string]: unknown;
+            };
+            /** @default true */
+            enabled: boolean;
+        };
+        NotificationPreference: {
+            /** Format: int64 */
+            id: number;
+            userId: string;
+            /** @description Event key (e.g. request.created, request.approved). */
+            eventType: string;
+            /** Format: int64 */
+            channelId: number;
+            enabled: boolean;
+            debounceSeconds: number;
+        };
+        NotificationPreferencesPatch: {
+            preferences: {
+                /** Format: int64 */
+                id?: number;
+                eventType: string;
+                /** Format: int64 */
+                channelId: number;
+                enabled?: boolean;
+                debounceSeconds?: number;
+            }[];
+        };
+        NotificationTestInput: {
+            /** @description Optional override body for the test payload. */
+            message?: string;
+        };
     };
     responses: never;
     parameters: {
         libraryId: number;
         itemId: number;
         sessionId: string;
+        requestId: number;
+        channelId: number;
     };
     requestBodies: never;
     headers: never;
@@ -2426,6 +2729,367 @@ export interface operations {
                 content: {
                     "application/octet-stream": string;
                 };
+            };
+        };
+    };
+    listRequests: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["RequestStatus"];
+                /** @description Filter by request owner (admin only). */
+                userId?: string;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Requests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        requests: components["schemas"]["ContentRequest"][];
+                    };
+                };
+            };
+        };
+    };
+    createRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRequestInput"];
+            };
+        };
+        responses: {
+            /** @description Request created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentRequest"];
+                };
+            };
+        };
+    };
+    discoverRequestableContent: {
+        parameters: {
+            query: {
+                q: string;
+                kind?: components["schemas"]["RequestMediaKind"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Discover results */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        results: components["schemas"]["RequestDiscoverResult"][];
+                    };
+                };
+            };
+        };
+    };
+    getRequestPolicies: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Request policies */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestPolicies"];
+                };
+            };
+        };
+    };
+    patchRequestPolicies: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestPoliciesPatch"];
+            };
+        };
+        responses: {
+            /** @description Updated policies */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestPolicies"];
+                };
+            };
+        };
+    };
+    getRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: components["parameters"]["requestId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Request */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentRequest"];
+                };
+            };
+        };
+    };
+    patchRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: components["parameters"]["requestId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestPatch"];
+            };
+        };
+        responses: {
+            /** @description Updated request */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentRequest"];
+                };
+            };
+        };
+    };
+    approveRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: components["parameters"]["requestId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RequestActionInput"];
+            };
+        };
+        responses: {
+            /** @description Approved request */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentRequest"];
+                };
+            };
+        };
+    };
+    rejectRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: components["parameters"]["requestId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RequestActionInput"];
+            };
+        };
+        responses: {
+            /** @description Rejected request */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentRequest"];
+                };
+            };
+        };
+    };
+    cancelRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requestId: components["parameters"]["requestId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cancelled request */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentRequest"];
+                };
+            };
+        };
+    };
+    getNotificationPreferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Preferences */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        preferences: components["schemas"]["NotificationPreference"][];
+                    };
+                };
+            };
+        };
+    };
+    patchNotificationPreferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotificationPreferencesPatch"];
+            };
+        };
+        responses: {
+            /** @description Updated preferences */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        preferences: components["schemas"]["NotificationPreference"][];
+                    };
+                };
+            };
+        };
+    };
+    listNotificationChannels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Channels */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        channels: components["schemas"]["NotificationChannel"][];
+                    };
+                };
+            };
+        };
+    };
+    createNotificationChannel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotificationChannelInput"];
+            };
+        };
+        responses: {
+            /** @description Channel created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationChannel"];
+                };
+            };
+        };
+    };
+    testNotificationChannel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                channelId: components["parameters"]["channelId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["NotificationTestInput"];
+            };
+        };
+        responses: {
+            /** @description Test notification sent */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

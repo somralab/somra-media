@@ -23,6 +23,10 @@ const OnboardingWizardPage = lazy(() => import('@/pages/OnboardingWizardPage'));
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
+const RequestDiscoverPage = lazy(() => import('@/pages/RequestDiscoverPage'));
+const MyRequestsPage = lazy(() => import('@/pages/MyRequestsPage'));
+const AdminRequestsPage = lazy(() => import('@/pages/AdminRequestsPage'));
+const NotificationSettingsPage = lazy(() => import('@/pages/NotificationSettingsPage'));
 
 function NavItem({ to, label }: { to: string; label: string }): ReactNode {
   return (
@@ -94,6 +98,7 @@ function AuthNav(): ReactNode {
     <>
       <NavItem to="/profile" label={t('nav.profile')} />
       {isAdmin ? <NavItem to="/admin/users" label={t('admin.nav')} /> : null}
+      {isAdmin ? <NavItem to="/admin/requests" label={t('nav.admin', { ns: 'requests' })} /> : null}
       <Button variant="secondary" size="sm" onClick={() => logoutMutation.mutate()}>
         {t('login.logout')}
       </Button>
@@ -122,6 +127,9 @@ export default function App(): ReactNode {
             {!onboardingActive && accessToken ? <NavItem to="/" label={t('nav.home')} /> : null}
             {!onboardingActive && accessToken ? (
               <NavItem to="/libraries" label={t('nav.libraries', { ns: 'library' })} />
+            ) : null}
+            {!onboardingActive && accessToken ? (
+              <NavItem to="/requests/discover" label={t('nav.requests')} />
             ) : null}
             {!onboardingActive ? <NavItem to="/status" label={t('nav.status')} /> : null}
             {!onboardingActive ? <NavItem to="/settings" label={t('nav.settings')} /> : null}
@@ -188,6 +196,38 @@ export default function App(): ReactNode {
               element={
                 <ProtectedRoute adminOnly>
                   <AdminUsersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/requests/discover"
+              element={
+                <ProtectedRoute>
+                  <RequestDiscoverPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/requests"
+              element={
+                <ProtectedRoute>
+                  <MyRequestsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/requests"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminRequestsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/notifications"
+              element={
+                <ProtectedRoute>
+                  <NotificationSettingsPage />
                 </ProtectedRoute>
               }
             />
