@@ -6,12 +6,16 @@ import i18n from '@/i18n';
 import { TestProviders } from './testUtils';
 
 vi.mock('@/api/endpoints/subtitles', () => ({
-  listMediaSubtitles: vi.fn().mockResolvedValue([
-    { id: 1, mediaItemId: 5, language: 'en', source: 'external', provider: 'mock' },
-  ]),
-  searchSubtitles: vi.fn().mockResolvedValue([
-    { provider: 'mock', externalId: '9', language: 'en', releaseName: 'Release', score: 90 },
-  ]),
+  listMediaSubtitles: vi
+    .fn()
+    .mockResolvedValue([
+      { id: 1, mediaItemId: 5, language: 'en', source: 'external', provider: 'mock' },
+    ]),
+  searchSubtitles: vi
+    .fn()
+    .mockResolvedValue([
+      { provider: 'mock', externalId: '9', language: 'en', releaseName: 'Release', score: 90 },
+    ]),
   downloadSubtitle: vi.fn().mockResolvedValue({ id: 2, language: 'en', source: 'external' }),
   uploadSubtitle: vi.fn().mockResolvedValue({ id: 3, language: 'tr', source: 'uploaded' }),
 }));
