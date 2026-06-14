@@ -13,6 +13,8 @@ export async function ensureAdmin(request: APIRequestContext): Promise<void> {
     phase?: string;
   };
 
+  let accessToken: string | undefined;
+
   if (body.phase === 'language' || (body.setupRequired && body.phase !== 'admin')) {
     const lang = await request.post('/api/v1/onboarding/step', {
       data: { phase: 'language', locale: 'en-US' },
@@ -27,12 +29,24 @@ export async function ensureAdmin(request: APIRequestContext): Promise<void> {
     if (!setup.ok()) {
       throw new Error(`setup admin failed: ${setup.status()}`);
     }
+    const tok = (await setup.json()) as { accessToken: string };
+    accessToken = tok.accessToken;
   }
 
   const onbStatus = await request.get('/api/v1/onboarding/status');
   const onb = (await onbStatus.json()) as { completed: boolean };
   if (!onb.completed) {
-    const done = await request.post('/api/v1/onboarding/complete');
+    if (!accessToken) {
+      const login = await request.post('/api/v1/auth/login', { data: E2E_ADMIN });
+      if (!login.ok()) {
+        throw new Error(`login for onboarding complete failed: ${login.status()}`);
+      }
+      const tok = (await login.json()) as { accessToken: string };
+      accessToken = tok.accessToken;
+    }
+    const done = await request.post('/api/v1/onboarding/complete', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
     if (!done.ok()) {
       throw new Error(`onboarding complete failed: ${done.status()}`);
     }
