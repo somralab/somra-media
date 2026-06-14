@@ -98,7 +98,7 @@ func TestDispatcherEnqueueSendFailure(t *testing.T) {
 	q.Close()
 	d := notifications.NewDispatcher(notifications.DispatcherConfig{
 		Renderer: notifications.NewTemplateRenderer(testBundle(t)),
-		Filter:   notifications.NewPreferenceFilter(&memoryPrefs{byUser: map[string]notifications.UserPreferences{
+		Filter: notifications.NewPreferenceFilter(&memoryPrefs{byUser: map[string]notifications.UserPreferences{
 			"u": {UserID: "u", EnabledChannels: map[notifications.ChannelID]bool{
 				notifications.ChannelWebhook: true,
 			}},
@@ -167,7 +167,7 @@ func TestDispatcher_SendFailureLogged(t *testing.T) {
 	ch := &recordingChannel{id: notifications.ChannelWebhook, sendErr: errors.New("delivery failed")}
 	d := notifications.NewDispatcher(notifications.DispatcherConfig{
 		Renderer: notifications.NewTemplateRenderer(testBundle(t)),
-		Filter:   notifications.NewPreferenceFilter(&memoryPrefs{byUser: map[string]notifications.UserPreferences{
+		Filter: notifications.NewPreferenceFilter(&memoryPrefs{byUser: map[string]notifications.UserPreferences{
 			"u": {UserID: "u", EnabledChannels: map[notifications.ChannelID]bool{notifications.ChannelWebhook: true}},
 		}}),
 		Debounce: notifications.NewDebouncer(0),

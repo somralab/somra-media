@@ -65,12 +65,12 @@ func TestBuildChannels_AllEnabled(t *testing.T) {
 	t.Parallel()
 	channels, err := notifications.BuildChannels(context.Background(), mapSettings{
 		notifications.KeyWebhookEnabled:    "true",
-		notifications.KeyWebhookURL:          "https://example.com/hook",
-		notifications.KeyDiscordEnabled:      "true",
-		notifications.KeyDiscordWebhookURL:   "https://discord.com/api/webhooks/x",
-		notifications.KeySMTPEnabled:         "true",
-		notifications.KeySMTPHost:            "smtp.example.com",
-		notifications.KeySMTPFrom:            "somra@example.com",
+		notifications.KeyWebhookURL:        "https://example.com/hook",
+		notifications.KeyDiscordEnabled:    "true",
+		notifications.KeyDiscordWebhookURL: "https://discord.com/api/webhooks/x",
+		notifications.KeySMTPEnabled:       "true",
+		notifications.KeySMTPHost:          "smtp.example.com",
+		notifications.KeySMTPFrom:          "somra@example.com",
 	}, nil)
 	require.NoError(t, err)
 	require.Len(t, channels, 3)
@@ -175,7 +175,9 @@ func TestDiscordChannelApprovedAndCompletedColors(t *testing.T) {
 	var colors []int
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var payload struct {
-			Embeds []struct{ Color int `json:"color"` } `json:"embeds"`
+			Embeds []struct {
+				Color int `json:"color"`
+			} `json:"embeds"`
 		}
 		_ = json.NewDecoder(r.Body).Decode(&payload)
 		if len(payload.Embeds) > 0 {
