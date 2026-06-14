@@ -1,0 +1,17 @@
+# Sprint 01 Paket 1 ships a minimal .gitignore; Paket 2 owns the canonical
+# version that covers frontend, SQLite, OS files, etc.
+
+# Go build outputs
+/somra
+/cmd/somra/somra
+*.test
+*.out
+
+# Local data directory (SQLite, caches)
+/data/
+
+# Editor and IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
