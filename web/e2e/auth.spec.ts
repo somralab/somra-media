@@ -18,7 +18,9 @@ test.describe('auth flow', () => {
     await page.getByRole('button', { name: /sign in|giriş|create admin|yönetici/i }).click();
 
     await expect(page).toHaveURL(/\/libraries/);
-    await expect(page.getByRole('heading', { name: /libraries|kütüphane/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 1, name: /libraries|kütüphane/i }),
+    ).toBeVisible();
   });
 
   test('unauthenticated libraries API returns 401', async ({ request }) => {
