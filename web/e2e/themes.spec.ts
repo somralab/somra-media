@@ -1,13 +1,11 @@
 import { test, expect } from '@playwright/test';
-
-async function login(page: import('@playwright/test').Page): Promise<void> {
-  await page.goto('/login');
-  await page.getByLabel(/username|kullanıcı/i).fill('admin');
-  await page.getByLabel(/password|şifre/i).fill('AdminPass1');
-  await page.getByRole('button', { name: /log in|giriş/i }).click();
-}
+import { ensureAdmin, login } from './helpers';
 
 test.describe('themes', () => {
+  test.beforeAll(async ({ request }) => {
+    await ensureAdmin(request);
+  });
+
   test('theme switcher changes data-theme', async ({ page }) => {
     await page.goto('/settings');
     const select = page.getByLabel(/theme|tema/i);

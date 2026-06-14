@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 // the three things the user can verify by eye on a working install.
 test.describe('M1 status dashboard', () => {
   test('shows non-empty version, health label and at least one SSE event', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/status');
 
     const versionValue = page.getByTestId('status-version-value');
     await expect(versionValue).toBeVisible({ timeout: 10_000 });
