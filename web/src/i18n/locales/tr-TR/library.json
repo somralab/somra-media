@@ -1,0 +1,57 @@
+{
+  "title": "Kütüphaneler",
+  "subtitle": "Medya klasörlerini tanımlayın, dosyaları tarayın ve eşleşen metadata önizlemesini görün.",
+  "nav": {
+    "libraries": "Kütüphaneler"
+  },
+  "list": {
+    "empty": "Henüz kütüphane yok. Taramaya başlamak için bir tane oluşturun.",
+    "create": "Yeni kütüphane",
+    "kind": "Tür",
+    "paths": "Yollar",
+    "watch": "Değişiklikleri izle"
+  },
+  "form": {
+    "name": "Ad",
+    "namePlaceholder": "Filmlerim",
+    "kind": "Kütüphane türü",
+    "paths": "Kök klasörler",
+    "pathsHelp": "Her satıra bir mutlak yol girin.",
+    "pathsPlaceholder": "/media/movies",
+    "watchEnabled": "Dosya sistemi izlemeyi etkinleştir",
+    "submitCreate": "Kütüphane oluştur",
+    "submitUpdate": "Değişiklikleri kaydet"
+  },
+  "kinds": {
+    "movie": "Filmler",
+    "tv": "Diziler",
+    "music": "Müzik"
+  },
+  "detail": {
+    "scanFull": "Tam tarama",
+    "scanIncremental": "Artımlı tarama",
+    "scanProgress": "Tarama ilerlemesi: {{done}} / {{total}}",
+    "scanHistory": "Tarama geçmişi",
+    "mediaItems": "Eşleşen öğeler",
+    "autoMatch": "Otomatik metadata eşleştir",
+    "rematch": "Yeniden eşleştir",
+    "noPoster": "Poster yok",
+    "status": "Durum"
+  },
+  "scanStatus": {
+    "pending": "Bekliyor",
+    "running": "Çalışıyor",
+    "succeeded": "Başarılı",
+    "failed": "Başarısız",
+    "cancelled": "İptal edildi"
+  },
+  "matchStatus": {
+    "unmatched": "Eşleşmedi",
+    "matched": "Eşleşti",
+    "manual": "Manuel"
+  },
+  "delete": {
+    "confirm": "Kütüphaneyi sil",
+    "warning": "Bu işlem kütüphane tanımını kaldırır; dosyalarınız silinmez."
+  }
+}

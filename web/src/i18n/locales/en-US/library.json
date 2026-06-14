@@ -1,0 +1,57 @@
+{
+  "title": "Libraries",
+  "subtitle": "Define media folders, scan for files, and preview matched metadata.",
+  "nav": {
+    "libraries": "Libraries"
+  },
+  "list": {
+    "empty": "No libraries yet. Create one to start scanning.",
+    "create": "New library",
+    "kind": "Type",
+    "paths": "Paths",
+    "watch": "Watch for changes"
+  },
+  "form": {
+    "name": "Name",
+    "namePlaceholder": "My Movies",
+    "kind": "Library type",
+    "paths": "Root folders",
+    "pathsHelp": "Enter one absolute path per line.",
+    "pathsPlaceholder": "/media/movies",
+    "watchEnabled": "Enable filesystem watch",
+    "submitCreate": "Create library",
+    "submitUpdate": "Save changes"
+  },
+  "kinds": {
+    "movie": "Movies",
+    "tv": "TV shows",
+    "music": "Music"
+  },
+  "detail": {
+    "scanFull": "Full scan",
+    "scanIncremental": "Incremental scan",
+    "scanProgress": "Scan progress: {{done}} / {{total}}",
+    "scanHistory": "Scan history",
+    "mediaItems": "Matched items",
+    "autoMatch": "Auto-match metadata",
+    "rematch": "Rematch",
+    "noPoster": "No poster",
+    "status": "Status"
+  },
+  "scanStatus": {
+    "pending": "Pending",
+    "running": "Running",
+    "succeeded": "Succeeded",
+    "failed": "Failed",
+    "cancelled": "Cancelled"
+  },
+  "matchStatus": {
+    "unmatched": "Unmatched",
+    "matched": "Matched",
+    "manual": "Manual"
+  },
+  "delete": {
+    "confirm": "Delete library",
+    "warning": "This removes the library definition but not your files."
+  }
+}

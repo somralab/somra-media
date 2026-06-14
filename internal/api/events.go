@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -15,11 +16,10 @@ import (
 // keep proxies and load balancers from closing idle connections.
 const defaultSSEHeartbeat = 15 * time.Second
 
-// sseEventsHandler implements GET /api/v1/events/stream. The endpoint is a
-// scaffold: it sends a single "hello" event on connect and then a heartbeat
-// comment on a fixed interval until the client disconnects. Real business
-// events are emitted in Sprint 05 (Paket 5 backend core / Sprint 02 library).
-func sseEventsHandler(heartbeat time.Duration) http.HandlerFunc {
+// sseEventsHandler implements GET /api/v1/events/stream. It sends a hello
+// event on connect, relays bus events when configured, and emits heartbeat
+// comments until the client disconnects.
+func sseEventsHandler(heartbeat time.Duration, bus *EventBus) http.HandlerFunc {
 	if heartbeat <= 0 {
 		heartbeat = defaultSSEHeartbeat
 	}
@@ -49,6 +49,12 @@ func sseEventsHandler(heartbeat time.Duration) http.HandlerFunc {
 		}
 		flusher.Flush()
 
+		var sub chan []byte
+		if bus != nil {
+			sub = bus.Subscribe()
+			defer bus.Unsubscribe(sub)
+		}
+
 		ticker := time.NewTicker(heartbeat)
 		defer ticker.Stop()
 
@@ -58,6 +64,21 @@ func sseEventsHandler(heartbeat time.Duration) http.HandlerFunc {
 			case <-ctx.Done():
 				logger.DebugContext(ctx, "sse: client disconnected")
 				return
+			case frame, ok := <-sub:
+				if !ok {
+					return
+				}
+				var wrapped struct {
+					Event string          `json:"event"`
+					Data  json.RawMessage `json:"data"`
+				}
+				if err := json.Unmarshal(frame, &wrapped); err != nil {
+					continue
+				}
+				if err := writeSSEEvent(w, wrapped.Event, string(wrapped.Data)); err != nil {
+					return
+				}
+				flusher.Flush()
 			case <-ticker.C:
 				if err := writeSSEComment(w, "ping"); err != nil {
 					return

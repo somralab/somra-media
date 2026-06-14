@@ -5,7 +5,8 @@
   },
   "nav": {
     "status": "Status",
-    "settings": "Settings"
+    "settings": "Settings",
+    "libraries": "Libraries"
   },
   "actions": {
     "save": "Save",
