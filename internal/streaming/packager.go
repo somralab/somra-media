@@ -30,7 +30,7 @@ func BuildFFmpegArgs(opts PackagerOptions) []string {
 	if len(opts.Tiers) > 0 {
 		tier = opts.Tiers[0]
 	} else {
-		tier = LadderTier{Name: "source", Width: 0, Height: 0, VideoBitrate: 2_500_000, AudioBitrate: 128_000}
+		tier = LadderTier{Width: 0, Height: 0, VideoBitrate: 2_500_000, AudioBitrate: 128_000}
 	}
 
 	args := []string{}
