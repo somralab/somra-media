@@ -78,16 +78,6 @@ func adminAuthContext(t *testing.T, d *db.DB) auth.AuthContext {
 	}
 }
 
-func userAuthContext(t *testing.T, d *db.DB, userID string) auth.AuthContext {
-	t.Helper()
-	return auth.AuthContext{
-		Claims: auth.Claims{
-			Subject: auth.Subject{UserID: userID, Roles: []string{auth.RoleUser}},
-		},
-		Permissions: permissionsForRoles(t, d, []string{auth.RoleUser}),
-	}
-}
-
 func userAuthContextWithPerms(userID string, perms []string) auth.AuthContext {
 	return auth.AuthContext{
 		Claims: auth.Claims{
