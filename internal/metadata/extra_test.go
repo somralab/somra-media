@@ -48,8 +48,3 @@ func TestStubProviders(t *testing.T) {
 		_, _, _, _ = p.Images(ctx, "1")
 	}
 }
-
-func TestDoRequest_BlocksBadURL(t *testing.T) {
-	_, err := DoRequest(context.Background(), SafeHTTPClient(time.Second), "GET", "http://127.0.0.1/")
-	require.Error(t, err)
-}

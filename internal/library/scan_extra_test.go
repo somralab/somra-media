@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -63,6 +64,7 @@ func waitScan(t *testing.T, ctx context.Context, queue *jobs.MemoryQueue, svc *S
 		if st == jobs.TaskSucceeded && run.Status == db.ScanSucceeded {
 			return
 		}
+		time.Sleep(10 * time.Millisecond)
 	}
 	t.Fatal("scan did not finish")
 }

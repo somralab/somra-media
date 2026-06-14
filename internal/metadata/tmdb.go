@@ -18,6 +18,14 @@ type TMDBProvider struct {
 	APIKey string
 	Client *http.Client
 	Base   string
+	fetch  func(ctx context.Context, client *http.Client, method, rawURL string) (*http.Response, error)
+}
+
+func (p *TMDBProvider) doHTTP(ctx context.Context, method, rawURL string) (*http.Response, error) {
+	if p.fetch != nil {
+		return p.fetch(ctx, p.Client, method, rawURL)
+	}
+	return DoRequest(ctx, p.Client, method, rawURL)
 }
 
 // NewTMDBProvider returns a TMDB provider.
@@ -54,7 +62,7 @@ func (p *TMDBProvider) Search(ctx context.Context, q SearchQuery) ([]SearchResul
 		}
 	}
 	raw := p.Base + endpoint + "?" + params.Encode()
-	resp, err := DoRequest(ctx, p.Client, http.MethodGet, raw)
+	resp, err := p.doHTTP(ctx, http.MethodGet, raw)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +116,7 @@ func (p *TMDBProvider) Search(ctx context.Context, q SearchQuery) ([]SearchResul
 
 func (p *TMDBProvider) Detail(ctx context.Context, externalID, locale string) (Detail, error) {
 	raw := fmt.Sprintf("%s/movie/%s?api_key=%s&language=%s", p.Base, externalID, url.QueryEscape(p.APIKey), localeToTMDB(locale))
-	resp, err := DoRequest(ctx, p.Client, http.MethodGet, raw)
+	resp, err := p.doHTTP(ctx, http.MethodGet, raw)
 	if err != nil {
 		return Detail{}, err
 	}
