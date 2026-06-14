@@ -6,9 +6,13 @@
 #   ./cache    : transcoding scratch space (used by streaming module)
 #   ./media    : mount your media library here, read-only
 #
-# Quick start:
-#   mkdir -p config data cache media
-#   docker compose -f deploy/docker-compose.yml up
+# Quick start (from repo root):
+#   mkdir -p deploy/config deploy/data deploy/cache deploy/media
+#   docker compose -f deploy/docker-compose.yml up --build
+#
+# Volumes resolve relative to this file's directory (deploy/). The image is built
+# locally from the repo; ghcr.io/somralab/somra-media:dev is the local tag only.
+# CI/releases publish to GHCR — use `make docker` for a standalone image build.
 #
 # Once the container is healthy, visit http://localhost:8080 — the SPA is
 # served from `/web/static` inside the image and the API lives under
@@ -17,6 +21,9 @@
 services:
   somra:
     image: ghcr.io/somralab/somra-media:dev
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
     container_name: somra
     restart: unless-stopped
     ports:
