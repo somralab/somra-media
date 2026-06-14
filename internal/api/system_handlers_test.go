@@ -19,7 +19,7 @@ func TestSystemDetectHandler(t *testing.T) {
 	dir := t.TempDir()
 
 	h := testRouterWithAuth(New(Options{
-		SystemHandlers: &SystemHandlers{DataDir: dir, CacheDir: dir},
+		SystemHandlers:   &SystemHandlers{DataDir: dir, CacheDir: dir},
 		SettingsHandlers: &SettingsHandlers{Service: settingsSvc},
 	}))
 
