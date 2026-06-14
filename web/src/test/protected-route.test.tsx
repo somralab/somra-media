@@ -16,7 +16,7 @@ describe('ProtectedRoute', () => {
     useAuthStore.setState({
       accessToken: 'token',
       expiresAt: new Date(Date.now() + 60_000).toISOString(),
-      user: { id: '1', username: 'admin', roles: ['admin'] },
+      user: { id: '1', username: 'admin', roles: ['admin'], disabled: false },
     });
 
     render(
