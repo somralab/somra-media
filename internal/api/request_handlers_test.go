@@ -273,6 +273,192 @@ func TestRequestHandlers_QuotaExceeded(t *testing.T) {
 	require.Equal(t, http.StatusForbidden, rec.Code)
 }
 
+func TestRequestHandlers_GetAndPatch(t *testing.T) {
+	h, d, token, _ := newRequestTestRouter(t)
+	ctx := context.Background()
+	users := db.NewUserRepo(d.Querier())
+	userID := uuid.NewString()
+	_, err := users.Create(ctx, userID, "getuser", "hash", []string{auth.RoleUser})
+	require.NoError(t, err)
+	reqRepo := db.NewRequestRepo(d.Querier())
+	id, err := reqRepo.Create(ctx, db.Request{
+		UserID: userID, MediaKind: db.RequestMediaKindMovie,
+		Provider: "tmdb", ExternalID: "get-1", Title: "Get Me",
+	})
+	require.NoError(t, err)
+
+	req := authRequest(http.MethodGet, fmt.Sprintf("/api/v1/requests/%d", id), token, nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	patch, _ := json.Marshal(map[string]any{
+		"qualityResolution": "1080p",
+		"qualityProfile":    "hd",
+		"adminNote":         "reviewed",
+	})
+	req = authRequest(http.MethodPatch, fmt.Sprintf("/api/v1/requests/%d", id), token, patch)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var updated map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &updated))
+	assert.Equal(t, "1080p", updated["qualityResolution"])
+	assert.Equal(t, "reviewed", updated["adminNote"])
+
+	req = authRequest(http.MethodGet, "/api/v1/requests/99999", token, nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusNotFound, rec.Code)
+
+	req = authRequest(http.MethodGet, "/api/v1/requests?status=pending", token, nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestRequestHandlers_DuplicatePendingCollision(t *testing.T) {
+	h, _, token, _ := newRequestTestRouter(t)
+
+	patch, _ := json.Marshal(map[string]any{"userQuotaPerMonth": 10, "autoApproveRoles": []string{}})
+	req := authRequest(http.MethodPatch, "/api/v1/requests/policies", token, patch)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	body, _ := json.Marshal(map[string]any{
+		"mediaKind": "movie", "provider": "tmdb", "externalId": "dup-1", "title": "Dup",
+	})
+	req = authRequest(http.MethodPost, "/api/v1/requests", token, body)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	assert.Equal(t, "pending", created["status"])
+
+	req = authRequest(http.MethodPost, "/api/v1/requests", token, body)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusConflict, rec.Code)
+}
+
+func TestRequestHandlers_PoliciesValidation(t *testing.T) {
+	h, _, token, _ := newRequestTestRouter(t)
+
+	patch, _ := json.Marshal(map[string]any{
+		"userQuotaPerMonth": -1,
+		"adminSettings":     map[string]any{"notifyOnCreate": true},
+	})
+	req := authRequest(http.MethodPatch, "/api/v1/requests/policies", token, patch)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+
+	patch, _ = json.Marshal(map[string]any{
+		"autoApproveRoles":  []string{"admin", "user"},
+		"adminSettings":     map[string]any{"notifyOnCreate": true},
+		"userQuotaPerMonth": 3,
+	})
+	req = authRequest(http.MethodPatch, "/api/v1/requests/policies", token, patch)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestRequestHandlers_UserGetsOwnRequest(t *testing.T) {
+	h, d, _, _ := newRequestTestRouter(t)
+	ctx := context.Background()
+	svc := newTestAuthService(t, d)
+	_, err := svc.Register(ctx, "ownreq", "UserPass1", []string{auth.RoleUser})
+	require.NoError(t, err)
+	user, pair, err := svc.Login(ctx, "ownreq", "UserPass1", "web", "127.0.0.1")
+	require.NoError(t, err)
+
+	reqRepo := db.NewRequestRepo(d.Querier())
+	id, err := reqRepo.Create(ctx, db.Request{
+		UserID: user.ID, MediaKind: db.RequestMediaKindMovie,
+		Provider: "tmdb", ExternalID: "own-1", Title: "Mine",
+	})
+	require.NoError(t, err)
+
+	req := authRequest(http.MethodGet, fmt.Sprintf("/api/v1/requests/%d", id), pair.AccessToken, nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	req = authRequest(http.MethodGet, fmt.Sprintf("/api/v1/requests?userId=%s", user.ID), pair.AccessToken, nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusForbidden, rec.Code)
+}
+
+func TestRequestHandlers_AdminListByUser(t *testing.T) {
+	h, d, token, _ := newRequestTestRouter(t)
+	ctx := context.Background()
+	users := db.NewUserRepo(d.Querier())
+	userID := uuid.NewString()
+	_, err := users.Create(ctx, userID, "listed", "hash", []string{auth.RoleUser})
+	require.NoError(t, err)
+	reqRepo := db.NewRequestRepo(d.Querier())
+	_, err = reqRepo.Create(ctx, db.Request{
+		UserID: userID, MediaKind: db.RequestMediaKindMovie,
+		Provider: "tmdb", ExternalID: "listed-1", Title: "Listed",
+	})
+	require.NoError(t, err)
+
+	req := authRequest(http.MethodGet, fmt.Sprintf("/api/v1/requests?userId=%s&status=pending", userID), token, nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	req = authRequest(http.MethodGet, "/api/v1/requests/not-a-number", token, nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestRequestHandlers_PatchNoOp(t *testing.T) {
+	h, d, token, _ := newRequestTestRouter(t)
+	ctx := context.Background()
+	reqRepo := db.NewRequestRepo(d.Querier())
+	users := db.NewUserRepo(d.Querier())
+	adminID := uuid.NewString()
+	_, err := users.Create(ctx, adminID, "admin2", "hash", []string{auth.RoleAdmin})
+	require.NoError(t, err)
+	id, err := reqRepo.Create(ctx, db.Request{
+		UserID: adminID, MediaKind: db.RequestMediaKindMovie,
+		Provider: "tmdb", ExternalID: "noop-1", Title: "Noop",
+	})
+	require.NoError(t, err)
+
+	req := authRequest(http.MethodPatch, fmt.Sprintf("/api/v1/requests/%d", id), token, []byte(`{}`))
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestRequestStatusPublisher_NilBus(t *testing.T) {
+	pub := RequestStatusPublisher{}
+	pub.PublishRequestStatus(RequestStatusEvent{RequestID: 1, Status: "pending"})
+}
+
+func TestRequestHandlers_NotifyCompleted(t *testing.T) {
+	bundle, err := i18n.NewBundle()
+	require.NoError(t, err)
+	queue := jobs.NewMemoryQueue(jobs.MemoryQueueConfig{Workers: 1, Buffer: 4})
+	t.Cleanup(queue.Close)
+	dispatcher := notifications.NewDispatcher(notifications.DispatcherConfig{
+		Renderer: notifications.NewTemplateRenderer(bundle),
+		Filter:   notifications.NewPreferenceFilter(nil),
+		Queue:    queue,
+	})
+	h := &RequestHandlers{Notify: dispatcher}
+	h.notifyCompleted(context.Background(), requests.Request{ID: 1, UserID: "u1", Title: "Done"})
+}
+
 func TestRequestHandlers_UserRBAC(t *testing.T) {
 	h, d, adminToken, _ := newRequestTestRouter(t)
 	ctx := context.Background()

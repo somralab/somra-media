@@ -63,6 +63,17 @@ func TestNotificationRepos_CRUD(t *testing.T) {
 	assert.Equal(t, 30, prefs[0].DebounceSeconds)
 
 	prefID2, err := prefRepo.Upsert(ctx, NotificationPreference{
+		ID:              prefID,
+		UserID:          userID,
+		EventType:       "request.created",
+		ChannelID:       chID,
+		Enabled:         false,
+		DebounceSeconds: 45,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, prefID, prefID2)
+
+	prefID2, err = prefRepo.Upsert(ctx, NotificationPreference{
 		UserID:          userID,
 		EventType:       "request.created",
 		ChannelID:       chID,
@@ -88,6 +99,91 @@ func TestNotificationRepos_CRUD(t *testing.T) {
 		ChannelID: chID,
 	})
 	require.ErrorIs(t, err, ErrNotificationPreferenceNotFound)
+}
+
+func TestNotificationChannelRepo_ListEmpty(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+	repo := NewNotificationChannelRepo(d.Querier())
+	channels, err := repo.List(ctx)
+	require.NoError(t, err)
+	assert.Empty(t, channels)
+}
+
+func TestNotificationPreferenceRepo_UpsertConflictLookup(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	users := NewUserRepo(d.Querier())
+	userID := uuid.NewString()
+	_, err := users.Create(ctx, userID, "conflict-user", "hash", []string{"user"})
+	require.NoError(t, err)
+
+	chRepo := NewNotificationChannelRepo(d.Querier())
+	chID, err := chRepo.Create(ctx, NotificationChannel{
+		ChannelType: NotificationChannelWebhook,
+		Name:        "hook",
+		Config:      `{"url":"https://example.com"}`,
+		Enabled:     true,
+	})
+	require.NoError(t, err)
+
+	prefRepo := NewNotificationPreferenceRepo(d.Querier())
+	id1, err := prefRepo.Upsert(ctx, NotificationPreference{
+		UserID: userID, EventType: "request.approved", ChannelID: chID, Enabled: true,
+	})
+	require.NoError(t, err)
+	id2, err := prefRepo.Upsert(ctx, NotificationPreference{
+		UserID: userID, EventType: "request.approved", ChannelID: chID, Enabled: false, DebounceSeconds: 5,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, id1, id2)
+}
+
+func TestNotificationChannelRepo_DefaultConfig(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+	repo := NewNotificationChannelRepo(d.Querier())
+
+	id, err := repo.Create(ctx, NotificationChannel{
+		ChannelType: NotificationChannelWebhook,
+		Name:        "Default cfg",
+	})
+	require.NoError(t, err)
+	ch, err := repo.GetByID(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, "{}", ch.Config)
+}
+
+func TestNotificationPreferenceRepo_Validation(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+	repo := NewNotificationPreferenceRepo(d.Querier())
+
+	_, err := repo.ListByUser(ctx, "")
+	require.Error(t, err)
+
+	_, err = repo.Upsert(ctx, NotificationPreference{})
+	require.Error(t, err)
+}
+
+func TestNotificationChannelRepo_Validation(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+	repo := NewNotificationChannelRepo(d.Querier())
+
+	_, err := repo.Create(ctx, NotificationChannel{})
+	require.Error(t, err)
+
+	_, err = repo.GetByID(ctx, 99999)
+	require.ErrorIs(t, err, ErrNotificationChannelNotFound)
+
+	require.Error(t, repo.SetEnabled(ctx, 99999, true))
 }
 
 func TestNotificationPreferenceRepo_ListAfterClose(t *testing.T) {
