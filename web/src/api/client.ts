@@ -121,7 +121,10 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
           headers: { Accept: 'application/json' },
         });
         if (refreshResp.ok) {
-          const refreshed = (await refreshResp.json()) as { accessToken: string; expiresAt: string };
+          const refreshed = (await refreshResp.json()) as {
+            accessToken: string;
+            expiresAt: string;
+          };
           const user = useAuthStore.getState().user;
           if (user) {
             setAuthSession(refreshed.accessToken, refreshed.expiresAt, user);

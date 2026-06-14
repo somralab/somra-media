@@ -29,7 +29,10 @@ export default function ProfilePage(): ReactNode {
     if (profileQuery.data && isThemeId(profileQuery.data.theme)) {
       setTheme(profileQuery.data.theme as ThemeId);
     }
-    if (profileQuery.data?.locale && SUPPORTED_LOCALES.includes(profileQuery.data.locale as SupportedLocale)) {
+    if (
+      profileQuery.data?.locale &&
+      SUPPORTED_LOCALES.includes(profileQuery.data.locale as SupportedLocale)
+    ) {
       void i18n.changeLanguage(profileQuery.data.locale);
     }
   }, [profileQuery.data, setTheme]);
@@ -75,7 +78,9 @@ export default function ProfilePage(): ReactNode {
         </div>
         <Button
           variant="secondary"
-          onClick={() => saveMutation.mutate({ locale: i18n.language, theme: useThemeStore.getState().theme })}
+          onClick={() =>
+            saveMutation.mutate({ locale: i18n.language, theme: useThemeStore.getState().theme })
+          }
         >
           {t('profile.save')}
         </Button>

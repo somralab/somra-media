@@ -32,7 +32,11 @@ export async function setupAdmin(username: string, password: string): Promise<To
   });
 }
 
-export async function login(username: string, password: string, deviceLabel?: string): Promise<TokenResponse> {
+export async function login(
+  username: string,
+  password: string,
+  deviceLabel?: string,
+): Promise<TokenResponse> {
   return apiClient.fetch<TokenResponse>('/auth/login', {
     method: 'POST',
     body: { username, password, deviceLabel },

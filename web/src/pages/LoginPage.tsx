@@ -50,7 +50,9 @@ export default function LoginPage(): ReactNode {
     <div className="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center p-6">
       <Card className="space-y-4 p-6">
         <h1 className="text-xl font-semibold">{isSetup ? t('setup.title') : t('login.title')}</h1>
-        <p className="text-sm text-muted">{isSetup ? t('setup.description') : t('login.description')}</p>
+        <p className="text-sm text-muted">
+          {isSetup ? t('setup.description') : t('login.description')}
+        </p>
         <form className="space-y-3" onSubmit={handleSubmit}>
           <label className="block space-y-1">
             <span className="text-sm">{t('fields.username')}</span>

@@ -23,7 +23,8 @@ export default function AdminUsersPage(): ReactNode {
   });
 
   const toggleMutation = useMutation({
-    mutationFn: ({ id, disabled }: { id: string; disabled: boolean }) => updateUser(id, { disabled }),
+    mutationFn: ({ id, disabled }: { id: string; disabled: boolean }) =>
+      updateUser(id, { disabled }),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['users'] }),
   });
 
@@ -40,9 +41,22 @@ export default function AdminUsersPage(): ReactNode {
       <Card className="space-y-3 p-4">
         <h2 className="font-medium">{t('admin.create')}</h2>
         <form className="flex flex-wrap gap-2" onSubmit={handleCreate}>
-          <Input placeholder={t('fields.username')} value={username} onChange={(e) => setUsername(e.target.value)} required />
-          <Input type="password" placeholder={t('fields.password')} value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <Button type="submit" disabled={createMutation.isPending}>{t('admin.createSubmit')}</Button>
+          <Input
+            placeholder={t('fields.username')}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder={t('fields.password')}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button type="submit" disabled={createMutation.isPending}>
+            {t('admin.createSubmit')}
+          </Button>
         </form>
       </Card>
       <Card className="overflow-x-auto p-4">
