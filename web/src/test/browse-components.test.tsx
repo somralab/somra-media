@@ -83,7 +83,16 @@ describe('browse components', () => {
 
     wrap(
       <SearchResultsDropdown
-        results={[{ id: 1, libraryId: 2, kind: 'movie', title: 'Found', year: 2020, matchStatus: 'matched' }]}
+        results={[
+          {
+            id: 1,
+            libraryId: 2,
+            kind: 'movie',
+            title: 'Found',
+            year: 2020,
+            matchStatus: 'matched',
+          },
+        ]}
         query="found"
       />,
     );
