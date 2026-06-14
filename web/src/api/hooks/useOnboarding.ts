@@ -55,13 +55,6 @@ export function useCompleteOnboarding() {
 }
 
 export function phaseIndex(phase: OnboardingPhase): number {
-  const order: OnboardingPhase[] = [
-    'language',
-    'admin',
-    'library',
-    'defaults',
-    'scan',
-    'complete',
-  ];
+  const order: OnboardingPhase[] = ['language', 'admin', 'library', 'defaults', 'scan', 'complete'];
   return order.indexOf(phase);
 }

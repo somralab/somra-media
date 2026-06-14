@@ -201,18 +201,13 @@ export default function OnboardingWizardPage(): ReactNode {
                 description={t('defaults.memory', { gb: memoryGb })}
               />
               <RecommendationCard
-                title={
-                  profile.gpuPresent ? t('defaults.gpu') : t('defaults.noGpu')
-                }
+                title={profile.gpuPresent ? t('defaults.gpu') : t('defaults.noGpu')}
                 description={t('defaults.transcodeConcurrency', {
                   count: statusQuery.data?.smartDefaults?.maxConcurrentTranscodes ?? 2,
                 })}
                 applied={defaultsApplied}
               />
-              <RecommendationCard
-                title={t('defaults.scanSchedule')}
-                applied={defaultsApplied}
-              />
+              <RecommendationCard title={t('defaults.scanSchedule')} applied={defaultsApplied} />
             </>
           ) : null}
           <Button onClick={() => void handleDefaults()} disabled={advance.isPending}>

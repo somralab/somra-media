@@ -2,13 +2,7 @@ import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 
-export type OnboardingStepId =
-  | 'language'
-  | 'admin'
-  | 'library'
-  | 'defaults'
-  | 'scan'
-  | 'complete';
+export type OnboardingStepId = 'language' | 'admin' | 'library' | 'defaults' | 'scan' | 'complete';
 
 const STEP_ORDER: OnboardingStepId[] = [
   'language',
@@ -66,7 +60,7 @@ export function StepIndicator({ currentStep }: StepIndicatorProps): ReactNode {
               className={cn(
                 'flex h-7 w-7 items-center justify-center rounded-full border text-xs font-medium',
                 isActive && 'border-primary bg-primary/15',
-                isDone && 'border-primary bg-primary text-primary-foreground',
+                isDone && 'text-primary-foreground border-primary bg-primary',
               )}
             >
               {idx + 1}

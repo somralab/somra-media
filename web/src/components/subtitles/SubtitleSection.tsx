@@ -4,13 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalTitle,
-  ModalClose,
-} from '@/components/ui/Modal';
+import { Modal, ModalContent, ModalHeader, ModalTitle, ModalClose } from '@/components/ui/Modal';
 import {
   downloadSubtitle,
   listMediaSubtitles,

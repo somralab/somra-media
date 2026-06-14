@@ -67,9 +67,7 @@ export default function SettingsPage(): ReactNode {
                 <select
                   className="w-full rounded-md border border-border bg-surface px-3 py-2"
                   value={general?.defaultLocale ?? 'en-US'}
-                  onChange={(e) =>
-                    patchGeneral.mutate({ defaultLocale: e.target.value })
-                  }
+                  onChange={(e) => patchGeneral.mutate({ defaultLocale: e.target.value })}
                 >
                   <option value="en-US">en-US</option>
                   <option value="tr-TR">tr-TR</option>
@@ -125,9 +123,7 @@ export default function SettingsPage(): ReactNode {
                     <input
                       type="checkbox"
                       defaultChecked={Boolean(subtitles?.autoDownload)}
-                      onChange={(e) =>
-                        patchSubtitles.mutate({ autoDownload: e.target.checked })
-                      }
+                      onChange={(e) => patchSubtitles.mutate({ autoDownload: e.target.checked })}
                     />
                     {t('subtitles.autoDownload.label')}
                   </label>
