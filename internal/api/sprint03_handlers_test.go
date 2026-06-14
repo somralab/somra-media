@@ -300,7 +300,7 @@ func TestAuthMiddleware_RequireRoleAndLocale(t *testing.T) {
 	localeHandler.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusOK, rec.Code)
 
-	_, ok := AcceptLanguageFromContext(nil)
+	_, ok := AcceptLanguageFromContext(context.Background())
 	assert.False(t, ok)
 
 	_ = svc

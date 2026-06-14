@@ -53,6 +53,6 @@ func TestService_LoginDisabledUser(t *testing.T) {
 
 func TestFromContext_Nil(t *testing.T) {
 	t.Parallel()
-	_, ok := auth.FromContext(nil)
+	_, ok := auth.FromContext(context.Background())
 	assert.False(t, ok)
 }

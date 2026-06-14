@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -161,7 +160,7 @@ func TestUserHandlers_InvalidJSON(t *testing.T) {
 	h.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusBadRequest, rec.Code)
 
-	req = authRequest(http.MethodPut, "/api/v1/users/"+fmt.Sprint("missing"), access, []byte(`{`))
+	req = authRequest(http.MethodPut, "/api/v1/users/missing", access, []byte(`{`))
 	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusBadRequest, rec.Code)
