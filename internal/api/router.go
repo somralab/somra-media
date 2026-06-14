@@ -60,6 +60,9 @@ type Options struct {
 	// MediaHandlers, when non-nil, mounts media/metadata routes.
 	MediaHandlers *MediaHandlers
 
+	// BrowseHandlers mounts discover/search/paginated browse/detail routes.
+	BrowseHandlers *BrowseHandlers
+
 	// AuthHandlers, when non-nil, mounts auth/setup routes (public subset).
 	AuthHandlers *AuthHandlers
 
@@ -153,6 +156,9 @@ func mountProtectedRoutes(r chi.Router, opts Options) {
 	}
 	if opts.MediaHandlers != nil {
 		opts.MediaHandlers.Mount(r)
+	}
+	if opts.BrowseHandlers != nil {
+		opts.BrowseHandlers.Mount(r)
 	}
 	if opts.StreamingHandlers != nil {
 		opts.StreamingHandlers.Mount(r)

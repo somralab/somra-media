@@ -1,20 +1,13 @@
 import { test, expect } from '@playwright/test';
+import { E2E_ADMIN, ensureAdmin } from './helpers';
 
 test.describe('auth flow', () => {
   test('setup admin, login, and reach libraries', async ({ page, request }) => {
-    const status = await request.get('/api/v1/setup/status');
-    const body = (await status.json()) as { setupRequired: boolean };
-
-    if (body.setupRequired) {
-      const setup = await request.post('/api/v1/setup/admin', {
-        data: { username: 'e2e-admin', password: 'E2eAdmin1' },
-      });
-      expect(setup.ok()).toBeTruthy();
-    }
+    await ensureAdmin(request);
 
     await page.goto('/login');
-    await page.getByLabel(/username|kullanıcı/i).fill('e2e-admin');
-    await page.getByLabel(/password|parola/i).fill('E2eAdmin1');
+    await page.getByLabel(/username|kullanıcı/i).fill(E2E_ADMIN.username);
+    await page.getByLabel(/password|şifre|parola/i).fill(E2E_ADMIN.password);
     await page.getByRole('button', { name: /sign in|giriş|create admin|yönetici/i }).click();
 
     await expect(page).toHaveURL(/\/libraries/);

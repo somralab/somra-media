@@ -92,8 +92,19 @@ export function listScans(id: number, signal?: AbortSignal): Promise<ScanRun[]> 
 }
 
 export function listMediaItems(libraryId: number, signal?: AbortSignal): Promise<MediaItem[]> {
-  return apiClient.fetch<MediaItem[]>(
-    `/libraries/${libraryId}/items`,
+  return listMediaItemsPaginated(libraryId, { limit: 500 }, signal).then((page) => page.items);
+}
+
+async function listMediaItemsPaginated(
+  libraryId: number,
+  filters: { limit?: number },
+  signal?: AbortSignal,
+): Promise<{ items: MediaItem[] }> {
+  const params = new URLSearchParams();
+  if (filters.limit !== undefined) params.set('limit', String(filters.limit));
+  const qs = params.toString();
+  return apiClient.fetch<{ items: MediaItem[] }>(
+    `/libraries/${libraryId}/items${qs ? `?${qs}` : ''}`,
     signal !== undefined ? { signal } : {},
   );
 }

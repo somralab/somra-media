@@ -1,0 +1,31 @@
+{
+  "poster": {
+    "label": "Open {{title}}",
+    "noImage": "No image"
+  },
+  "filters": {
+    "sort": "Sort",
+    "sortTitle": "Title",
+    "sortYear": "Year",
+    "sortAdded": "Date added",
+    "genre": "Genre",
+    "genrePlaceholder": "Action, Drama…",
+    "year": "Year",
+    "watchStatus": "Watch status",
+    "watchAll": "All",
+    "watchUnwatched": "Unwatched",
+    "watchInProgress": "In progress",
+    "watchCompleted": "Completed"
+  },
+  "view": {
+    "grid": "Grid",
+    "list": "List"
+  },
+  "empty": {
+    "title": "No titles found",
+    "description": "Try adjusting filters or run a library scan."
+  },
+  "error": {
+    "loadFailed": "Could not load library items."
+  }
+}

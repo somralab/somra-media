@@ -1,0 +1,16 @@
+{
+  "title": "Discover",
+  "subtitle": "Continue watching, new additions, and picks for you.",
+  "shelves": {
+    "continueWatching": "Continue watching",
+    "recentlyAdded": "Recently added",
+    "recommended": "Recommended for you"
+  },
+  "empty": {
+    "title": "Nothing to discover yet",
+    "description": "Scan a library and start watching to see personalized shelves here."
+  },
+  "error": {
+    "loadFailed": "Could not load discover shelves."
+  }
+}

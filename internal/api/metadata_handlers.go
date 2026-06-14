@@ -25,30 +25,10 @@ type rematchRequest struct {
 }
 
 func (h *MediaHandlers) Mount(r chi.Router) {
-	r.With(RequirePermission(auth.PermLibraryRead)).Get("/libraries/{libraryID}/items", h.listItems)
 	r.With(RequirePermission(auth.PermLibraryRead)).Get("/media-items/{itemID}", h.getItem)
 	r.With(RequirePermission(auth.PermLibraryRead)).Get("/media-items/{itemID}/match-candidates", h.matchCandidates)
 	r.With(RequirePermission(auth.PermLibraryWrite)).Post("/media-items/{itemID}/rematch", h.rematch)
 	r.With(RequirePermission(auth.PermLibraryWrite)).Post("/libraries/{libraryID}/match", h.autoMatch)
-}
-
-func (h *MediaHandlers) listItems(w http.ResponseWriter, r *http.Request) {
-	libraryID, err := parseID(chi.URLParam(r, "libraryID"))
-	if err != nil {
-		writeError(w, r, platformerrors.New(http.StatusBadRequest, platformerrors.CodeValidation, "library.id.invalid"))
-		return
-	}
-	locale := "en-US"
-	if h.Locale != nil {
-		locale = h.Locale(r)
-	}
-	items, err := db.NewMediaRepo(h.DB.Querier()).ListItemsByLibrary(r.Context(), libraryID, locale, 100, 0)
-	if err != nil {
-		writeError(w, r, platformerrors.Wrap(err, http.StatusInternalServerError, platformerrors.CodeInternal, "media.list.failed"))
-		return
-	}
-	items = filterByParental(r, items)
-	writeJSON(w, http.StatusOK, items)
 }
 
 func filterByParental(r *http.Request, items []db.MediaItem) []db.MediaItem {

@@ -1,0 +1,16 @@
+{
+  "title": "Keşfet",
+  "subtitle": "Kaldığın yerden devam et, yeni eklenenler ve senin için seçilenler.",
+  "shelves": {
+    "continueWatching": "İzlemeye devam et",
+    "recentlyAdded": "Yeni eklenenler",
+    "recommended": "Senin için önerilen"
+  },
+  "empty": {
+    "title": "Henüz keşfedilecek içerik yok",
+    "description": "Kişiselleştirilmiş raflar için bir kütüphane tarayın ve izlemeye başlayın."
+  },
+  "error": {
+    "loadFailed": "Keşif rafları yüklenemedi."
+  }
+}

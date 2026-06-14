@@ -41,6 +41,8 @@ tags:
     description: Media library definition and scanning.
   - name: media
     description: Media items and metadata matching.
+  - name: discover
+    description: Home shelves, search, and browse discovery.
   - name: streaming
     description: Playback, transcode sessions, and HLS manifests.
 
@@ -390,18 +392,47 @@ paths:
     parameters:
       - $ref: "#/components/parameters/libraryId"
     get:
-      tags: [media]
-      summary: List media items
-      operationId: listMediaItems
+      tags: [discover, media]
+      summary: List media items (paginated, filterable)
+      operationId: listMediaItemsPaginated
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [title, year, created_at]
+        - name: genre
+          in: query
+          schema:
+            type: string
+        - name: year
+          in: query
+          schema:
+            type: integer
+        - name: watchStatus
+          in: query
+          schema:
+            type: string
+            enum: [all, unwatched, in_progress, completed]
       responses:
         "200":
-          description: Media items
+          description: Paginated media items
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/MediaItem"
+                $ref: "#/components/schemas/PaginatedMediaItems"
 
   /libraries/{libraryId}/match:
     parameters:
@@ -420,6 +451,212 @@ paths:
                 properties:
                   matched:
                     type: integer
+
+  /media-items/{itemId}/detail:
+    parameters:
+      - $ref: "#/components/parameters/itemId"
+    get:
+      tags: [discover, media]
+      summary: Get full media detail
+      operationId: getMediaDetail
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Media detail with seasons, cast, and images
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaDetail"
+
+  /discover/home:
+    get:
+      tags: [discover]
+      summary: Personalized discover shelves
+      operationId: getDiscoverHome
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Home discover shelves
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiscoverHome"
+
+  /search:
+    get:
+      tags: [discover]
+      summary: Full-text search
+      operationId: searchMedia
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResponse"
+
+  /watch-state:
+    get:
+      tags: [auth]
+      summary: List watch states for current user
+      operationId: listWatchStates
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Watch states
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WatchState"
+
+  /watch-state/{mediaItemId}:
+    parameters:
+      - name: mediaItemId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [auth]
+      summary: Get watch state for an item
+      operationId: getWatchState
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Watch state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WatchState"
+    put:
+      tags: [auth]
+      summary: Upsert watch state
+      operationId: upsertWatchState
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WatchStateUpdate"
+      responses:
+        "200":
+          description: Updated watch state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WatchState"
+
+  /favorites:
+    get:
+      tags: [auth]
+      summary: List favorite media item ids
+      operationId: listFavorites
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Favorite item ids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+
+  /favorites/{mediaItemId}:
+    parameters:
+      - name: mediaItemId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    post:
+      tags: [auth]
+      summary: Add favorite
+      operationId: addFavorite
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Added
+    delete:
+      tags: [auth]
+      summary: Remove favorite
+      operationId: removeFavorite
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Removed
+
+  /watchlist:
+    get:
+      tags: [auth]
+      summary: List watchlist media item ids
+      operationId: listWatchlist
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Watchlist item ids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+
+  /watchlist/{mediaItemId}:
+    parameters:
+      - name: mediaItemId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    post:
+      tags: [auth]
+      summary: Add to watchlist
+      operationId: addWatchlist
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Added
+    delete:
+      tags: [auth]
+      summary: Remove from watchlist
+      operationId: removeWatchlist
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Removed
 
   /media-items/{itemId}:
     parameters:
@@ -791,6 +1028,182 @@ components:
           type: string
         matchScore:
           type: number
+        contentRating:
+          type: string
+          nullable: true
+
+    MediaItemSummary:
+      allOf:
+        - $ref: "#/components/schemas/MediaItem"
+        - type: object
+          properties:
+            watchState:
+              $ref: "#/components/schemas/WatchStateBrief"
+
+    PaginatedMediaItems:
+      type: object
+      required: [items, total, offset, limit]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaItem"
+        total:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
+
+    DiscoverShelf:
+      type: object
+      required: [id, titleKey, items]
+      properties:
+        id:
+          type: string
+        titleKey:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaItemSummary"
+
+    DiscoverHome:
+      type: object
+      required: [shelves]
+      properties:
+        shelves:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiscoverShelf"
+
+    SearchResult:
+      allOf:
+        - $ref: "#/components/schemas/MediaItem"
+        - type: object
+          properties:
+            score:
+              type: number
+
+    SearchResponse:
+      type: object
+      required: [results, query]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/SearchResult"
+        query:
+          type: string
+
+    WatchStateBrief:
+      type: object
+      properties:
+        positionMs:
+          type: integer
+          format: int64
+        completed:
+          type: boolean
+
+    WatchState:
+      type: object
+      properties:
+        mediaItemId:
+          type: integer
+          format: int64
+        positionMs:
+          type: integer
+          format: int64
+        completed:
+          type: boolean
+
+    WatchStateUpdate:
+      type: object
+      properties:
+        positionMs:
+          type: integer
+          format: int64
+        completed:
+          type: boolean
+
+    CastMember:
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+        order:
+          type: integer
+        imageUrl:
+          type: string
+
+    ArtworkImage:
+      type: object
+      properties:
+        kind:
+          type: string
+        sourceUrl:
+          type: string
+        localPath:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+
+    EpisodeSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        seasonNumber:
+          type: integer
+        episodeNumber:
+          type: integer
+        title:
+          type: string
+
+    SeasonDetail:
+      type: object
+      properties:
+        seasonNumber:
+          type: integer
+        episodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/EpisodeSummary"
+
+    MediaDetail:
+      allOf:
+        - $ref: "#/components/schemas/MediaItem"
+        - type: object
+          properties:
+            genres:
+              type: array
+              items:
+                type: string
+            backdropUrl:
+              type: string
+            cast:
+              type: array
+              items:
+                $ref: "#/components/schemas/CastMember"
+            images:
+              type: array
+              items:
+                $ref: "#/components/schemas/ArtworkImage"
+            seasons:
+              type: array
+              items:
+                $ref: "#/components/schemas/SeasonDetail"
+            isFavorite:
+              type: boolean
+            inWatchlist:
+              type: boolean
+            watchState:
+              $ref: "#/components/schemas/WatchStateBrief"
 
     MatchCandidate:
       type: object

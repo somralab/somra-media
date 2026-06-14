@@ -1,0 +1,31 @@
+{
+  "poster": {
+    "label": "{{title}} aç",
+    "noImage": "Görsel yok"
+  },
+  "filters": {
+    "sort": "Sırala",
+    "sortTitle": "Başlık",
+    "sortYear": "Yıl",
+    "sortAdded": "Eklenme tarihi",
+    "genre": "Tür",
+    "genrePlaceholder": "Aksiyon, Drama…",
+    "year": "Yıl",
+    "watchStatus": "İzlenme durumu",
+    "watchAll": "Tümü",
+    "watchUnwatched": "İzlenmemiş",
+    "watchInProgress": "Devam ediyor",
+    "watchCompleted": "Tamamlandı"
+  },
+  "view": {
+    "grid": "Izgara",
+    "list": "Liste"
+  },
+  "empty": {
+    "title": "Başlık bulunamadı",
+    "description": "Filtreleri değiştirin veya kütüphane taraması çalıştırın."
+  },
+  "error": {
+    "loadFailed": "Kütüphane öğeleri yüklenemedi."
+  }
+}

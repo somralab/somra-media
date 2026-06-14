@@ -1,0 +1,23 @@
+{
+  "backToLibrary": "Kütüphaneye dön",
+  "noPoster": "Poster yok",
+  "actions": {
+    "play": "Oynat",
+    "resume": "Devam et",
+    "favorite": "Favorilere ekle",
+    "unfavorite": "Favorilerden çıkar",
+    "addWatchlist": "İzleme listesine ekle",
+    "removeWatchlist": "İzleme listesinden çıkar"
+  },
+  "cast": {
+    "title": "Oyuncular ve ekip"
+  },
+  "seasons": {
+    "title": "Sezonlar ve bölümler",
+    "number": "Sezon {{number}}",
+    "episode": "Bölüm {{number}}"
+  },
+  "error": {
+    "loadFailed": "Detaylar yüklenemedi."
+  }
+}

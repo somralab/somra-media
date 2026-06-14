@@ -1,0 +1,9 @@
+{
+  "label": "Search",
+  "placeholder": "Search movies and shows…",
+  "results": {
+    "label": "Search results",
+    "loading": "Searching…",
+    "empty": "No results for “{{query}}”."
+  }
+}

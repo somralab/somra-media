@@ -271,8 +271,8 @@ export interface paths {
             };
             cookie?: never;
         };
-        /** List media items */
-        get: operations["listMediaItems"];
+        /** List media items (paginated, filterable) */
+        get: operations["listMediaItemsPaginated"];
         put?: never;
         post?: never;
         delete?: never;
@@ -295,6 +295,170 @@ export interface paths {
         /** Auto-match metadata */
         post: operations["autoMatchLibrary"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/media-items/{itemId}/detail": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itemId: components["parameters"]["itemId"];
+            };
+            cookie?: never;
+        };
+        /** Get full media detail */
+        get: operations["getMediaDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/discover/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Personalized discover shelves */
+        get: operations["getDiscoverHome"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Full-text search */
+        get: operations["searchMedia"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/watch-state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List watch states for current user */
+        get: operations["listWatchStates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/watch-state/{mediaItemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mediaItemId: number;
+            };
+            cookie?: never;
+        };
+        /** Get watch state for an item */
+        get: operations["getWatchState"];
+        /** Upsert watch state */
+        put: operations["upsertWatchState"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/favorites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List favorite media item ids */
+        get: operations["listFavorites"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/favorites/{mediaItemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mediaItemId: number;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add favorite */
+        post: operations["addFavorite"];
+        /** Remove favorite */
+        delete: operations["removeFavorite"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/watchlist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List watchlist media item ids */
+        get: operations["listWatchlist"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/watchlist/{mediaItemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mediaItemId: number;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add to watchlist */
+        post: operations["addWatchlist"];
+        /** Remove from watchlist */
+        delete: operations["removeWatchlist"];
         options?: never;
         head?: never;
         patch?: never;
@@ -619,6 +783,82 @@ export interface components {
             posterUrl?: string;
             matchStatus?: string;
             matchScore?: number;
+            contentRating?: string | null;
+        };
+        MediaItemSummary: components["schemas"]["MediaItem"] & {
+            watchState?: components["schemas"]["WatchStateBrief"];
+        };
+        PaginatedMediaItems: {
+            items: components["schemas"]["MediaItem"][];
+            total: number;
+            offset: number;
+            limit: number;
+        };
+        DiscoverShelf: {
+            id: string;
+            titleKey: string;
+            items: components["schemas"]["MediaItemSummary"][];
+        };
+        DiscoverHome: {
+            shelves: components["schemas"]["DiscoverShelf"][];
+        };
+        SearchResult: components["schemas"]["MediaItem"] & {
+            score?: number;
+        };
+        SearchResponse: {
+            results: components["schemas"]["SearchResult"][];
+            query: string;
+        };
+        WatchStateBrief: {
+            /** Format: int64 */
+            positionMs?: number;
+            completed?: boolean;
+        };
+        WatchState: {
+            /** Format: int64 */
+            mediaItemId?: number;
+            /** Format: int64 */
+            positionMs?: number;
+            completed?: boolean;
+        };
+        WatchStateUpdate: {
+            /** Format: int64 */
+            positionMs?: number;
+            completed?: boolean;
+        };
+        CastMember: {
+            name?: string;
+            role?: string;
+            order?: number;
+            imageUrl?: string;
+        };
+        ArtworkImage: {
+            kind?: string;
+            sourceUrl?: string;
+            localPath?: string;
+            width?: number;
+            height?: number;
+        };
+        EpisodeSummary: {
+            /** Format: int64 */
+            id?: number;
+            seasonNumber?: number;
+            episodeNumber?: number;
+            title?: string;
+        };
+        SeasonDetail: {
+            seasonNumber?: number;
+            episodes?: components["schemas"]["EpisodeSummary"][];
+        };
+        MediaDetail: components["schemas"]["MediaItem"] & {
+            genres?: string[];
+            backdropUrl?: string;
+            cast?: components["schemas"]["CastMember"][];
+            images?: components["schemas"]["ArtworkImage"][];
+            seasons?: components["schemas"]["SeasonDetail"][];
+            isFavorite?: boolean;
+            inWatchlist?: boolean;
+            watchState?: components["schemas"]["WatchStateBrief"];
         };
         MatchCandidate: {
             provider?: string;
@@ -1171,9 +1411,16 @@ export interface operations {
             };
         };
     };
-    listMediaItems: {
+    listMediaItemsPaginated: {
         parameters: {
-            query?: never;
+            query?: {
+                offset?: number;
+                limit?: number;
+                sort?: "title" | "year" | "created_at";
+                genre?: string;
+                year?: number;
+                watchStatus?: "all" | "unwatched" | "in_progress" | "completed";
+            };
             header?: never;
             path: {
                 libraryId: components["parameters"]["libraryId"];
@@ -1182,13 +1429,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Media items */
+            /** @description Paginated media items */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MediaItem"][];
+                    "application/json": components["schemas"]["PaginatedMediaItems"];
                 };
             };
         };
@@ -1214,6 +1461,259 @@ export interface operations {
                         matched?: number;
                     };
                 };
+            };
+        };
+    };
+    getMediaDetail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itemId: components["parameters"]["itemId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Media detail with seasons, cast, and images */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaDetail"];
+                };
+            };
+        };
+    };
+    getDiscoverHome: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Home discover shelves */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiscoverHome"];
+                };
+            };
+        };
+    };
+    searchMedia: {
+        parameters: {
+            query: {
+                q: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Search results */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchResponse"];
+                };
+            };
+        };
+    };
+    listWatchStates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Watch states */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WatchState"][];
+                };
+            };
+        };
+    };
+    getWatchState: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mediaItemId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Watch state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WatchState"];
+                };
+            };
+        };
+    };
+    upsertWatchState: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mediaItemId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WatchStateUpdate"];
+            };
+        };
+        responses: {
+            /** @description Updated watch state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WatchState"];
+                };
+            };
+        };
+    };
+    listFavorites: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Favorite item ids */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": number[];
+                };
+            };
+        };
+    };
+    addFavorite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mediaItemId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Added */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    removeFavorite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mediaItemId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Removed */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    listWatchlist: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Watchlist item ids */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": number[];
+                };
+            };
+        };
+    };
+    addWatchlist: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mediaItemId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Added */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    removeWatchlist: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mediaItemId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Removed */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
