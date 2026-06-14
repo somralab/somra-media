@@ -1,0 +1,25 @@
+# Somra — VAAPI / Intel QSV overlay (Intel iGPU, AMD via Mesa VAAPI).
+#
+# Prerequisites on the host:
+#   - Intel: i915 driver + intel-media-driver (or iHD) for QSV/VAAPI
+#   - AMD: amdgpu + mesa-va-drivers
+#   - User in `video` or `render` group (or run rootless with mapped GID)
+#
+# Usage (from repo root):
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.vaapi.yml up --build
+#
+# Verify inside the container:
+#   ls -l /dev/dri
+#   ffmpeg -hide_banner -encoders 2>/dev/null | grep -E 'h264_(qsv|vaapi)'
+
+services:
+  somra:
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - video
+    environment:
+      # Intel Gen8+ (Broadwell and newer): iHD. Older Intel: i965.
+      LIBVA_DRIVER_NAME: ${LIBVA_DRIVER_NAME:-iHD}
+      # Optional explicit render node when multiple GPUs exist.
+      SOMRA_VAAPI_DEVICE: ${SOMRA_VAAPI_DEVICE:-/dev/dri/renderD128}

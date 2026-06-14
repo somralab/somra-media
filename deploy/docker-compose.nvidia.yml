@@ -1,0 +1,27 @@
+# Somra — NVIDIA NVENC/NVDEC overlay.
+#
+# Prerequisites on the host:
+#   - NVIDIA driver installed
+#   - NVIDIA Container Toolkit (nvidia-container-toolkit) configured for Docker
+#   - `docker run --gpus all` works on the host
+#
+# Usage (from repo root):
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.nvidia.yml up --build
+#
+# Verify inside the container:
+#   nvidia-smi
+#   ffmpeg -hide_banner -encoders 2>/dev/null | grep h264_nvenc
+
+services:
+  somra:
+    runtime: nvidia
+    environment:
+      NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
+      NVIDIA_DRIVER_CAPABILITIES: compute,video,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: ${NVIDIA_GPU_COUNT:-1}
+              capabilities: [gpu, video, compute]
