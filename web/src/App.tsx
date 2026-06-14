@@ -18,6 +18,7 @@ const LibraryPage = lazy(() => import('@/pages/LibraryPage'));
 const LibraryDetailPage = lazy(() => import('@/pages/LibraryDetailPage'));
 const MediaDetailPage = lazy(() => import('@/pages/MediaDetailPage'));
 const PlayerPage = lazy(() => import('@/pages/PlayerPage'));
+const OnboardingWizardPage = lazy(() => import('@/pages/OnboardingWizardPage'));
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
@@ -135,6 +136,7 @@ export default function App(): ReactNode {
               }
             />
             <Route path="/status" element={<StatusPage />} />
+            <Route path="/setup/wizard" element={<OnboardingWizardPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route
               path="/libraries"

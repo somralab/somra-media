@@ -89,8 +89,9 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("bootstrap auth: %w", err)
 	}
-
+	settingsBundle := bootstrap.WireSettings(components, authBundle.Service)
 	streamBundle := bootstrap.WireStreaming(components, cfg, logger)
+	subtitlesBundle := bootstrap.WireSubtitles(components, cfg, settingsBundle.Settings, logger)
 
 	localeFn := func(r *http.Request) string {
 		if loc, ok := api.AcceptLanguageFromContext(r.Context()); ok && loc != "" {
@@ -119,6 +120,7 @@ func run() error {
 		AuthHandlers: &api.AuthHandlers{
 			Service:      authBundle.Service,
 			SecureCookie: cfg.Auth.SecureCookie,
+			Onboarding:   settingsBundle.Onboarding,
 		},
 		AuthMiddleware: authMW,
 		UserHandlers: &api.UserHandlers{
@@ -132,8 +134,9 @@ func run() error {
 			Watch: db.NewWatchRepo(components.DB.Querier()),
 		},
 		LibraryHandlers: &api.LibraryHandlers{
-			Service: libBundle.Library,
-			Locale:  localeFn,
+			Service:    libBundle.Library,
+			Locale:     localeFn,
+			Onboarding: settingsBundle.Onboarding,
 		},
 		MediaHandlers: &api.MediaHandlers{
 			DB:       components.DB,
@@ -144,6 +147,15 @@ func run() error {
 			Browse: db.NewBrowseRepo(components.DB.Querier()),
 			Locale: localeFn,
 		},
+	}
+	apiOpts.SystemHandlers = &api.SystemHandlers{
+		DataDir:  cfg.Data.Dir,
+		CacheDir: cfg.Data.CacheDir,
+	}
+	apiOpts.SettingsHandlers = &api.SettingsHandlers{Service: settingsBundle.Settings}
+	apiOpts.OnboardingHandlers = &api.OnboardingHandlers{Onboarding: settingsBundle.Onboarding}
+	if subtitlesBundle != nil && subtitlesBundle.Service != nil {
+		apiOpts.SubtitleHandlers = &api.SubtitleHandlers{Service: subtitlesBundle.Service}
 	}
 	if streamBundle != nil && streamBundle.Service != nil {
 		apiOpts.StreamingHandlers = &api.StreamingHandlers{

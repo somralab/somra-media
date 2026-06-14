@@ -11,12 +11,14 @@ import (
 )
 
 var allowedHosts = map[string]struct{}{
-	"api.themoviedb.org":   {},
-	"image.tmdb.org":       {},
-	"api4.thetvdb.com":     {},
-	"musicbrainz.org":      {},
-	"coverartarchive.org":  {},
-	"webservice.fanart.tv": {},
+	"api.themoviedb.org":    {},
+	"image.tmdb.org":        {},
+	"api4.thetvdb.com":      {},
+	"musicbrainz.org":       {},
+	"coverartarchive.org":   {},
+	"webservice.fanart.tv":  {},
+	"api.opensubtitles.com": {},
+	"dl.opensubtitles.org":  {},
 }
 
 // SafeHTTPClient returns an HTTP client with SSRF protections.

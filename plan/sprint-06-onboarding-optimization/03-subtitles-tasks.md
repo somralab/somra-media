@@ -14,16 +14,16 @@
 ## Epikler ve Görevler
 
 ### Epik A: Altyazı sağlayıcı entegrasyonu
-- [ ] A1 — Açık altyazı sağlayıcı(ları) için ortak arayüz + entegrasyon | Kabul: arama/indirme çalışır.
-- [ ] A2 — Dil tercihi ve kalite/eşleşme skorlama | Kabul: doğru altyazı seçilir.
+- [x] A1 — Açık altyazı sağlayıcı(ları) için ortak arayüz + entegrasyon | Kabul: arama/indirme çalışır.
+- [x] A2 — Dil tercihi ve kalite/eşleşme skorlama | Kabul: doğru altyazı seçilir.
 
 ### Epik B: Otomasyon
-- [ ] B1 — Eksik altyazı tespiti (kullanıcı dil tercihine göre) | Kabul: eksikler raporlanır.
-- [ ] B2 — Periyodik otomatik indirme işi (scheduler) | Kabul: yeni içerikte altyazı otomatik gelir.
-- [ ] B3 — Manuel altyazı arama/yükleme | Kabul: kullanıcı override edebilir.
+- [x] B1 — Eksik altyazı tespiti (kullanıcı dil tercihine göre) | Kabul: eksikler raporlanır.
+- [x] B2 — Periyodik otomatik indirme işi (scheduler) | Kabul: yeni içerikte altyazı otomatik gelir.
+- [x] B3 — Manuel altyazı arama/yükleme | Kabul: kullanıcı override edebilir.
 
 ### Epik C: UI bağlantısı
-- [ ] C1 — Detay sayfasında altyazı yönetimi (frontend ile koordine) | Kabul: altyazı durumu görünür.
+- [x] C1 — Detay sayfasında altyazı yönetimi (frontend ile koordine) | Kabul: altyazı durumu görünür.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Sistem eksik altyazıları tespit edip otomatik indirir; manuel yönetim mümkün.

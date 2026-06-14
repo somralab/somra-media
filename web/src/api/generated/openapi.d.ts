@@ -64,6 +64,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/system/detect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Detect system hardware and validate storage paths */
+        get: operations["detectSystem"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/setup/status": {
         parameters: {
             query?: never;
@@ -92,6 +109,160 @@ export interface paths {
         put?: never;
         /** Create first admin (one-time) */
         post: operations["setupAdmin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/onboarding/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Onboarding wizard state */
+        get: operations["getOnboardingStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/onboarding/step": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Advance or update an onboarding step */
+        post: operations["advanceOnboardingStep"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/onboarding/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark onboarding as completed */
+        post: operations["completeOnboarding"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all settings grouped by category */
+        get: operations["getSettings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/settings/{category}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update settings in a category */
+        patch: operations["patchSettingsCategory"];
+        trace?: never;
+    };
+    "/subtitles/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search external subtitle providers */
+        get: operations["searchSubtitles"];
+        put?: never;
+        /** Search external subtitle providers (POST body) */
+        post: operations["searchSubtitlesPost"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/subtitles/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Download a subtitle from a provider */
+        post: operations["downloadSubtitle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/subtitles/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload a subtitle file manually */
+        post: operations["uploadSubtitle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/media-items/{itemId}/subtitles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List subtitles for a media item */
+        get: operations["listMediaSubtitles"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -924,6 +1095,92 @@ export interface components {
             audioTracks?: components["schemas"]["AudioTrack"][];
             subtitleTracks?: components["schemas"]["SubtitleTrack"][];
         };
+        SystemProfile: {
+            cpuCores: number;
+            /** Format: int64 */
+            memoryBytes: number;
+            gpuPresent: boolean;
+            paths: components["schemas"]["PathValidation"][];
+        };
+        PathValidation: {
+            path: string;
+            readable: boolean;
+            writable: boolean;
+        };
+        SmartDefaults: {
+            maxConcurrentTranscodes: number;
+            scanCron: string;
+            /** @enum {string} */
+            defaultLocale?: "en-US" | "tr-TR";
+        };
+        SetupStatusResponse: {
+            setupRequired: boolean;
+            completed: boolean;
+            phase: components["schemas"]["OnboardingPhase"];
+        };
+        /** @enum {string} */
+        OnboardingPhase: "language" | "admin" | "library" | "defaults" | "scan" | "complete";
+        OnboardingState: {
+            phase: components["schemas"]["OnboardingPhase"];
+            completed: boolean;
+            setupRequired: boolean;
+            smartDefaults?: components["schemas"]["SmartDefaults"];
+        };
+        OnboardingStepRequest: {
+            phase: components["schemas"]["OnboardingPhase"];
+            /** @enum {string} */
+            locale?: "en-US" | "tr-TR";
+            applyDefaults?: boolean;
+            /** Format: int64 */
+            libraryId?: number;
+        };
+        SettingsSnapshot: {
+            general?: components["schemas"]["SettingsCategory"];
+            library?: components["schemas"]["SettingsCategory"];
+            playback?: components["schemas"]["SettingsCategory"];
+            subtitles?: components["schemas"]["SettingsCategory"];
+            streaming?: components["schemas"]["SettingsCategory"];
+        };
+        SettingsCategory: {
+            [key: string]: unknown;
+        };
+        SettingsCategoryPatch: {
+            [key: string]: unknown;
+        };
+        SubtitleSearchRequest: {
+            /** Format: int64 */
+            mediaItemId: number;
+            language?: string;
+            query?: string;
+        };
+        SubtitleSearchResult: {
+            provider: string;
+            externalId: string;
+            language: string;
+            releaseName?: string;
+            score: number;
+            downloadCount?: number;
+        };
+        SubtitleDownloadRequest: {
+            /** Format: int64 */
+            mediaItemId: number;
+            provider: string;
+            externalId: string;
+            language?: string;
+        };
+        ManagedSubtitle: {
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            mediaItemId: number;
+            language: string;
+            /** @enum {string} */
+            source: "embedded" | "external" | "uploaded";
+            path?: string;
+            provider?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
         SetupAdminRequest: {
             username: string;
             password: string;
@@ -1055,6 +1312,29 @@ export interface operations {
             };
         };
     };
+    detectSystem: {
+        parameters: {
+            query?: {
+                /** @description Comma-separated paths to validate (optional; defaults to configured data/cache dirs) */
+                paths?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description System profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SystemProfile"];
+                };
+            };
+        };
+    };
     getSetupStatus: {
         parameters: {
             query?: never;
@@ -1070,9 +1350,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        setupRequired: boolean;
-                    };
+                    "application/json": components["schemas"]["SetupStatusResponse"];
                 };
             };
         };
@@ -1097,6 +1375,244 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+        };
+    };
+    getOnboardingStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Onboarding state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnboardingState"];
+                };
+            };
+        };
+    };
+    advanceOnboardingStep: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OnboardingStepRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated onboarding state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnboardingState"];
+                };
+            };
+        };
+    };
+    completeOnboarding: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Onboarding completed */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Settings snapshot */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SettingsSnapshot"];
+                };
+            };
+        };
+    };
+    patchSettingsCategory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category: "general" | "library" | "playback" | "subtitles" | "streaming";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SettingsCategoryPatch"];
+            };
+        };
+        responses: {
+            /** @description Updated category settings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SettingsCategory"];
+                };
+            };
+        };
+    };
+    searchSubtitles: {
+        parameters: {
+            query: {
+                mediaItemId: number;
+                language?: string;
+                query?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Search results */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        results: components["schemas"]["SubtitleSearchResult"][];
+                    };
+                };
+            };
+        };
+    };
+    searchSubtitlesPost: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubtitleSearchRequest"];
+            };
+        };
+        responses: {
+            /** @description Search results */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        results: components["schemas"]["SubtitleSearchResult"][];
+                    };
+                };
+            };
+        };
+    };
+    downloadSubtitle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubtitleDownloadRequest"];
+            };
+        };
+        responses: {
+            /** @description Subtitle downloaded */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedSubtitle"];
+                };
+            };
+        };
+    };
+    uploadSubtitle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: int64 */
+                    mediaItemId: number;
+                    language?: string;
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Subtitle uploaded */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedSubtitle"];
+                };
+            };
+        };
+    };
+    listMediaSubtitles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itemId: components["parameters"]["itemId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Subtitle tracks */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        subtitles: components["schemas"]["ManagedSubtitle"][];
+                    };
                 };
             };
         };

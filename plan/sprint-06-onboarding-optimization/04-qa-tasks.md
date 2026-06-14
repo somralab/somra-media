@@ -13,14 +13,14 @@
 ## Epikler ve Görevler
 
 ### Epik A: Onboarding
-- [ ] A1 — Sıfırdan kurulum e2e (<10 dk hedefi ölçümü) | Kabul: hedef süre doğrulanır.
-- [ ] A2 — Akıllı varsayılan doğruluğu (farklı sistem profilleri) | Kabul: makul öneriler.
+- [x] A1 — Sıfırdan kurulum e2e (<10 dk hedefi ölçümü) | Kabul: hedef süre doğrulanır.
+- [x] A2 — Akıllı varsayılan doğruluğu (farklı sistem profilleri) | Kabul: makul öneriler.
 
 ### Epik B: Altyazı
-- [ ] B1 — Eksik tespit + otomatik indirme + manuel akış testi | Kabul: akışlar geçer.
+- [x] B1 — Eksik tespit + otomatik indirme + manuel akış testi | Kabul: akışlar geçer.
 
 ### Epik C: Regresyon
-- [ ] C1 — Ayar değişikliklerinin sistem davranışına etkisi | Kabul: ayarlar uygulanır.
+- [x] C1 — Ayar değişikliklerinin sistem davranışına etkisi | Kabul: ayarlar uygulanır.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Kurulum ve altyazı akışları test kapsamında; kurulum süresi hedefi karşılanır.

@@ -1,0 +1,72 @@
+{
+  "wizard": {
+    "title": "Somra'ya hoş geldiniz",
+    "subtitle": "Medya sunucunuzu birkaç hızlı adımda kurun.",
+    "next": "Devam",
+    "back": "Geri",
+    "finish": "Kurulumu bitir",
+    "skip": "Şimdilik atla"
+  },
+  "steps": {
+    "language": "Dil",
+    "admin": "Yönetici hesabı",
+    "library": "Kütüphane",
+    "defaults": "Akıllı varsayılanlar",
+    "scan": "İlk tarama",
+    "complete": "Tamamlandı"
+  },
+  "language": {
+    "title": "Dilinizi seçin",
+    "description": "Kullanıcılar kendi tercihini ayarlayana kadar bu sistem varsayılanı olur.",
+    "systemDefault": "Sistem varsayılan dili"
+  },
+  "admin": {
+    "title": "Yönetici hesabı oluşturun",
+    "description": "Bu hesap kütüphaneleri, ayarları ve kullanıcıları yönetir."
+  },
+  "library": {
+    "title": "İlk kütüphanenizi ekleyin",
+    "description": "Somra'yı filmlerinizin veya dizilerinizin bulunduğu klasöre yönlendirin.",
+    "name": "Kütüphane adı",
+    "path": "Medya klasörü yolu",
+    "kind": "İçerik türü",
+    "kinds": {
+      "movie": "Filmler",
+      "tv": "Diziler",
+      "music": "Müzik"
+    }
+  },
+  "defaults": {
+    "title": "Önerilen ayarlar",
+    "description": "Somra donanımınızı tespit etti ve optimize varsayılanlar öneriyor.",
+    "apply": "Önerileri uygula",
+    "cpuCores": "{{count}} CPU çekirdeği tespit edildi",
+    "memory": "{{gb}} GB RAM",
+    "gpu": "GPU hızlandırma mevcut",
+    "noGpu": "GPU tespit edilmedi (yazılım dönüştürme)",
+    "transcodeConcurrency": "Eşzamanlı dönüştürme: {{count}}",
+    "scanSchedule": "Her gece saat 03:00'te kütüphane taraması"
+  },
+  "scan": {
+    "title": "Kütüphaneniz taranıyor",
+    "description": "Somra medyanızı indeksliyor. Bu birkaç dakika sürebilir.",
+    "progress": "{{done}} / {{total}} dosya",
+    "waiting": "Tarama başlaması bekleniyor…",
+    "complete": "Tarama tamamlandı"
+  },
+  "complete": {
+    "title": "Hazırsınız!",
+    "description": "Somra kullanıma hazır. Kütüphanenize göz atın veya istediğiniz zaman ayarları değiştirin.",
+    "goHome": "Ana sayfaya git",
+    "goLibraries": "Kütüphanelere göz at"
+  },
+  "recommendation": {
+    "recommended": "Önerilen",
+    "applied": "Uygulandı"
+  },
+  "errors": {
+    "stepFailed": "Bu adım kaydedilemedi. Tekrar deneyin.",
+    "libraryFailed": "Kütüphane oluşturulamadı.",
+    "defaultsFailed": "Öneriler uygulanamadı."
+  }
+}

@@ -14,17 +14,17 @@
 ## Epikler ve Görevler
 
 ### Epik A: Sistem tespiti
-- [ ] A1 — Donanım tespiti (CPU, bellek, mevcut GPU varlığı) | Kabul: sistem profili çıkarılır.
-- [ ] A2 — Depolama/dizin tespiti ve doğrulama (medya/cache yolları) | Kabul: yazma/okuma izni doğrulanır.
+- [x] A1 — Donanım tespiti (CPU, bellek, mevcut GPU varlığı) | Kabul: sistem profili çıkarılır.
+- [x] A2 — Depolama/dizin tespiti ve doğrulama (medya/cache yolları) | Kabul: yazma/okuma izni doğrulanır.
 
 ### Epik B: Akıllı varsayılanlar
-- [ ] B1 — Donanıma göre transcode profili/eşzamanlılık önerisi (CPU bazlı; GPU Sprint 07'de genişler) | Kabul: makul varsayılan üretilir.
-- [ ] B2 — Önerilen kütüphane tarama/ yenileme zamanlaması | Kabul: varsayılan job programı.
+- [x] B1 — Donanıma göre transcode profili/eşzamanlılık önerisi (CPU bazlı; GPU Sprint 07'de genişler) | Kabul: makul varsayılan üretilir.
+- [x] B2 — Önerilen kütüphane tarama/ yenileme zamanlaması | Kabul: varsayılan job programı.
 
 ### Epik C: Merkezi ayar yönetimi
-- [ ] C1 — Ayar şeması + API (kategori bazlı, doğrulamalı) | Kabul: ayarlar tek yerden yönetilir.
-- [ ] C2 — Kurulum durumu (onboarding tamamlandı mı) state machine | Kabul: ilk kurulum akışını yönetir.
-- [ ] C3 — Sistem varsayılan dili ayarı (tr-TR/en-US) | Kabul: kullanıcı tercihi yoksa bu kullanılır; dil pazarlığı önceliklerine uyar. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §3.
+- [x] C1 — Ayar şeması + API (kategori bazlı, doğrulamalı) | Kabul: ayarlar tek yerden yönetilir.
+- [x] C2 — Kurulum durumu (onboarding tamamlandı mı) state machine | Kabul: ilk kurulum akışını yönetir.
+- [x] C3 — Sistem varsayılan dili ayarı (tr-TR/en-US) | Kabul: kullanıcı tercihi yoksa bu kullanılır; dil pazarlığı önceliklerine uyar. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §3.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Sistem kendini tespit eder, akıllı varsayılan üretir; ayarlar merkezi API ile yönetilir.

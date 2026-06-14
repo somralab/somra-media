@@ -1,0 +1,53 @@
+{
+  "page": {
+    "title": "Settings",
+    "subtitle": "Configure Somra server behavior and preferences.",
+    "advanced": "Advanced settings",
+    "simple": "Simple mode",
+    "saved": "Settings saved.",
+    "saveFailed": "Could not save settings."
+  },
+  "categories": {
+    "general": "General",
+    "library": "Library",
+    "playback": "Playback",
+    "subtitles": "Subtitles",
+    "users": "Users"
+  },
+  "general": {
+    "defaultLocale": {
+      "label": "System default language",
+      "description": "Used when no user preference is set."
+    }
+  },
+  "library": {
+    "scanCron": {
+      "label": "Library scan schedule",
+      "description": "Cron expression for automatic library scans."
+    }
+  },
+  "playback": {
+    "maxConcurrentTranscodes": {
+      "label": "Max concurrent transcodes",
+      "description": "How many transcode sessions can run at once."
+    }
+  },
+  "subtitles": {
+    "autoDownload": {
+      "label": "Auto-download missing subtitles",
+      "description": "Automatically fetch subtitles for preferred languages."
+    },
+    "preferredLanguages": {
+      "label": "Preferred subtitle languages",
+      "description": "ISO 639-1 codes, comma-separated (e.g. en, tr)."
+    },
+    "apiKey": {
+      "label": "OpenSubtitles API key",
+      "description": "Required for external subtitle search. Get one at opensubtitles.com."
+    }
+  },
+  "users": {
+    "manageLink": "Manage users",
+    "description": "Create and manage user accounts from the admin panel."
+  }
+}
