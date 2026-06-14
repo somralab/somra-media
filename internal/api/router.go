@@ -6,6 +6,9 @@ package api
 import (
 	"log/slog"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -22,6 +25,10 @@ type Options struct {
 	CORS        config.CORSConfig
 	RateLimiter RateLimiter
 	HealthCheck []HealthCheck
+	// HealthAggregator, when non-nil, enriches /api/v1/health with the
+	// platform diagnostics registry. Test handlers can leave it nil and
+	// rely on HealthCheck alone.
+	HealthAggregator HealthAggregator
 
 	// Now is the clock used by handlers; nil falls back to time.Now. Tests
 	// inject a fixed time to assert on payload shape.
@@ -30,6 +37,18 @@ type Options struct {
 	// SSEHeartbeat overrides the default heartbeat interval. Useful for
 	// tests that want a faster keep-alive cadence.
 	SSEHeartbeat time.Duration
+
+	// WebDir, when non-empty, points at a directory of static assets to
+	// serve under "/". Used by the Docker image to ship the React SPA out
+	// of the same binary; left empty during local dev (Vite proxies API).
+	WebDir string
+
+	// LocalizerMiddleware, when non-nil, is mounted into the chain so the
+	// downstream handlers can resolve user-facing strings via the
+	// negotiated locale. cmd/somra wires this from the i18n bundle so
+	// error envelopes pick up Accept-Language; tests that don't care
+	// about localization can leave it nil and receive raw message keys.
+	LocalizerMiddleware func(http.Handler) http.Handler
 }
 
 // New returns a chi router with the canonical middleware chain mounted at
@@ -47,6 +66,9 @@ func New(opts Options) http.Handler {
 	r.Use(corsMiddleware(opts.CORS))
 	r.Use(RateLimitMiddleware(opts.RateLimiter))
 	r.Use(ContentTypeMiddleware)
+	if opts.LocalizerMiddleware != nil {
+		r.Use(opts.LocalizerMiddleware)
+	}
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		writeError(w, req, errNotFound)
@@ -56,12 +78,77 @@ func New(opts Options) http.Handler {
 	})
 
 	r.Route("/api/v1", func(api chi.Router) {
-		api.Get("/health", healthHandler(opts.Now, opts.HealthCheck))
+		api.Get("/health", healthHandler(opts.Now, opts.HealthCheck, opts.HealthAggregator))
 		api.Get("/version", versionHandler(opts.Build, opts.Now))
 		api.Get("/events/stream", sseEventsHandler(opts.SSEHeartbeat))
 	})
 
+	if opts.WebDir != "" {
+		mountSPA(r, opts.WebDir, opts.Logger)
+	}
+
 	return r
+}
+
+// mountSPA serves the built React SPA from dir. It serves static assets
+// directly and falls back to index.html for any non-API path so that
+// client-side routes resolve on hard reloads. The handler is silently
+// skipped when dir does not exist, allowing the same image to be used in
+// API-only deployments.
+func mountSPA(r chi.Router, dir string, logger *slog.Logger) {
+	clean := filepath.Clean(dir)
+	info, err := os.Stat(clean)
+	if err != nil || !info.IsDir() {
+		if logger != nil {
+			logger.Warn("spa directory not available",
+				slog.String("dir", clean),
+				slog.Any("error", err),
+			)
+		}
+		return
+	}
+
+	indexPath := filepath.Join(clean, "index.html")
+	if _, err := os.Stat(indexPath); err != nil {
+		if logger != nil {
+			logger.Warn("spa index.html missing",
+				slog.String("dir", clean),
+				slog.Any("error", err),
+			)
+		}
+		return
+	}
+
+	fs := http.FileServer(http.Dir(clean))
+	spaHandler := func(w http.ResponseWriter, req *http.Request) {
+		urlPath := req.URL.Path
+		if urlPath == "" || urlPath == "/" {
+			serveIndex(w, req, indexPath)
+			return
+		}
+		if strings.HasPrefix(urlPath, "/api/") {
+			writeError(w, req, errNotFound)
+			return
+		}
+
+		assetPath := filepath.Join(clean, filepath.FromSlash(strings.TrimPrefix(urlPath, "/")))
+		if rel, err := filepath.Rel(clean, assetPath); err != nil || strings.HasPrefix(rel, "..") {
+			writeError(w, req, errNotFound)
+			return
+		}
+		if stat, err := os.Stat(assetPath); err == nil && !stat.IsDir() {
+			fs.ServeHTTP(w, req)
+			return
+		}
+		serveIndex(w, req, indexPath)
+	}
+	r.Get("/*", spaHandler)
+	r.Head("/*", spaHandler)
+}
+
+func serveIndex(w http.ResponseWriter, r *http.Request, indexPath string) {
+	w.Header().Set("Cache-Control", "no-cache")
+	http.ServeFile(w, r, indexPath)
 }
 
 // corsMiddleware adapts the go-chi/cors module to our config struct.

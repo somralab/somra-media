@@ -77,7 +77,7 @@ func TestRecoverMiddleware_ConvertsPanicTo500(t *testing.T) {
 	var env platformerrors.Envelope
 	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &env))
 	assert.Equal(t, platformerrors.CodeInternal, env.Code)
-	assert.Equal(t, "errors.internal_error", env.MessageKey)
+	assert.Equal(t, "errors.internal", env.MessageKey)
 	assert.NotEmpty(t, env.RequestID)
 	assert.Contains(t, buf.String(), "panic recovered")
 }

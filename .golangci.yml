@@ -1,0 +1,95 @@
+# golangci-lint configuration for Somra.
+#
+# Schema: golangci-lint v2.x.
+# Reference: https://golangci-lint.run/usage/configuration/
+#
+# Linter selection rationale:
+#   - errcheck/govet/staticcheck/ineffassign/unused: core correctness baseline.
+#   - errorlint/bodyclose/noctx: enforce error-wrapping (%w), resp.Body.Close
+#     and ctx-propagation idioms required by AGENTS.md.
+#   - revive/gocritic/unparam/misspell: lightweight style + bug-prevention.
+#
+# Disabled (noisy / not aligned with project conventions): exhaustruct,
+# gochecknoglobals.
+
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  default: none
+  enable:
+    - bodyclose
+    - errcheck
+    - errorlint
+    - gocritic
+    - govet
+    - ineffassign
+    - misspell
+    - noctx
+    - revive
+    - staticcheck
+    - unparam
+    - unused
+  settings:
+    errcheck:
+      exclude-functions:
+        - (net/http.ResponseWriter).Write
+        - encoding/json.Marshal
+    govet:
+      enable-all: true
+      disable:
+        - fieldalignment
+        - shadow
+    revive:
+      severity: warning
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: dot-imports
+        - name: error-return
+        - name: error-strings
+        - name: error-naming
+        - name: increment-decrement
+        - name: range
+        - name: receiver-naming
+        - name: redefines-builtin-id
+        - name: superfluous-else
+        - name: time-naming
+        - name: unexported-return
+        - name: unreachable-code
+        - name: var-declaration
+        - name: var-naming
+    staticcheck:
+      checks:
+        - all
+        - "-ST1000"
+  exclusions:
+    generated: lax
+    rules:
+      - path: _test\.go
+        linters:
+          - errcheck
+          - bodyclose
+          - unparam
+          - gocritic
+          - noctx
+          - revive
+      # goose migration runner uses `max` as a local for "max applied
+      # version"; renaming it would only obscure the intent.
+      - path: internal/platform/db/migrate\.go
+        linters:
+          - revive
+        text: "redefines-builtin-id"
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/somralab/somra-media

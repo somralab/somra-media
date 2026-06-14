@@ -1,0 +1,42 @@
+# Somra — single-service docker-compose.
+#
+# Prerequisites (create them in the same directory before `docker compose up`):
+#   ./config   : runtime configuration overrides (currently empty placeholder)
+#   ./data     : SQLite databases and durable state (`SOMRA_DATA_DIR`)
+#   ./cache    : transcoding scratch space (used by streaming module)
+#   ./media    : mount your media library here, read-only
+#
+# Quick start:
+#   mkdir -p config data cache media
+#   docker compose -f deploy/docker-compose.yml up
+#
+# Once the container is healthy, visit http://localhost:8080 — the SPA is
+# served from `/web/static` inside the image and the API lives under
+# `/api/v1`.
+
+services:
+  somra:
+    image: ghcr.io/somralab/somra-media:dev
+    container_name: somra
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SOMRA_HTTP_ADDR: ":8080"
+      SOMRA_DATA_DIR: /data
+      SOMRA_WEB_DIR: /web/static
+      SOMRA_LOG_LEVEL: info
+      SOMRA_LOG_FORMAT: json
+    volumes:
+      - ./config:/config
+      - ./data:/data
+      - ./cache:/cache
+      - ./media:/media:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "curl -fsS --max-time 4 http://127.0.0.1:8080/api/v1/health || exit 1"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

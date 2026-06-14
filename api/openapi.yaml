@@ -1,0 +1,244 @@
+openapi: 3.1.0
+info:
+  title: Somra API
+  version: 0.1.0-dev
+  description: |
+    Somra — all-in-one, self-hosted home media server.
+
+    This document is the **design-first** source of truth for the Somra HTTP API.
+    Frontend TypeScript types are generated from this file (see
+    `scripts/gen-openapi-types.sh` and `make openapi-types`). The Go backend
+    implements the contract defined here; any divergence is a bug in the
+    implementation, not in this specification.
+
+    Errors follow a `ProblemDetails`-style envelope: every error response uses
+    the `ErrorResponse` schema, which is a superset compatible with RFC 7807
+    "Problem Details for HTTP APIs" (the `messageKey` field carries an
+    i18n key resolvable by the client; `message` carries the
+    already-localized human text). See `plan/i18n-localization.md` for the
+    binding i18n rules.
+  license:
+    name: AGPL-3.0-or-later
+    identifier: AGPL-3.0-or-later
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+  contact:
+    name: Somra
+    url: https://github.com/somralab/somra-media
+
+servers:
+  - url: /api/v1
+    description: Default API root (relative to the Somra server host)
+
+security:
+  - {}
+
+tags:
+  - name: system
+    description: System-level endpoints (health, version, diagnostics).
+
+paths:
+  /health:
+    get:
+      tags: [system]
+      summary: Liveness/readiness probe
+      description: |
+        Reports the operational state of the Somra server and its critical
+        dependencies. Intended for container orchestrators, monitoring
+        systems and the setup wizard. Does not require authentication.
+      operationId: getHealth
+      responses:
+        "200":
+          description: Service is healthy.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              examples:
+                healthy:
+                  summary: All checks passing
+                  value:
+                    status: ok
+                    time: "2025-01-01T12:34:56Z"
+                    checks:
+                      database:
+                        status: ok
+                      scheduler:
+                        status: ok
+                        detail: running
+                      uptime:
+                        status: ok
+                        detail: up 1m
+        "503":
+          description: Service is unhealthy or starting up.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unhealthy:
+                  summary: Database unreachable
+                  value:
+                    code: service_unavailable
+                    messageKey: system.health.unavailable
+                    message: Service is temporarily unavailable.
+                    requestId: 0HMVQK8R9
+                    details:
+                      database: down
+
+  /version:
+    get:
+      tags: [system]
+      summary: Build and version information
+      description: |
+        Returns the semantic version, git commit hash and build timestamp of
+        the running Somra server. Does not require authentication.
+      operationId: getVersion
+      responses:
+        "200":
+          description: Version information.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VersionResponse"
+              examples:
+                example:
+                  summary: A development build
+                  value:
+                    version: 0.1.0-dev
+                    commit: 466b6eccd4007f1535820ee1e4f0514ac9581827
+                    builtAt: "2025-01-01T12:00:00Z"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Short-lived JWT access token issued by the auth module. The matching
+        revocable refresh token is delivered out-of-band (HTTP-only cookie).
+        Not applied to any operation in this revision; reserved for the auth
+        endpoints introduced in Sprint 03.
+
+  schemas:
+    HealthResponse:
+      type: object
+      description: Health probe payload.
+      additionalProperties: false
+      required: [status, time, checks]
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded, unavailable]
+          description: Aggregated health verdict.
+          examples: [ok]
+        time:
+          type: string
+          format: date-time
+          description: Server time when the probe was evaluated (RFC 3339).
+          examples: ["2025-01-01T12:34:56Z"]
+        checks:
+          type: object
+          description: |
+            Map of dependency-name to per-check status object. Concrete
+            keys are implementation-defined (`database`, `scheduler`,
+            `uptime`, ...) and may evolve; clients must treat unknown
+            keys as informational only and ignore unknown extra fields.
+          additionalProperties:
+            $ref: "#/components/schemas/HealthCheckStatus"
+          examples:
+            - database:
+                status: ok
+              scheduler:
+                status: ok
+                detail: running
+
+    HealthCheckStatus:
+      type: object
+      description: Per-dependency health status entry.
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded, unavailable, down]
+          description: |
+            Per-dependency status. `down` is reserved for critical
+            providers (e.g. database) that report a fatal failure;
+            non-critical providers cap out at `degraded`.
+        detail:
+          type: string
+          description: Human-readable detail (e.g. "running", "up 5m").
+        extra:
+          type: object
+          additionalProperties: true
+          description: Provider-specific structured data.
+
+    VersionResponse:
+      type: object
+      description: Build/version metadata.
+      additionalProperties: false
+      required: [version, commit, builtAt]
+      properties:
+        version:
+          type: string
+          description: Semantic version (SemVer 2.0.0), optionally with a pre-release suffix.
+          examples: ["0.1.0-dev"]
+        commit:
+          type: string
+          description: Full or short git commit hash the binary was built from.
+          examples: ["466b6eccd4007f1535820ee1e4f0514ac9581827"]
+        builtAt:
+          type: string
+          format: date-time
+          description: UTC build timestamp (RFC 3339).
+          examples: ["2025-01-01T12:00:00Z"]
+
+    ErrorResponse:
+      type: object
+      description: |
+        Canonical error envelope returned by every Somra endpoint on failure.
+        This schema is compatible with RFC 7807 "Problem Details for HTTP
+        APIs" — clients that expect Problem Details can map fields as
+        follows: `type` ≈ `code`, `title` ≈ `messageKey`, `detail` ≈ `message`,
+        `instance` ≈ `requestId`. Therefore `ProblemDetails` is an alias of
+        `ErrorResponse` (see below).
+      additionalProperties: false
+      required: [code, messageKey, message]
+      properties:
+        code:
+          type: string
+          description: |
+            Machine-readable error code in `snake_case`. Stable across releases;
+            clients may switch on this value.
+          examples: [validation_failed, not_found, service_unavailable]
+        messageKey:
+          type: string
+          description: |
+            i18n key resolvable on the client (e.g. `auth.login.invalid_credentials`).
+            Format: `domain.context.key`. See `plan/i18n-localization.md`.
+          examples: [system.health.unavailable]
+        message:
+          type: string
+          description: |
+            Server-side localized human-readable message. May be presented to
+            end users as a fallback when the client cannot resolve `messageKey`.
+          examples: ["Service is temporarily unavailable."]
+        requestId:
+          type: string
+          description: |
+            Correlation identifier for log lookup. Echoed from the
+            `X-Request-Id` response header.
+          examples: ["0HMVQK8R9"]
+        details:
+          type: object
+          description: |
+            Optional structured details (e.g. per-field validation errors).
+            Shape is endpoint-specific; clients must tolerate unknown keys.
+          additionalProperties: true
+
+    ProblemDetails:
+      description: |
+        Alias for `ErrorResponse`, provided so that callers familiar with
+        RFC 7807 can refer to the same schema by its canonical name.
+      allOf:
+        - $ref: "#/components/schemas/ErrorResponse"

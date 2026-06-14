@@ -1,17 +1,60 @@
-# Sprint 01 Paket 1 ships a minimal .gitignore; Paket 2 owns the canonical
-# version that covers frontend, SQLite, OS files, etc.
-
-# Go build outputs
+# --- Go ---
+bin/
 /somra
 /cmd/somra/somra
 *.test
 *.out
+coverage.out
+coverage.go.out
+coverage.html
+*.prof
 
-# Local data directory (SQLite, caches)
+# --- Node / Frontend ---
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/
+.vite/
+.cache/
+.eslintcache
+web/coverage/
+
+# --- Playwright e2e ---
+web/playwright-report/
+web/test-results/
+web/.playwright/
+
+# --- SQLite ---
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# --- Environment & secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Application data ---
+data/
 /data/
 
-# Editor and IDE
-.vscode/
-.idea/
-*.swp
+# --- OS ---
 .DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# --- IDE / Editors ---
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.shared.json
+!.vscode/launch.shared.json
+*.swp
+*.swo
+*~
