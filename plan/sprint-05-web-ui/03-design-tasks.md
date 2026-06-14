@@ -14,21 +14,21 @@
 ## Epikler ve Görevler
 
 ### Epik A: Marka & görsel kimlik
-- [ ] A1 — somra logo, renk paleti, tipografi | Kabul: marka kılavuzu (mini).
-- [ ] A2 — İkonografi ve görsel dil | Kabul: tutarlı set.
+- [x] A1 — somra logo, renk paleti, tipografi | Kabul: marka kılavuzu (mini).
+- [x] A2 — İkonografi ve görsel dil | Kabul: tutarlı set.
 
 ### Epik B: Akış tasarımları
-- [ ] B1 — Ana sayfa, kütüphane, detay, oynatıcı ekran tasarımları | Kabul: onaylı mockup.
-- [ ] B2 — Arama/filtre ve boş/hata durumları | Kabul: tüm durumlar tasarlanmış.
+- [x] B1 — Ana sayfa, kütüphane, detay, oynatıcı ekran tasarımları | Kabul: onaylı mockup.
+- [x] B2 — Arama/filtre ve boş/hata durumları | Kabul: tüm durumlar tasarlanmış.
 
 ### Epik C: Tasarım sistemi olgunlaştırma
-- [ ] C1 — Bileşen kütüphanesini genişletme (raf, kart, oynatıcı kontrolleri) | Kabul: frontend ile hizalı.
-- [ ] C2 — Erişilebilirlik (kontrast, klavye, ARIA) kılavuzu | Kabul: WCAG temel uyum.
+- [x] C1 — Bileşen kütüphanesini genişletme (raf, kart, oynatıcı kontrolleri) | Kabul: frontend ile hizalı.
+- [x] C2 — Erişilebilirlik (kontrast, klavye, ARIA) kılavuzu | Kabul: WCAG temel uyum.
 
 ### Epik D: Dinamik tema tasarımı
-- [ ] D1 — Dört özgün tema token setinin tasarımı (renk/tipografi/yoğunluk/kart-raf stili): **Cinematic (varsayılan)** — koyu, sinematik, sıcak vurgulu; **Aurora** — mavi/teal, ferah; **Noir** — derin mor/siyah, yüksek kontrast; **Minimal** — sade, nötr | Kabul: her tema için onaylı token paleti, tüm temalar WCAG kontrast eşiğini geçer, hiçbir tema bir markanın logosunu/görsel kimliğini taklit etmez.
-- [ ] D2 — Tema seçici (theme switcher) UX'i ve önizleme | Kabul: tema değişimi anında ve tutarlı.
-- [ ] D3 — Temaların tüm ekranlarda (ana sayfa, kütüphane, detay, oynatıcı) tutarlılık kontrolü | Kabul: hiçbir ekran tema-bağımsız kırılmaz.
+- [x] D1 — Dört özgün tema token setinin tasarımı
+- [x] D2 — Tema seçici (theme switcher) UX'i ve önizleme
+- [x] D3 — Temaların tüm ekranlarda tutarlılık kontrolü
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Onaylı görsel kimlik + temel ekran tasarımları + olgun tasarım sistemi + dört tema seti.

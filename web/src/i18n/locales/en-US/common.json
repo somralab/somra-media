@@ -4,6 +4,7 @@
     "tagline": "Self-hosted media server"
   },
   "nav": {
+    "home": "Home",
     "status": "Status",
     "settings": "Settings",
     "libraries": "Libraries"

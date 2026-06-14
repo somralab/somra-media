@@ -4,6 +4,7 @@
     "tagline": "Kendi sunucunuzda medya"
   },
   "nav": {
+    "home": "Ana sayfa",
     "status": "Durum",
     "settings": "Ayarlar",
     "libraries": "Kütüphaneler"

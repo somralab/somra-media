@@ -13,15 +13,15 @@
 ## Epikler ve Görevler
 
 ### Epik A: Gezinme API'leri
-- [ ] A1 — Sayfalı/filtreli kütüphane listesi endpoint'i | Kabul: hızlı, indeks kullanır.
-- [ ] A2 — Öğe/sezon/bölüm detay endpoint'leri | Kabul: tek çağrıda gerekli veri.
+- [x] A1 — Sayfalı/filtreli kütüphane listesi endpoint'i | Kabul: hızlı, indeks kullanır.
+- [x] A2 — Öğe/sezon/bölüm detay endpoint'leri | Kabul: tek çağrıda gerekli veri.
 
 ### Epik B: Keşif rafları
-- [ ] B1 — "Devam et", "yeni eklenenler", öneri rafı endpoint'leri (kullanıcı bazlı) | Kabul: izleme durumuna göre.
-- [ ] B2 — Ebeveyn kontrolü filtre uygulaması (sunucu tarafı) | Kabul: kısıtlı içerik dönmez.
+- [x] B1 — "Devam et", "yeni eklenenler", öneri rafı endpoint'leri (kullanıcı bazlı) | Kabul: izleme durumuna göre.
+- [x] B2 — Ebeveyn kontrolü filtre uygulaması (sunucu tarafı) | Kabul: kısıtlı içerik dönmez.
 
 ### Epik C: Arama
-- [ ] C1 — FTS tabanlı arama endpoint'i (debounce dostu) | Kabul: düşük gecikme.
+- [x] C1 — FTS tabanlı arama endpoint'i (debounce dostu) | Kabul: düşük gecikme.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Frontend gezinme/keşif/arama ihtiyaçlarını karşılayan performanslı API'ler hazır.

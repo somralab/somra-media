@@ -1,0 +1,23 @@
+{
+  "backToLibrary": "Back to library",
+  "noPoster": "No poster",
+  "actions": {
+    "play": "Play",
+    "resume": "Resume",
+    "favorite": "Add to favorites",
+    "unfavorite": "Remove from favorites",
+    "addWatchlist": "Add to watchlist",
+    "removeWatchlist": "Remove from watchlist"
+  },
+  "cast": {
+    "title": "Cast & crew"
+  },
+  "seasons": {
+    "title": "Seasons & episodes",
+    "number": "Season {{number}}",
+    "episode": "Episode {{number}}"
+  },
+  "error": {
+    "loadFailed": "Could not load details."
+  }
+}

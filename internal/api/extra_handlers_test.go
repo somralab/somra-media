@@ -41,6 +41,10 @@ func TestMediaHandlers_ListAndMatch(t *testing.T) {
 			DB: d, Metadata: meta,
 			Locale: func(*http.Request) string { return "tr-TR" },
 		},
+		BrowseHandlers: &BrowseHandlers{
+			Browse: db.NewBrowseRepo(d.Querier()),
+			Locale: func(*http.Request) string { return "tr-TR" },
+		},
 	}))
 
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/libraries/"+jsonNumber(lib.ID)+"/items", nil)

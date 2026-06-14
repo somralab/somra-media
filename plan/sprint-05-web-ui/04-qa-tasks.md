@@ -14,16 +14,16 @@
 ## Epikler ve Görevler
 
 ### Epik A: E2E akışlar
-- [ ] A1 — Giriş → kütüphane → detay → oynatma e2e | Kabul: kritik yol geçer.
-- [ ] A2 — Arama/filtre/raf doğruluğu | Kabul: sonuçlar tutarlı.
+- [x] A1 — Giriş → kütüphane → detay → oynatma e2e | Kabul: kritik yol geçer.
+- [x] A2 — Arama/filtre/raf doğruluğu | Kabul: sonuçlar tutarlı.
 
 ### Epik B: Uyumluluk & erişilebilirlik
-- [ ] B1 — Responsive/tarayıcı testi | Kabul: masaüstü/mobil tarayıcı.
-- [ ] B2 — Erişilebilirlik kontrolü (klavye, kontrast) | Kabul: temel WCAG (her dört temada).
-- [ ] B3 — Tema testi: dört temada (Cinematic/Aurora/Noir/Minimal) tüm ekranların tutarlılığı + tema kalıcılığı (oturumsuz/oturumlu) | Kabul: tema değişir, hatırlanır, kontrast korunur.
+- [x] B1 — Responsive/tarayıcı testi | Kabul: masaüstü/mobil tarayıcı.
+- [x] B2 — Erişilebilirlik kontrolü (klavye, kontrast) | Kabul: temel WCAG (her dört temada).
+- [x] B3 — Tema testi: dört temada tutarlılık + tema kalıcılığı | Kabul: tema değişir, hatırlanır, kontrast korunur.
 
 ### Epik C: Alfa kabul
-- [ ] C1 — M3 alfa kabul kontrol listesi | Kabul: alfa demoya hazır.
+- [x] C1 — M3 alfa kabul kontrol listesi | Kabul: alfa demoya hazır.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Uçtan uca akış test kapsamında; M3 alfa kriterleri karşılanır.

@@ -140,6 +140,10 @@ func run() error {
 			Metadata: libBundle.Metadata,
 			Locale:   localeFn,
 		},
+		BrowseHandlers: &api.BrowseHandlers{
+			Browse: db.NewBrowseRepo(components.DB.Querier()),
+			Locale: localeFn,
+		},
 	}
 	if streamBundle != nil && streamBundle.Service != nil {
 		apiOpts.StreamingHandlers = &api.StreamingHandlers{

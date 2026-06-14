@@ -1,4 +1,4 @@
-import { type ReactNode, Suspense, lazy } from 'react';
+import { type ReactNode, Suspense, lazy, useState } from 'react';
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
@@ -7,11 +7,16 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { useAuthStore, clearAuthSession } from '@/stores/auth';
 import { logout } from '@/api/endpoints/auth';
 import { Button } from '@/components/ui/Button';
+import { SearchBar } from '@/components/search/SearchBar';
+import { SearchResultsDropdown } from '@/components/search/SearchResultsDropdown';
+import { useSearchMedia } from '@/api/hooks/useBrowse';
 
+const HomePage = lazy(() => import('@/pages/HomePage'));
 const StatusPage = lazy(() => import('@/pages/StatusPage'));
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
 const LibraryPage = lazy(() => import('@/pages/LibraryPage'));
 const LibraryDetailPage = lazy(() => import('@/pages/LibraryDetailPage'));
+const MediaDetailPage = lazy(() => import('@/pages/MediaDetailPage'));
 const PlayerPage = lazy(() => import('@/pages/PlayerPage'));
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
@@ -31,6 +36,38 @@ function NavItem({ to, label }: { to: string; label: string }): ReactNode {
     >
       {label}
     </NavLink>
+  );
+}
+
+function GlobalSearch(): ReactNode {
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
+  const { data, isLoading } = useSearchMedia(query, Boolean(accessToken) && open);
+
+  if (!accessToken) {
+    return null;
+  }
+
+  return (
+    <div className="relative hidden sm:block">
+      <SearchBar
+        value={query}
+        onChange={(v) => {
+          setQuery(v);
+          setOpen(true);
+        }}
+        onSubmit={() => setOpen(true)}
+      />
+      {open && (
+        <SearchResultsDropdown
+          results={data?.results ?? []}
+          query={query}
+          isLoading={isLoading}
+          onClose={() => setOpen(false)}
+        />
+      )}
+    </div>
   );
 }
 
@@ -64,18 +101,23 @@ function AuthNav(): ReactNode {
 
 export default function App(): ReactNode {
   const { t } = useTranslation();
+  const accessToken = useAuthStore((s) => s.accessToken);
 
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b border-border bg-surface">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 p-4">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 p-4">
           <div className="flex flex-col">
             <span className="text-lg font-semibold">{t('app.name')}</span>
             <span className="text-xs text-muted">{t('app.tagline')}</span>
           </div>
-          <nav aria-label="primary" className="flex items-center gap-1">
-            <NavItem to="/" label={t('nav.status')} />
-            <NavItem to="/libraries" label={t('nav.libraries', { ns: 'library' })} />
+          <GlobalSearch />
+          <nav aria-label="primary" className="flex flex-wrap items-center gap-1">
+            {accessToken ? <NavItem to="/" label={t('nav.home')} /> : null}
+            {accessToken ? (
+              <NavItem to="/libraries" label={t('nav.libraries', { ns: 'library' })} />
+            ) : null}
+            <NavItem to="/status" label={t('nav.status')} />
             <NavItem to="/settings" label={t('nav.settings')} />
             <AuthNav />
           </nav>
@@ -84,7 +126,15 @@ export default function App(): ReactNode {
       <main className="flex-1">
         <Suspense fallback={<p className="p-6 text-muted">{t('states.loading')}</p>}>
           <Routes>
-            <Route path="/" element={<StatusPage />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <HomePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/status" element={<StatusPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route
               path="/libraries"
@@ -99,6 +149,14 @@ export default function App(): ReactNode {
               element={
                 <ProtectedRoute>
                   <LibraryDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/libraries/:libraryId/items/:itemId"
+              element={
+                <ProtectedRoute>
+                  <MediaDetailPage />
                 </ProtectedRoute>
               }
             />

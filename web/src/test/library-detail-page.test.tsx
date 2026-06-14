@@ -12,13 +12,30 @@ vi.mock('@/api/hooks/useLibraries', () => ({
   useScanHistory: () => ({
     data: [{ id: 1, scanType: 'full', status: 'succeeded', filesTotal: 1, filesDone: 1 }],
   }),
-  useMediaItems: () => ({
-    data: [{ id: 1, title: 'Inception', year: 2010, matchStatus: 'unmatched' }],
-    refetch: vi.fn(),
-  }),
   useTriggerScan: () => ({ mutate: vi.fn(), isPending: false }),
   useAutoMatch: () => ({ mutate: vi.fn(), isPending: false }),
-  useMatchCandidates: () => ({ data: [] }),
+}));
+
+vi.mock('@/api/hooks/useBrowse', () => ({
+  useBrowseItems: () => ({
+    data: {
+      items: [
+        {
+          id: 1,
+          libraryId: 1,
+          title: 'Inception',
+          year: 2010,
+          matchStatus: 'unmatched',
+        },
+      ],
+      total: 1,
+      offset: 0,
+      limit: 500,
+    },
+    isLoading: false,
+    error: null,
+    refetch: vi.fn(),
+  }),
 }));
 
 vi.mock('@/api/scanEvents', () => ({
@@ -41,6 +58,6 @@ describe('LibraryDetailPage', () => {
     );
     expect(screen.getByRole('heading', { name: 'Movies' })).toBeInTheDocument();
     expect(screen.getByText(/full scan/i)).toBeInTheDocument();
-    expect(screen.getByText('Inception')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /grid/i })).toBeInTheDocument();
   });
 });

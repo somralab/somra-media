@@ -1,0 +1,9 @@
+{
+  "label": "Ara",
+  "placeholder": "Film ve dizi ara…",
+  "results": {
+    "label": "Arama sonuçları",
+    "loading": "Aranıyor…",
+    "empty": "“{{query}}” için sonuç yok."
+  }
+}

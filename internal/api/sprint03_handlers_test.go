@@ -27,6 +27,10 @@ func newSprint03Router(t *testing.T) (http.Handler, *auth.Service, *db.DB, strin
 		UserHandlers:    &UserHandlers{Service: svc, Users: db.NewUserRepo(d.Querier())},
 		ProfileHandlers: &ProfileHandlers{Profiles: db.NewProfileRepo(d.Querier())},
 		WatchHandlers:   &WatchHandlers{Watch: db.NewWatchRepo(d.Querier())},
+		BrowseHandlers: &BrowseHandlers{
+			Browse: db.NewBrowseRepo(d.Querier()),
+			Locale: func(*http.Request) string { return "en-US" },
+		},
 	})
 
 	setupBody, _ := json.Marshal(map[string]string{"username": "admin", "password": "AdminPass1"})
