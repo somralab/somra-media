@@ -65,7 +65,10 @@ export async function getWatchState(itemId: number): Promise<WatchState> {
   return apiFetch<WatchState>(`/watch-state/${itemId}`);
 }
 
-export async function saveWatchState(itemId: number, payload: WatchStatePayload): Promise<WatchState> {
+export async function saveWatchState(
+  itemId: number,
+  payload: WatchStatePayload,
+): Promise<WatchState> {
   return apiFetch<WatchState>(`/watch-state/${itemId}`, { method: 'PUT', body: payload });
 }
 

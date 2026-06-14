@@ -29,8 +29,7 @@ export function useWatchStateQuery(itemId: number, enabled = true) {
 
 export function useSaveWatchProgress(itemId: number) {
   return useMutation({
-    mutationFn: (positionMs: number) =>
-      saveWatchState(itemId, { positionMs, completed: false }),
+    mutationFn: (positionMs: number) => saveWatchState(itemId, { positionMs, completed: false }),
   });
 }
 
