@@ -12,13 +12,8 @@ const defaultScanCron = "0 3 * * *"
 // RecommendDefaults derives conservative transcode concurrency from CPU cores.
 func RecommendDefaults(cpuCores int, locale string) SmartDefaults {
 	concurrency := 2
-	switch {
-	case cpuCores <= 2:
+	if cpuCores <= 2 {
 		concurrency = 1
-	case cpuCores <= 4:
-		concurrency = 2
-	default:
-		concurrency = 2
 	}
 	if locale == "" {
 		locale = "en-US"

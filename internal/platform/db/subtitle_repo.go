@@ -48,7 +48,7 @@ func (r *SubtitleRepo) ListByMediaItem(ctx context.Context, mediaItemID int64) (
 	if err != nil {
 		return nil, fmt.Errorf("db subtitle list: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	var out []SubtitleFile
 	for rows.Next() {
 		var f SubtitleFile
@@ -126,7 +126,7 @@ func (r *SubtitleRepo) ListMediaItemsMissingLanguages(ctx context.Context, langs
 		for rows.Next() {
 			var id int64
 			if err := rows.Scan(&id); err != nil {
-				rows.Close()
+				_ = rows.Close()
 				return nil, err
 			}
 			if _, ok := seen[id]; !ok {
@@ -134,7 +134,7 @@ func (r *SubtitleRepo) ListMediaItemsMissingLanguages(ctx context.Context, langs
 				ids = append(ids, id)
 			}
 		}
-		rows.Close()
+		_ = rows.Close()
 		if err := rows.Err(); err != nil {
 			return nil, err
 		}

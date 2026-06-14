@@ -99,7 +99,7 @@ func (h *SubtitleHandlers) upload(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, platformerrors.New(http.StatusBadRequest, platformerrors.CodeValidation, "subtitles.upload.invalid"))
 		return
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	content, err := io.ReadAll(io.LimitReader(f, 2<<20))
 	if err != nil {
 		writeError(w, r, platformerrors.Wrap(err, http.StatusBadRequest, platformerrors.CodeValidation, "subtitles.upload.invalid"))

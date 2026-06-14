@@ -46,7 +46,7 @@ func (p *OpenSubtitles) Search(ctx context.Context, q SearchQuery) ([]SearchResu
 	if err != nil {
 		return nil, fmt.Errorf("subtitles opensubtitles search: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("subtitles opensubtitles search: status %d", resp.StatusCode)
 	}
@@ -82,7 +82,7 @@ func (p *OpenSubtitles) Download(ctx context.Context, externalID, language strin
 	if err != nil {
 		return nil, fmt.Errorf("subtitles opensubtitles download: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("subtitles opensubtitles download: status %d", resp.StatusCode)
 	}
@@ -103,7 +103,7 @@ func (p *OpenSubtitles) Download(ctx context.Context, externalID, language strin
 	if err != nil {
 		return nil, err
 	}
-	defer dlResp.Body.Close()
+	defer func() { _ = dlResp.Body.Close() }()
 	return io.ReadAll(io.LimitReader(dlResp.Body, 4<<20))
 }
 

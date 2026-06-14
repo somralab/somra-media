@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"runtime"
@@ -108,7 +109,7 @@ func detectMemoryBytes() int64 {
 			}
 		}
 	case "darwin":
-		out, err := exec.Command("sysctl", "-n", "hw.memsize").Output()
+		out, err := exec.CommandContext(context.Background(), "sysctl", "-n", "hw.memsize").Output()
 		if err == nil {
 			if bytes, err := strconv.ParseInt(strings.TrimSpace(string(out)), 10, 64); err == nil {
 				return bytes
@@ -127,7 +128,7 @@ func detectGPU() bool {
 			}
 		}
 	case "darwin":
-		out, err := exec.Command("system_profiler", "SPDisplaysDataType").Output()
+		out, err := exec.CommandContext(context.Background(), "system_profiler", "SPDisplaysDataType").Output()
 		if err == nil && !strings.Contains(string(out), "Chipset Model: Apple") {
 			// Discrete GPU or external GPU likely present when not only Apple Silicon iGPU.
 			if strings.Contains(strings.ToLower(string(out)), "nvidia") ||
