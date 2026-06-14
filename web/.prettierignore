@@ -1,0 +1,8 @@
+node_modules
+dist
+.vite
+coverage
+pnpm-lock.yaml
+src/api/generated
+playwright-report
+test-results
