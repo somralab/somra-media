@@ -161,7 +161,7 @@ func (r *UserRepo) List(ctx context.Context) ([]UserAccount, error) {
 	if err != nil {
 		return nil, fmt.Errorf("db user list: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var out []UserAccount
 	for rows.Next() {
@@ -245,7 +245,7 @@ func (r *UserRepo) PermissionsForUser(ctx context.Context, userID string) ([]str
 	if err != nil {
 		return nil, fmt.Errorf("db user permissions: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var perms []string
 	for rows.Next() {

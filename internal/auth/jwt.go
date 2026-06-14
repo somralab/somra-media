@@ -57,7 +57,7 @@ func (s *JWTService) Validate(_ context.Context, raw string) (Claims, error) {
 		return s.cfg.Secret, nil
 	}, jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}))
 	if err != nil {
-		return Claims{}, fmt.Errorf("%w: %v", ErrInvalidToken, err)
+		return Claims{}, fmt.Errorf("%w: %w", ErrInvalidToken, err)
 	}
 	claims, ok := token.Claims.(*accessClaims)
 	if !ok || !token.Valid {

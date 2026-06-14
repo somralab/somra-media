@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"net/http"
 	"time"
 
@@ -33,15 +32,4 @@ func testAuthMiddleware(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r.WithContext(auth.WithAuthContext(r.Context(), ac)))
 	})
-}
-
-// withTestAuth wraps ctx with admin permissions for direct handler calls.
-func withTestAuth(ctx context.Context) context.Context {
-	ac := auth.AuthContext{
-		Claims: auth.Claims{
-			Subject: auth.Subject{UserID: "test-user", Username: "testadmin", Roles: []string{auth.RoleAdmin}},
-		},
-		Permissions: []string{auth.PermLibraryRead, auth.PermLibraryWrite, auth.PermUsersManage, auth.PermProfileEdit},
-	}
-	return auth.WithAuthContext(ctx, ac)
 }

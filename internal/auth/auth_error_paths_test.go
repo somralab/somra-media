@@ -10,8 +10,8 @@ import (
 	"github.com/somralab/somra-media/internal/platform/db"
 )
 
-func TestFromContext_Nil(t *testing.T) {
-	_, ok := auth.FromContext(nil)
+func TestFromContext_Empty(t *testing.T) {
+	_, ok := auth.FromContext(context.Background())
 	require.False(t, ok)
 }
 

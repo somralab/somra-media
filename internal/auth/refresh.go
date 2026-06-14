@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -54,7 +55,7 @@ func (s *SQLiteRefreshStore) Lookup(ctx context.Context, secret string) (Refresh
 	hash := HashRefreshSecret(s.pepper, secret)
 	rec, err := s.sessions.GetByTokenHash(ctx, hash)
 	if err != nil {
-		if err == db.ErrSessionNotFound {
+		if errors.Is(err, db.ErrSessionNotFound) {
 			return RefreshToken{}, ErrTokenNotFound
 		}
 		return RefreshToken{}, fmt.Errorf("auth refresh lookup: %w", err)
@@ -78,7 +79,7 @@ func (s *SQLiteRefreshStore) Lookup(ctx context.Context, secret string) (Refresh
 // Revoke marks a token revoked by id.
 func (s *SQLiteRefreshStore) Revoke(ctx context.Context, id string) error {
 	if err := s.sessions.RevokeByID(ctx, id); err != nil {
-		if err == db.ErrSessionNotFound {
+		if errors.Is(err, db.ErrSessionNotFound) {
 			return nil
 		}
 		return fmt.Errorf("auth refresh revoke: %w", err)

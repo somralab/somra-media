@@ -128,7 +128,7 @@ func (r *SessionRepo) ListByUser(ctx context.Context, userID string) ([]SessionR
 	if err != nil {
 		return nil, fmt.Errorf("db session list: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var out []SessionRecord
 	for rows.Next() {
@@ -160,7 +160,7 @@ func (r *SessionRepo) ListByUser(ctx context.Context, userID string) ([]SessionR
 	return out, rows.Err()
 }
 
-// Revoke marks a session revoked by token hash id lookup.
+// RevokeByID marks a session revoked by id.
 func (r *SessionRepo) RevokeByID(ctx context.Context, id string) error {
 	res, err := r.q.ExecContext(ctx, `
 		UPDATE session SET revoked_at = datetime('now') WHERE id = ? AND revoked_at IS NULL
