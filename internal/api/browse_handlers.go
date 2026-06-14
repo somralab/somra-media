@@ -44,12 +44,7 @@ func (h *BrowseHandlers) discoverHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for i := range home.Shelves {
-		items := make([]db.MediaItemSummary, len(home.Shelves[i].Items))
-		for j, item := range home.Shelves[i].Items {
-			items[j] = item
-		}
-		filtered := filterSummariesByParental(r, home.Shelves[i].Items)
-		home.Shelves[i].Items = filtered
+		home.Shelves[i].Items = filterSummariesByParental(r, home.Shelves[i].Items)
 	}
 	writeJSON(w, http.StatusOK, home)
 }
