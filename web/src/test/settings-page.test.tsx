@@ -14,7 +14,12 @@ vi.mock('@/api/hooks/useSettings', () => ({
     data: {
       general: { defaultLocale: 'en-US' },
       library: { scanCron: '0 3 * * *' },
-      playback: { maxConcurrentTranscodes: 2, hwMode: 'auto', hwAccelerator: 'auto', maxHWTranscodes: 2 },
+      playback: {
+        maxConcurrentTranscodes: 2,
+        hwMode: 'auto',
+        hwAccelerator: 'auto',
+        maxHWTranscodes: 2,
+      },
       subtitles: { autoDownload: false, preferredLanguages: ['en'], apiKeySet: false },
     },
     isLoading: false,

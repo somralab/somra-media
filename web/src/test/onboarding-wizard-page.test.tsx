@@ -20,9 +20,22 @@ vi.mock('@/api/hooks/useOnboarding', () => ({
     isLoading: false,
   }),
   useSystemDetect: () => ({
-    data: { cpuCores: 4, memoryBytes: 8_000_000_000, gpuPresent: true, accelerators: [
-      { id: 'qsv', available: true, devicePresent: true, encodeCodecs: ['h264_qsv'], decodeCodecs: [] },
-    ], recommendedAccelerator: 'qsv', paths: [] },
+    data: {
+      cpuCores: 4,
+      memoryBytes: 8_000_000_000,
+      gpuPresent: true,
+      accelerators: [
+        {
+          id: 'qsv',
+          available: true,
+          devicePresent: true,
+          encodeCodecs: ['h264_qsv'],
+          decodeCodecs: [],
+        },
+      ],
+      recommendedAccelerator: 'qsv',
+      paths: [],
+    },
   }),
   useAdvanceOnboarding: () => ({ mutateAsync: advanceMutate, isPending: false }),
   useCompleteOnboarding: () => ({ mutate: vi.fn(), mutateAsync: vi.fn(), isPending: false }),
