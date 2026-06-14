@@ -72,7 +72,7 @@ func (r *WatchRepo) ListWatchStates(ctx context.Context, userID string) ([]Watch
 	if err != nil {
 		return nil, fmt.Errorf("db watch list: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var out []WatchState
 	for rows.Next() {
@@ -120,7 +120,7 @@ func (r *WatchRepo) ListFavorites(ctx context.Context, userID string) ([]int64, 
 	if err != nil {
 		return nil, fmt.Errorf("db favorite list: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var ids []int64
 	for rows.Next() {
@@ -164,7 +164,7 @@ func (r *WatchRepo) ListWatchlist(ctx context.Context, userID string) ([]int64, 
 	if err != nil {
 		return nil, fmt.Errorf("db watchlist list: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var ids []int64
 	for rows.Next() {

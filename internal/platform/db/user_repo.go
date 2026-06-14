@@ -268,7 +268,7 @@ func (r *UserRepo) loadRoles(ctx context.Context, userID string) ([]string, erro
 	if err != nil {
 		return nil, fmt.Errorf("db user load roles: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var roles []string
 	for rows.Next() {
