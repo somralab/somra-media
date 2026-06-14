@@ -13,16 +13,16 @@
 ## Epikler ve Görevler
 
 ### Epik A: Tarama testleri
-- [ ] A1 — Çeşitli adlandırma/klasör yapısı test seti | Kabul: ayrıştırma doğruluğu ölçülür.
-- [ ] A2 — Bozuk/desteklenmeyen dosya dayanıklılık testi | Kabul: tarama çökmeden devam eder.
-- [ ] A3 — Büyük kütüphane performans testi (temel) | Kabul: süre/kaynak raporlanır.
+- [x] A1 — Çeşitli adlandırma/klasör yapısı test seti | Kabul: ayrıştırma doğruluğu ölçülür.
+- [x] A2 — Bozuk/desteklenmeyen dosya dayanıklılık testi | Kabul: tarama çökmeden devam eder.
+- [x] A3 — Büyük kütüphane performans testi (temel) | Kabul: süre/kaynak raporlanır.
 
 ### Epik B: Metadata testleri
-- [ ] B1 — Sağlayıcı eşleştirme doğruluğu (mock + gerçek örnek) | Kabul: kabul edilebilir eşleşme oranı.
-- [ ] B2 — Oran sınırı/cache davranışı testi | Kabul: sınır aşımı yaşanmaz.
+- [x] B1 — Sağlayıcı eşleştirme doğruluğu (mock + gerçek örnek) | Kabul: kabul edilebilir eşleşme oranı.
+- [x] B2 — Oran sınırı/cache davranışı testi | Kabul: sınır aşımı yaşanmaz.
 
 ### Epik C: Regresyon
-- [ ] C1 — Sprint 02 regresyon paketi | Kabul: CI'da koşar.
+- [x] C1 — Sprint 02 regresyon paketi | Kabul: CI'da koşar.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Tarama/metadata akışları test kapsamında; kritik hata yok.

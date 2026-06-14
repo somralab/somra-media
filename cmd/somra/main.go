@@ -18,6 +18,7 @@ import (
 	"github.com/somralab/somra-media/internal/platform/bootstrap"
 	"github.com/somralab/somra-media/internal/platform/config"
 	"github.com/somralab/somra-media/internal/platform/db"
+	i18npkg "github.com/somralab/somra-media/internal/platform/i18n"
 	platformlog "github.com/somralab/somra-media/internal/platform/log"
 )
 
@@ -83,6 +84,14 @@ func run() error {
 		}
 	}()
 
+	libBundle := bootstrap.WireLibrary(components)
+	localeFn := func(r *http.Request) string {
+		if loc := i18npkg.FromContext(r.Context()); loc != nil {
+			return loc.Tag().String()
+		}
+		return "en-US"
+	}
+
 	handler := api.New(api.Options{
 		Logger: logger,
 		Build: api.BuildInfo{
@@ -94,6 +103,16 @@ func run() error {
 		WebDir:              cfg.Web.Dir,
 		LocalizerMiddleware: components.I18n.Middleware(),
 		HealthAggregator:    api.NewDiagnosticsAggregator(components.Diagnostics),
+		EventBus:            libBundle.EventBus,
+		LibraryHandlers: &api.LibraryHandlers{
+			Service: libBundle.Library,
+			Locale:  localeFn,
+		},
+		MediaHandlers: &api.MediaHandlers{
+			DB:       components.DB,
+			Metadata: libBundle.Metadata,
+			Locale:   localeFn,
+		},
 	})
 
 	srv := &http.Server{

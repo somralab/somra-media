@@ -49,6 +49,15 @@ type Options struct {
 	// error envelopes pick up Accept-Language; tests that don't care
 	// about localization can leave it nil and receive raw message keys.
 	LocalizerMiddleware func(http.Handler) http.Handler
+
+	// EventBus broadcasts SSE events (scan progress, etc.).
+	EventBus *EventBus
+
+	// LibraryHandlers, when non-nil, mounts /libraries routes.
+	LibraryHandlers *LibraryHandlers
+
+	// MediaHandlers, when non-nil, mounts media/metadata routes.
+	MediaHandlers *MediaHandlers
 }
 
 // New returns a chi router with the canonical middleware chain mounted at
@@ -80,7 +89,13 @@ func New(opts Options) http.Handler {
 	r.Route("/api/v1", func(api chi.Router) {
 		api.Get("/health", healthHandler(opts.Now, opts.HealthCheck, opts.HealthAggregator))
 		api.Get("/version", versionHandler(opts.Build, opts.Now))
-		api.Get("/events/stream", sseEventsHandler(opts.SSEHeartbeat))
+		api.Get("/events/stream", sseEventsHandler(opts.SSEHeartbeat, opts.EventBus))
+		if opts.LibraryHandlers != nil {
+			opts.LibraryHandlers.Mount(api)
+		}
+		if opts.MediaHandlers != nil {
+			opts.MediaHandlers.Mount(api)
+		}
 	})
 
 	if opts.WebDir != "" {

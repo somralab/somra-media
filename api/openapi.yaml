@@ -35,6 +35,10 @@ security:
 tags:
   - name: system
     description: System-level endpoints (health, version, diagnostics).
+  - name: library
+    description: Media library definition and scanning.
+  - name: media
+    description: Media items and metadata matching.
 
 paths:
   /health:
@@ -107,6 +111,211 @@ paths:
                     version: 0.1.0-dev
                     commit: 466b6eccd4007f1535820ee1e4f0514ac9581827
                     builtAt: "2025-01-01T12:00:00Z"
+
+  /libraries:
+    get:
+      tags: [library]
+      summary: List libraries
+      operationId: listLibraries
+      responses:
+        "200":
+          description: Libraries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Library"
+    post:
+      tags: [library]
+      summary: Create library
+      operationId: createLibrary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LibraryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Library"
+
+  /libraries/{libraryId}:
+    parameters:
+      - $ref: "#/components/parameters/libraryId"
+    get:
+      tags: [library]
+      summary: Get library
+      operationId: getLibrary
+      responses:
+        "200":
+          description: Library
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Library"
+    put:
+      tags: [library]
+      summary: Update library
+      operationId: updateLibrary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LibraryInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Library"
+    delete:
+      tags: [library]
+      summary: Delete library
+      operationId: deleteLibrary
+      responses:
+        "204":
+          description: Deleted
+
+  /libraries/{libraryId}/scan:
+    parameters:
+      - $ref: "#/components/parameters/libraryId"
+    post:
+      tags: [library]
+      summary: Trigger library scan
+      operationId: triggerLibraryScan
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScanRequest"
+      responses:
+        "202":
+          description: Scan accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScanResponse"
+
+  /libraries/{libraryId}/scans:
+    parameters:
+      - $ref: "#/components/parameters/libraryId"
+    get:
+      tags: [library]
+      summary: List scan history
+      operationId: listLibraryScans
+      responses:
+        "200":
+          description: Scan runs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScanRun"
+
+  /libraries/{libraryId}/items:
+    parameters:
+      - $ref: "#/components/parameters/libraryId"
+    get:
+      tags: [media]
+      summary: List media items
+      operationId: listMediaItems
+      responses:
+        "200":
+          description: Media items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MediaItem"
+
+  /libraries/{libraryId}/match:
+    parameters:
+      - $ref: "#/components/parameters/libraryId"
+    post:
+      tags: [media]
+      summary: Auto-match metadata
+      operationId: autoMatchLibrary
+      responses:
+        "200":
+          description: Match count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  matched:
+                    type: integer
+
+  /media-items/{itemId}:
+    parameters:
+      - $ref: "#/components/parameters/itemId"
+    get:
+      tags: [media]
+      summary: Get media item
+      operationId: getMediaItem
+      responses:
+        "200":
+          description: Media item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaItem"
+
+  /media-items/{itemId}/match-candidates:
+    parameters:
+      - $ref: "#/components/parameters/itemId"
+    get:
+      tags: [media]
+      summary: Search match candidates
+      operationId: listMatchCandidates
+      responses:
+        "200":
+          description: Candidates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MatchCandidate"
+
+  /media-items/{itemId}/rematch:
+    parameters:
+      - $ref: "#/components/parameters/itemId"
+    post:
+      tags: [media]
+      summary: Manual rematch
+      operationId: rematchMediaItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RematchRequest"
+      responses:
+        "204":
+          description: Rematched
+
+  /events/stream:
+    get:
+      tags: [system]
+      summary: Server-sent events stream
+      operationId: streamEvents
+      responses:
+        "200":
+          description: SSE stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
 
 components:
   securitySchemes:
@@ -242,3 +451,139 @@ components:
         RFC 7807 can refer to the same schema by its canonical name.
       allOf:
         - $ref: "#/components/schemas/ErrorResponse"
+
+    Library:
+      type: object
+      required: [id, name, kind, paths, watchEnabled]
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        kind:
+          type: string
+          enum: [movie, tv, music]
+        paths:
+          type: array
+          items:
+            type: string
+        watchEnabled:
+          type: boolean
+
+    LibraryInput:
+      type: object
+      required: [name, kind, paths]
+      properties:
+        name:
+          type: string
+        kind:
+          type: string
+          enum: [movie, tv, music]
+        paths:
+          type: array
+          items:
+            type: string
+        watchEnabled:
+          type: boolean
+
+    ScanRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [full, incremental]
+          default: full
+
+    ScanResponse:
+      type: object
+      required: [scanRunId, taskId]
+      properties:
+        scanRunId:
+          type: integer
+          format: int64
+        taskId:
+          type: string
+
+    ScanRun:
+      type: object
+      properties:
+        id:
+          type: integer
+        libraryId:
+          type: integer
+        taskId:
+          type: string
+        scanType:
+          type: string
+        status:
+          type: string
+        filesTotal:
+          type: integer
+        filesDone:
+          type: integer
+        error:
+          type: string
+
+    MediaItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        libraryId:
+          type: integer
+        kind:
+          type: string
+        title:
+          type: string
+        year:
+          type: integer
+        overview:
+          type: string
+        posterUrl:
+          type: string
+        matchStatus:
+          type: string
+        matchScore:
+          type: number
+
+    MatchCandidate:
+      type: object
+      properties:
+        provider:
+          type: string
+        externalId:
+          type: string
+        title:
+          type: string
+        year:
+          type: integer
+        score:
+          type: number
+        posterUrl:
+          type: string
+
+    RematchRequest:
+      type: object
+      required: [provider, externalId]
+      properties:
+        provider:
+          type: string
+        externalId:
+          type: string
+
+  parameters:
+    libraryId:
+      name: libraryId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    itemId:
+      name: itemId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64

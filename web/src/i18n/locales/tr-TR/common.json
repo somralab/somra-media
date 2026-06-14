@@ -5,7 +5,8 @@
   },
   "nav": {
     "status": "Durum",
-    "settings": "Ayarlar"
+    "settings": "Ayarlar",
+    "libraries": "Kütüphaneler"
   },
   "actions": {
     "save": "Kaydet",

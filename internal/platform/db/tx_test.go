@@ -84,3 +84,29 @@ func TestWithTx_BeginFailsOnClosedDB(t *testing.T) {
 	err := WithTx(ctx, d, func(Querier) error { return nil })
 	require.Error(t, err)
 }
+
+func TestWithTx_LibraryAndMedia(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	d := newMigratedDB(t)
+	dir := t.TempDir()
+
+	err := WithTx(ctx, d, func(q Querier) error {
+		libRepo := NewLibraryRepo(q)
+		mediaRepo := NewMediaRepo(q)
+		lib, err := libRepo.Create(ctx, "TxLib", LibraryKindMovie, []string{dir}, true)
+		if err != nil {
+			return err
+		}
+		itemID, err := mediaRepo.CreateItem(ctx, lib.ID, LibraryKindMovie, "Title", nil)
+		if err != nil {
+			return err
+		}
+		score := 0.5
+		if err := mediaRepo.SetMatch(ctx, itemID, MatchMatched, &score); err != nil {
+			return err
+		}
+		return mediaRepo.SetMatch(ctx, itemID, MatchUnmatched, nil)
+	})
+	require.NoError(t, err)
+}

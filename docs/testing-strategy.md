@@ -15,8 +15,9 @@ prefer the lowest layer that actually exercises the behaviour under test.
 | Integration        | Go `testing` with `//go:build integration` tag, in-process SQLite via `t.TempDir()` | Cross-package boundaries: DB ↔ repo, chi router ↔ bootstrap, i18n middleware ↔ error envelope. No external network. | `internal/api/integration_*_test.go`, `internal/platform/db/*_test.go` |
 | End-to-end (smoke) | Playwright (`@playwright/test`), Chromium headless                                  | Status page renders against a real backend; SSE event arrives in the panel. One spec per critical flow.             | `web/e2e/*.spec.ts`                                                    |
 
-Performance and load testing are deliberately out of scope for Sprint 01. They land in
-Sprint 04 (streaming) with `k6`/`vegeta`-style harnesses.
+Performance and load testing are deliberately out of scope for Sprint 01. Sprint 02 adds
+parser/provider unit tests and a naming fixture set under `testdata/library/`; a basic
+scan performance report can be captured manually via `go test -bench` when needed.
 
 ## Coverage policy (binding)
 

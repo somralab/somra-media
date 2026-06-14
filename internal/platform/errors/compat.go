@@ -15,6 +15,7 @@ type Code = string
 
 const (
 	CodeBadRequest         Code = "bad_request"
+	CodeValidation         Code = "validation_error"
 	CodeUnauthorized       Code = "unauthorized"
 	CodeForbidden          Code = "forbidden"
 	CodeNotFound           Code = "not_found"
@@ -39,6 +40,11 @@ func New(status int, code Code, messageKey string) *Error {
 		MessageKey: messageKey,
 		HTTPStatus: status,
 	}
+}
+
+// Wrap attaches cause to a new Error with the given status, code and key.
+func Wrap(cause error, status int, code Code, messageKey string) *Error {
+	return New(status, code, messageKey).WithCause(cause)
 }
 
 // ToEnvelope projects err onto the Envelope wire shape without

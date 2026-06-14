@@ -14,16 +14,16 @@
 ## Epikler ve Görevler
 
 ### Epik A: Kütüphane yönetimi
-- [ ] A1 — Kütüphane oluştur/düzenle/sil ekranları | Kabul: CRUD API'ye bağlı, doğrulamalı.
-- [ ] A2 — Klasör/yol seçimi UI'si | Kabul: çoklu yol eklenebilir.
+- [x] A1 — Kütüphane oluştur/düzenle/sil ekranları | Kabul: CRUD API'ye bağlı, doğrulamalı.
+- [x] A2 — Klasör/yol seçimi UI'si | Kabul: çoklu yol eklenebilir.
 
 ### Epik B: Tarama izleme
-- [ ] B1 — Tarama tetikleme + gerçek zamanlı ilerleme (WS/SSE) | Kabul: ilerleme canlı güncellenir.
-- [ ] B2 — Tarama geçmişi / iş durumu görünümü | Kabul: başarılı/hatalı işler listelenir.
+- [x] B1 — Tarama tetikleme + gerçek zamanlı ilerleme (WS/SSE) | Kabul: ilerleme canlı güncellenir.
+- [x] B2 — Tarama geçmişi / iş durumu görünümü | Kabul: başarılı/hatalı işler listelenir.
 
 ### Epik C: Metadata önizleme
-- [ ] C1 — Eşleşen öğelerin temel listesi + metadata önizleme | Kabul: poster + başlık + yıl gösterilir.
-- [ ] C2 — Manuel yeniden eşleştirme arayüzü | Kabul: backend düzeltme API'sini kullanır.
+- [x] C1 — Eşleşen öğelerin temel listesi + metadata önizleme | Kabul: poster + başlık + yıl gösterilir.
+- [x] C2 — Manuel yeniden eşleştirme arayüzü | Kabul: backend düzeltme API'sini kullanır.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Kullanıcı arayüzden kütüphane tanımlar, tarar ve sonuçları görür.

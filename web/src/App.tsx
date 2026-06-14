@@ -5,6 +5,8 @@ import { cn } from '@/lib/cn';
 
 const StatusPage = lazy(() => import('@/pages/StatusPage'));
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
+const LibraryPage = lazy(() => import('@/pages/LibraryPage'));
+const LibraryDetailPage = lazy(() => import('@/pages/LibraryDetailPage'));
 
 function NavItem({ to, label }: { to: string; label: string }): ReactNode {
   return (
@@ -36,6 +38,7 @@ export default function App(): ReactNode {
           </div>
           <nav aria-label="primary" className="flex items-center gap-1">
             <NavItem to="/" label={t('nav.status')} />
+            <NavItem to="/libraries" label={t('nav.libraries', { ns: 'library' })} />
             <NavItem to="/settings" label={t('nav.settings')} />
           </nav>
         </div>
@@ -44,6 +47,8 @@ export default function App(): ReactNode {
         <Suspense fallback={<p className="p-6 text-muted">{t('states.loading')}</p>}>
           <Routes>
             <Route path="/" element={<StatusPage />} />
+            <Route path="/libraries" element={<LibraryPage />} />
+            <Route path="/libraries/:id" element={<LibraryDetailPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Routes>
         </Suspense>

@@ -14,18 +14,18 @@
 ## Epikler ve Görevler
 
 ### Epik A: Kütüphane tanımı
-- [ ] A1 — Kütüphane (library) kavramı: tür (film/dizi/müzik), kaynak klasör(ler), tarama ayarları | Kabul: CRUD API + test.
-- [ ] A2 — Çoklu klasör/volume desteği | Kabul: birden fazla yol taranabilir.
+- [x] A1 — Kütüphane (library) kavramı: tür (film/dizi/müzik), kaynak klasör(ler), tarama ayarları | Kabul: CRUD API + test.
+- [x] A2 — Çoklu klasör/volume desteği | Kabul: birden fazla yol taranabilir.
 
 ### Epik B: Dosya tarama motoru
-- [ ] B1 — Tam tarama (full scan) işi: dosya keşfi, desteklenen format filtresi | Kabul: büyük klasörde stabil çalışır, ilerleme raporlar.
-- [ ] B2 — Artımlı tarama (yalnızca değişenler) | Kabul: değişiklik tespiti çalışır.
-- [ ] B3 — ffprobe ile teknik metadata (kodek, çözünürlük, süre, ses/altyazı kanalları) | Kabul: doğru parse, test verisiyle doğrulanır.
-- [ ] B4 — Dosya adı/klasör yapısından ön ayrıştırma (başlık, yıl, sezon/bölüm) | Kabul: yaygın adlandırma kalıpları çözülür.
+- [x] B1 — Tam tarama (full scan) işi: dosya keşfi, desteklenen format filtresi | Kabul: büyük klasörde stabil çalışır, ilerleme raporlar.
+- [x] B2 — Artımlı tarama (yalnızca değişenler) | Kabul: değişiklik tespiti çalışır.
+- [x] B3 — ffprobe ile teknik metadata (kodek, çözünürlük, süre, ses/altyazı kanalları) | Kabul: doğru parse, test verisiyle doğrulanır.
+- [x] B4 — Dosya adı/klasör yapısından ön ayrıştırma (başlık, yıl, sezon/bölüm) | Kabul: yaygın adlandırma kalıpları çözülür.
 
 ### Epik C: Dosya izleme (watch)
-- [ ] C1 — Dosya sistemi izleyici (ekleme/silme/taşıma) | Kabul: değişiklikte artımlı tarama tetiklenir.
-- [ ] C2 — Debounce/toplu işleme | Kabul: kütle değişimde sistem boğulmaz.
+- [x] C1 — Dosya sistemi izleyici (ekleme/silme/taşıma) | Kabul: değişiklikte artımlı tarama tetiklenir.
+- [x] C2 — Debounce/toplu işleme | Kabul: kütle değişimde sistem boğulmaz.
 
 ## Kabul Kriterleri (Sprint Çıktısı)
 - Bir kütüphane tanımlanıp taranır; teknik metadata DB'ye yazılır; izleme aktif.

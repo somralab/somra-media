@@ -1,0 +1,24 @@
+[
+  {
+    "file": "movies/Inception (2010)/Inception (2010).mkv",
+    "title": "Inception",
+    "year": 2010
+  },
+  {
+    "file": "movies/The.Matrix.1999.1080p.mkv",
+    "title": "The Matrix",
+    "year": 1999
+  },
+  {
+    "file": "tv/Breaking Bad/Season 01/Breaking Bad S01E02.mkv",
+    "title": "Breaking Bad",
+    "season": 1,
+    "episode": 2
+  },
+  {
+    "file": "tv/Show Name/Show Name 2x05.mkv",
+    "title": "Show Name",
+    "season": 2,
+    "episode": 5
+  }
+]
