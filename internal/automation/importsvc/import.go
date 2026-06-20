@@ -25,21 +25,17 @@ func (s *Service) ImportCompleted(ctx context.Context, savePath string) error {
 	if savePath == "" {
 		return fmt.Errorf("automation import: empty save path")
 	}
-	destRoot := s.ImportRoot
-	if destRoot == "" {
-		destRoot = savePath
-	} else {
-		base := filepath.Base(savePath)
-		dest := filepath.Join(destRoot, base)
+	scanPath := savePath
+	if s.ImportRoot != "" {
+		dest := filepath.Join(s.ImportRoot, filepath.Base(savePath))
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 			return fmt.Errorf("automation import mkdir: %w", err)
 		}
-		if err := os.Rename(savePath, dest); err != nil {
-			// Fall back to scan source path when rename across volumes fails.
-			dest = savePath
+		if err := os.Rename(savePath, dest); err == nil {
+			scanPath = dest
 		}
-		_ = dest
 	}
+	_ = scanPath
 	libID := s.TargetLibID
 	if libID <= 0 {
 		libs, err := s.Library.ListLibraries(ctx)

@@ -121,7 +121,7 @@ LIMIT ?`, limit)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	return scanHandoffs(rows)
 }
 
@@ -171,7 +171,7 @@ LIMIT ?`, limit)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	return scanDownloads(rows)
 }
 
@@ -190,7 +190,7 @@ LIMIT ?`, limit)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	return scanDownloads(rows)
 }
 
@@ -241,7 +241,7 @@ SELECT id, name, spec, is_default, created_at, updated_at FROM quality_profiles 
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	var out []QualityProfile
 	for rows.Next() {
 		var p QualityProfile
