@@ -140,9 +140,12 @@ func NewTestServer(t *testing.T) *TestServer {
 	}
 	requestsBundle, err := WireRequests(c, libBundle, localeFn)
 	require.NoError(t, err)
+	automationBundle, err := WireAutomation(c, libBundle, pluginsBundle, requestsBundle)
+	require.NoError(t, err)
 	apiOpts.RequestHandlers = requestsBundle.Requests
 	apiOpts.NotificationHandlers = requestsBundle.Notifications
 	apiOpts.PluginHandlers = &api.PluginHandlers{Manager: pluginsBundle.Manager}
+	apiOpts.AutomationHandlers = automationBundle.Handlers
 
 	handler := api.New(apiOpts)
 	srv := httptest.NewServer(handler)

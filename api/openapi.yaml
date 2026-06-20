@@ -57,6 +57,8 @@ tags:
     description: Notification channels and user preferences.
   - name: plugins
     description: Plugin catalog and instance management (indexers, download clients).
+  - name: automation
+    description: Indexer search, download queue, and quality profiles.
 
 paths:
   /health:
@@ -1501,6 +1503,112 @@ paths:
               schema:
                 $ref: "#/components/schemas/PluginTestResult"
 
+  /automation/indexers/search:
+    post:
+      tags: [automation]
+      summary: Search enabled indexers (admin)
+      operationId: searchIndexers
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IndexerSearchRequest"
+      responses:
+        "200":
+          description: Merged search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndexerSearchResponse"
+
+  /automation/downloads:
+    get:
+      tags: [automation]
+      summary: List automation downloads (admin)
+      operationId: listAutomationDownloads
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Download list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  downloads:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AutomationDownload"
+
+  /automation/downloads/{downloadId}:
+    parameters:
+      - name: downloadId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [automation]
+      summary: Get automation download (admin)
+      operationId: getAutomationDownload
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Download row
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutomationDownload"
+
+  /automation/quality-profiles:
+    get:
+      tags: [automation]
+      summary: List quality profiles (admin)
+      operationId: listQualityProfiles
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Profile list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/QualityProfile"
+    post:
+      tags: [automation]
+      summary: Create quality profile (admin)
+      operationId: createQualityProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QualityProfileInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+
 components:
   securitySchemes:
     bearerAuth:
@@ -2669,6 +2777,99 @@ components:
         details:
           type: object
           additionalProperties: true
+
+    IndexerSearchRequest:
+      type: object
+      required: [title, mediaKind]
+      properties:
+        title:
+          type: string
+        year:
+          type: integer
+        mediaKind:
+          type: string
+          enum: [movie, tv]
+        season:
+          type: integer
+        episode:
+          type: integer
+        indexerIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+
+    IndexerSearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              indexerId:
+                type: string
+              error:
+                type: string
+
+    AutomationDownload:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        requestId:
+          type: integer
+          format: int64
+        handoffId:
+          type: integer
+          format: int64
+        clientInstanceId:
+          type: integer
+          format: int64
+        clientDownloadId:
+          type: string
+        releaseId:
+          type: string
+        title:
+          type: string
+        protocol:
+          type: string
+        status:
+          type: string
+        progress:
+          type: number
+        savePath:
+          type: string
+
+    QualityProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        spec:
+          type: string
+        isDefault:
+          type: boolean
+
+    QualityProfileInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        spec:
+          type: string
+        isDefault:
+          type: boolean
 
   parameters:
     libraryId:

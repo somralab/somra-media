@@ -14,17 +14,17 @@
 ## Epics and Tasks
 
 ### Epic A: Download client adapters
-- [ ] A1 — Torrent + Usenet download client adapter interface (add, status, completed) | Acceptance: common clients can be added.
-- [ ] A2 — Download status monitoring (scheduler) | Acceptance: progress/completion tracked.
+- [x] A1 — Torrent + Usenet download client adapter interface (add, status, completed) | Acceptance: common clients can be added.
+- [x] A2 — Download status monitoring (scheduler) | Acceptance: progress/completion tracked.
 
 ### Epic B: Quality profiles & decision
-- [ ] B1 — Quality profile definition (resolution/codec/size preferences) | Acceptance: profile-based selection.
-- [ ] B2 — Score indexer results by profile + automatic grab | Acceptance: best release selected.
+- [x] B1 — Quality profile definition (resolution/codec/size preferences) | Acceptance: profile-based selection.
+- [x] B2 — Score indexer results by profile + automatic grab | Acceptance: best release selected.
 
 ### Epic C: Import & watchlists
-- [ ] C1 — Import completed download to library (rename/move + trigger scan) | Acceptance: media appears in library.
+- [x] C1 — Import completed download to library (rename/move + trigger scan) | Acceptance: media appears in library.
 - [ ] C2 — Watchlist/monitor (automatic episode tracking for series) | Acceptance: new episodes searched automatically.
-- [ ] C3 — Request → approval → automatic acquisition end-to-end flow (integration with Sprint 08) | Acceptance: approved request completed automatically.
+- [x] C3 — Request → approval → automatic acquisition end-to-end flow (integration with Sprint 08) | Acceptance: approved request completed automatically.
 
 ## Acceptance Criteria (Sprint Output)
 - An approved request automatically completes the indexer search → quality selection → download → import → library flow.

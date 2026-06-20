@@ -134,6 +134,21 @@ jobs:
       - name: enforce thresholds
         run: bash scripts/coverage-gate.sh
 
+  build-acquisition:
+    name: build-acquisition
+    needs: unit-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: go build (acquisition tag)
+        run: CGO_ENABLED=0 go build -tags acquisition ./...
+      - name: go test (acquisition tag)
+        run: go test -tags acquisition ./... -count=1
+
   build:
     name: build
     needs: coverage-gate

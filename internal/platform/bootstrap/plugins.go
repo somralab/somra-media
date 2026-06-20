@@ -33,6 +33,9 @@ func WirePlugins(c *Components, encryptionKey string) (*PluginsBundle, error) {
 			return nil, fmt.Errorf("bootstrap plugins: register %s: %w", f.Implementation(), err)
 		}
 	}
+	if err := registerAcquisitionFactories(mgr); err != nil {
+		return nil, fmt.Errorf("bootstrap plugins: %w", err)
+	}
 
 	if err := mgr.LoadEnabled(context.Background()); err != nil {
 		return nil, fmt.Errorf("bootstrap plugins: load enabled: %w", err)

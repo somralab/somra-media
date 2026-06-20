@@ -104,6 +104,16 @@ func TestDB_CloseIsIdempotent(t *testing.T) {
 	require.NoError(t, nilDB.Close())
 }
 
+func TestDB_PingAfterClose(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+
+	d, err := Open(ctx, newTestConfig(t))
+	require.NoError(t, err)
+	require.NoError(t, d.Close())
+	require.Error(t, d.Ping(ctx))
+}
+
 func TestDB_QuerierExposed(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()
@@ -166,6 +176,13 @@ func TestConfig_PathAndDSN(t *testing.T) {
 
 // TestIntegrationBootstrap is the "smoke" sub-test required by the packet
 // brief: open DB at a temp dir, run migrations, query settings.
+func TestInitialize_OpenError(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	_, err := Initialize(ctx, Config{}, nil)
+	require.Error(t, err)
+}
+
 func TestIntegrationBootstrap(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()

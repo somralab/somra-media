@@ -46,6 +46,7 @@ CRITICAL_PACKAGES=(
 # main() wiring is exercised by integration smoke tests, not by unit tests.
 EXCLUDED_PACKAGES=(
   "github.com/somralab/somra-media/cmd/somra"
+  "github.com/somralab/somra-media/internal/automation/automationtest"
 )
 
 summary_file=""
