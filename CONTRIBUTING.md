@@ -2,13 +2,13 @@
 
 Thanks for your interest in Somra. Please read this document and
 [`AGENTS.md`](./AGENTS.md) before opening a PR. The authoritative product
-scope and module boundaries live under [`plan/`](./plan/) — read
-[`plan/project-brief.md`](./plan/project-brief.md) first if you are not sure
+scope and module boundaries live under [`.plan/`](./.plan/) — read
+[`.plan/project-brief.md`](./.plan/project-brief.md) first if you are not sure
 whether your change is in scope.
 
 > All source code, comments and commit messages are in **English**.
 > User-facing strings are localized; never hardcode them
-> (see [`plan/i18n-localization.md`](./plan/i18n-localization.md)).
+> (see [`.plan/i18n-localization.md`](./.plan/i18n-localization.md)).
 
 ## Branch naming
 
@@ -54,13 +54,13 @@ rejected by CI.
 ## Pull requests
 
 - One logical change per PR; split large work.
-- Reference the related task and acceptance criteria under [`plan/`](./plan/).
+- Reference the related task and acceptance criteria under [`.plan/`](./.plan/).
 - Follow the PR template (see the repository PR template / the
   [`pr-and-code-review`](./.cursor/rules/pr-and-code-review.mdc) cursor rule).
 - All CI gates must be green:
   `lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build`.
 - The Definition of Done lives at
-  [`plan/definition-of-done.md`](./plan/definition-of-done.md) §1.
+  [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) §1.
 
 ## Code style & tests
 

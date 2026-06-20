@@ -1,6 +1,6 @@
 # Testing Strategy
 
-Operational complement to [`plan/definition-of-done.md`](../plan/definition-of-done.md) §4.
+Operational complement to [`.plan/definition-of-done.md`](../.plan/definition-of-done.md) §4.
 This document describes _how_ Somra tests its code; the binding policy (thresholds, CI
 gates, coverage targets) lives in the DoD.
 
@@ -21,7 +21,7 @@ scan performance report can be captured manually via `go test -bench` when neede
 
 ## Coverage policy (binding)
 
-[DoD §4.1](../plan/definition-of-done.md) is the source of truth. Operationally:
+[DoD §4.1](../.plan/definition-of-done.md) is the source of truth. Operationally:
 
 - Go core packages: **≥ 80 %** statement coverage. Measured per package by
   [`scripts/coverage-gate.sh`](../scripts/coverage-gate.sh).

@@ -5,7 +5,7 @@
 # cmd/i18n-check (uses the same toml/json dependencies already in the
 # module). Run from the repository root.
 #
-# See plan/i18n-localization.md §6 for the binding rules.
+# See .plan/i18n-localization.md §6 for the binding rules.
 
 set -euo pipefail
 

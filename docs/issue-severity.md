@@ -1,6 +1,6 @@
 # Issue Severity Model
 
-Operational support for [`plan/definition-of-done.md`](../plan/definition-of-done.md) §2,
+Operational support for [`.plan/definition-of-done.md`](../.plan/definition-of-done.md) §2,
 which requires sprints to ship with no outstanding **critical** or **high** issues.
 
 The intent is to keep triage predictable: severity drives whether an issue blocks a sprint,

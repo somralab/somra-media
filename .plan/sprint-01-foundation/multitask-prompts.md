@@ -2,7 +2,7 @@
 
 > **Purpose:** M1 milestone — empty but working Somra skeleton via `docker run`.  
 > **Usage:** Agents Window → Cloud Agent (recommended) → `/multitask` → paste the prompts below in order or by wave.  
-> **Repo status:** Greenfield (only `plan/` + `AGENTS.md` exist).  
+> **Repo status:** Greenfield (only `.plan/` + `AGENTS.md` exist).  
 > **References:** [`AGENTS.md`](../../AGENTS.md) · [`01-architecture-tasks.md`](./01-architecture-tasks.md) · [`definition-of-done.md`](../definition-of-done.md)
 
 ---
@@ -10,7 +10,7 @@
 ## 0. Run this first — Orchestrator (single message)
 
 ```
-Set up Sprint 01 (M1) foundation skeleton. Repo is greenfield; plan/ and AGENTS.md are the single source of truth.
+Set up Sprint 01 (M1) foundation skeleton. Repo is greenfield; .plan/ and AGENTS.md are the single source of truth.
 
 GOAL (M1):
 - Go single binary compiles, starts, graceful shutdown
@@ -22,10 +22,10 @@ GOAL (M1):
 - docker compose up → health responds
 
 RULES (binding):
-- Do not change technology: chi, modernc.org/sqlite, goose, TanStack Query, Tailwind, Radix — see plan/tech-stack.md
+- Do not change technology: chi, modernc.org/sqlite, goose, TanStack Query, Tailwind, Radix — see .plan/tech-stack.md
 - CGO-free build (modernc.org/sqlite)
 - Code/comments/commits in English; user-facing text via i18n keys (en-US + tr-TR together)
-- Module boundaries: plan/architecture.md §3
+- Module boundaries: .plan/architecture.md §3
 - NO business logic (scanning, playback, auth logic — skeleton/contract only)
 - Every PR/commit DCO: git commit -s
 - Branch: feat/sprint-01-<package-name>
@@ -84,8 +84,8 @@ Branch: feat/sprint-01-api-gateway
 
 Sprint 01 Package 1 — Monorepo skeleton + API Gateway.
 
-Source: plan/sprint-01-foundation/01-architecture-tasks.md (Epic A1–A3 partially, B, C)
-AGENTS.md directory structure and plan/architecture.md §3 module boundaries.
+Source: .plan/sprint-01-foundation/01-architecture-tasks.md (Epic A1–A3 partially, B, C)
+AGENTS.md directory structure and .plan/architecture.md §3 module boundaries.
 
 DO:
 1. go.mod (module: github.com/somralab/somra-media or actual repo path)
@@ -120,7 +120,7 @@ Branch: feat/sprint-01-openapi-makefile
 
 Sprint 01 Package 2 — OpenAPI 3.1 + Makefile + repo root infrastructure.
 
-Source: plan/sprint-01-foundation/01-architecture-tasks.md (A4), 05-devops-tasks.md (C2)
+Source: .plan/sprint-01-foundation/01-architecture-tasks.md (A4), 05-devops-tasks.md (C2)
 
 DO:
 1. api/openapi.yaml — OpenAPI 3.1: /api/v1/health, /api/v1/version schemas
@@ -152,7 +152,7 @@ Branch: feat/sprint-01-frontend-scaffold
 
 Sprint 01 Package 3 — React + Vite SPA skeleton (Wave 1, minimal API integration).
 
-Source: plan/sprint-01-foundation/04-frontend-tasks.md (Epic A, C partially)
+Source: .plan/sprint-01-foundation/04-frontend-tasks.md (Epic A, C partially)
 
 DO:
 1. web/ — Vite + React + TypeScript strict + Tailwind + Radix UI + pnpm
@@ -191,7 +191,7 @@ Branch: feat/sprint-01-database
 
 Sprint 01 Package 4 — SQLite data layer + goose migration.
 
-Source: plan/sprint-01-foundation/03-database-tasks.md
+Source: .plan/sprint-01-foundation/03-database-tasks.md
 Tech: modernc.org/sqlite (CGO-free), pressly/goose embed.FS
 
 DO:
@@ -225,7 +225,7 @@ Branch: feat/sprint-01-backend-core
 
 Sprint 01 Package 5 — Job scheduler + backend i18n + diagnostics.
 
-Source: plan/sprint-01-foundation/02-backend-tasks.md
+Source: .plan/sprint-01-foundation/02-backend-tasks.md
 
 DO:
 1. internal/jobs/ — robfig/cron/v3 + lightweight scheduler wrapper
@@ -260,7 +260,7 @@ Branch: feat/sprint-01-frontend-integration
 
 Sprint 01 Package 6 — FE API client + realtime + status UI.
 
-Source: plan/sprint-01-foundation/04-frontend-tasks.md (Epic B)
+Source: .plan/sprint-01-foundation/04-frontend-tasks.md (Epic B)
 
 DO:
 1. Typed HTTP client with OpenAPI-generated types (health, version)
@@ -291,7 +291,7 @@ Branch: feat/sprint-01-devops
 
 Sprint 01 Package 7 — Docker + CI/CD + Makefile completion.
 
-Source: plan/sprint-01-foundation/05-devops-tasks.md
+Source: .plan/sprint-01-foundation/05-devops-tasks.md
 
 DO:
 1. deploy/Dockerfile — multi-stage: Go build (CGO_ENABLED=0) + web static + ffmpeg/ffprobe
@@ -325,7 +325,7 @@ Branch: feat/sprint-01-qa
 
 Sprint 01 Package 8 — QA automation + M1 smoke + documentation.
 
-Source: plan/sprint-01-foundation/06-qa-tasks.md
+Source: .plan/sprint-01-foundation/06-qa-tasks.md
 
 DO:
 1. docs/testing-strategy.md — test pyramid, coverage policy (DoD §4.1)
@@ -339,7 +339,7 @@ DO:
 ACCEPTANCE:
 - Integration + e2e smoke green in CI
 - M1: docker run → health/version OK; SPA status page OK
-- plan/sprint-01-foundation/*.md tasks verifiable via checkboxes
+- .plan/sprint-01-foundation/*.md tasks verifiable via checkboxes
 
 Commit: test(qa): add integration and e2e harness for sprint 01
 DCO sign-off (-s). Open PR — user awaits review.
@@ -358,13 +358,13 @@ Merge all feat/sprint-01-* branches into a single integration branch: feat/sprin
 4. Complete missing en-US/tr-TR keys
 5. Verify AGENTS.md target directory structure is complete
 6. Single summary commit or logical commit series; DCO sign-off
-7. PR body template (plan/.cursor rules):
+7. PR body template (`.cursor/rules`):
 
 ## What / Why
 Sprint 01 M1: working skeleton service + CI + Docker.
 
 ## Related task
-plan/sprint-01-foundation/ → M1 milestone
+.plan/sprint-01-foundation/ → M1 milestone
 
 ## Test
 make lint test i18n-check coverage build docker
@@ -395,7 +395,7 @@ Subagent C → Package 3 (FE scaffold) branch feat/sprint-01-frontend-scaffold
 Subagent D → Package 4 (DB) branch feat/sprint-01-database — align with Package 1 bootstrap interface
 Subagent E → Package 5 (Backend core) branch feat/sprint-01-backend-core — align with Package 1+4
 
-Shared rules: AGENTS.md, plan/tech-stack.md, CGO-free, i18n en-US+tr-TR, DCO commits, no business logic.
+Shared rules: AGENTS.md, .plan/tech-stack.md, CGO-free, i18n en-US+tr-TR, DCO commits, no business logic.
 
 After completion in order: Package 6 → 7 → 8 → Integration prompt.
 
@@ -410,7 +410,7 @@ Each subagent on completion: brief summary — files, test result, blockers.
 - [x] `docker compose -f deploy/docker-compose.yml up --build` → `/api/v1/health` 200
 - [x] SPA status page shows health/version
 - [x] No hardcoded user-facing text (grep `"[A-Z][a-z]+ [a-z]+"` for suspicious areas)
-- [x] Module boundaries compatible with `plan/architecture.md` §3
+- [x] Module boundaries compatible with `.plan/architecture.md` §3
 - [x] CGO_ENABLED=0 build
 - [x] Commits have `Signed-off-by:`
 - [x] No out-of-scope feature creep (auth logic, library scan, transcode)

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Enforce the coverage thresholds documented in plan/definition-of-done.md §4.1.
+# Enforce the coverage thresholds documented in .plan/definition-of-done.md §4.1.
 #
 # Inputs (auto-detected, overridable via env):
 #   GO_COVER          Go coverprofile (default: coverage.go.out)

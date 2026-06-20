@@ -74,7 +74,7 @@ func TestConcurrent_WALReadersAndWriter(t *testing.T) {
 // write transactions on the same DB pool commit independently. SQLite
 // serialises writers in WAL mode, so spawning multiple parallel write
 // transactions is unsafe without deadlock-aware retry logic — that is a
-// future concern (see plan/sprint-02 jobs) and outside the M1 scope.
+// future concern (see .plan/sprint-02 jobs) and outside the M1 scope.
 func TestConcurrent_SequentialTxWritesPersist(t *testing.T) {
 	t.Parallel()
 

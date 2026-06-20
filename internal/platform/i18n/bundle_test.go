@@ -72,7 +72,7 @@ func TestLocalizerMissingKeyReturnsKey(t *testing.T) {
 }
 
 // TestLocaleParity ensures en-US and tr-TR define the exact same set of
-// message IDs; this guards plan/i18n-localization.md §5 anti-drift rule.
+// message IDs; this guards .plan/i18n-localization.md §5 anti-drift rule.
 func TestLocaleParity(t *testing.T) {
 	t.Parallel()
 	keysFor := func(t *testing.T, file string) []string {

@@ -4,7 +4,7 @@
 > transcoding/streaming + requests + automation, delivered as a single
 > Docker install. Philosophy: **minimum configuration, maximum
 > optimization**. See
-> [`plan/project-brief.md`](./plan/project-brief.md) for the full vision
+> [`.plan/project-brief.md`](./.plan/project-brief.md) for the full vision
 > and scope.
 
 **Status:** Sprint 01 (M1 foundation — **complete**). The repository
@@ -12,7 +12,7 @@ ships a runnable skeleton — chi gateway, SQLite (WAL) + goose
 migrations, in-house scheduler, i18n-aware error envelopes, diagnostics
 registry, SSE event stream, typed React SPA — plus the CI gates and
 container image. Domain logic arrives in later sprints (see
-[`plan/roadmap.md`](./plan/roadmap.md)).
+[`.plan/roadmap.md`](./.plan/roadmap.md)).
 
 **License:** [AGPL-3.0-or-later](./LICENSE) with
 [Developer Certificate of Origin](https://developercertificate.org)
@@ -24,7 +24,7 @@ sign-off on every commit (no CLA). See
 ## Tech stack (snapshot)
 
 Decided technologies — do not swap without Tech Lead approval and a doc
-update (see [`plan/tech-stack.md`](./plan/tech-stack.md)).
+update (see [`.plan/tech-stack.md`](./.plan/tech-stack.md)).
 
 - **Backend (Go):** `go-chi/chi`, SQLite (WAL) via `modernc.org/sqlite`
   (pure Go, **no CGO**), `pressly/goose` migrations,
@@ -123,7 +123,7 @@ Verification:
 ## CI gates
 
 Every PR runs the following jobs in order — each must be green to merge
-(see [`plan/definition-of-done.md`](./plan/definition-of-done.md) §5):
+(see [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) §5):
 
 `lint → i18n-check → unit-test → integration-test → coverage-gate → build → e2e → image-build`
 
@@ -165,7 +165,7 @@ Re-run this command whenever you change `api/openapi.yaml`.
 ## Internationalization
 
 Binding rules live in
-[`plan/i18n-localization.md`](./plan/i18n-localization.md). Short
+[`.plan/i18n-localization.md`](./.plan/i18n-localization.md). Short
 version:
 
 - Source / fallback locale: **`en-US`**. First translation: **`tr-TR`**.
@@ -185,8 +185,8 @@ Locale negotiation order: user profile → system default →
 
 ```
 .
-├── AGENTS.md           # agent-facing how-to (companion to plan/)
-├── plan/               # authoritative planning docs (scope-of-truth)
+├── AGENTS.md           # agent-facing how-to (companion to .plan/)
+├── .plan/               # authoritative planning docs (scope-of-truth)
 ├── cmd/                # Go entrypoint(s)               (Paket 1)
 ├── internal/           # Go modules                     (Paket 1 / 4 / 5)
 ├── web/                # React + Vite SPA                (Paket 3)
@@ -201,14 +201,14 @@ Locale negotiation order: user profile → system default →
 
 ## Planning & governance
 
-The authoritative documents live under [`plan/`](./plan/):
+The authoritative documents live under [`.plan/`](./.plan/):
 
-- [`plan/project-brief.md`](./plan/project-brief.md) — vision, scope (in / out), decisions.
-- [`plan/architecture.md`](./plan/architecture.md) — modules, data flow, decisions.
-- [`plan/tech-stack.md`](./plan/tech-stack.md) — closed technology decisions.
-- [`plan/definition-of-done.md`](./plan/definition-of-done.md) — DoD, coding standards, CI gates.
-- [`plan/i18n-localization.md`](./plan/i18n-localization.md) — binding i18n rules.
-- [`plan/roadmap.md`](./plan/roadmap.md) — sprint / milestone plan.
+- [`.plan/project-brief.md`](./.plan/project-brief.md) — vision, scope (in / out), decisions.
+- [`.plan/architecture.md`](./.plan/architecture.md) — modules, data flow, decisions.
+- [`.plan/tech-stack.md`](./.plan/tech-stack.md) — closed technology decisions.
+- [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) — DoD, coding standards, CI gates.
+- [`.plan/i18n-localization.md`](./.plan/i18n-localization.md) — binding i18n rules.
+- [`.plan/roadmap.md`](./.plan/roadmap.md) — sprint / milestone plan.
 
 For agent workflow conventions see [`AGENTS.md`](./AGENTS.md).
 

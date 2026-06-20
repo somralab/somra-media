@@ -1,9 +1,9 @@
 # Sprint 01 (M1 foundation) — Definition of Done Checklist
 
-Closes [`plan/sprint-01-foundation/06-qa-tasks.md`](../plan/sprint-01-foundation/06-qa-tasks.md)
-Epik C. Items below mirror [`plan/definition-of-done.md`](../plan/definition-of-done.md)
+Closes [`.plan/sprint-01-foundation/06-qa-tasks.md`](../.plan/sprint-01-foundation/06-qa-tasks.md)
+Epik C. Items below mirror [`.plan/definition-of-done.md`](../.plan/definition-of-done.md)
 §1 (task-level), §2 (sprint-level) and §6 (security defaults) plus the i18n acceptance
-criteria from [`plan/i18n-localization.md`](../plan/i18n-localization.md) §6.
+criteria from [`.plan/i18n-localization.md`](../.plan/i18n-localization.md) §6.
 
 Tick the boxes that are satisfied today; leave open items for the sprints that own them.
 
@@ -12,7 +12,7 @@ Tick the boxes that are satisfied today; leave open items for the sprints that o
 ## DoD §1 — Task-level (must be true for every Sprint 01 task)
 
 - [x] **1.1** Acceptance criteria documented in the per-discipline task files.
-- [x] **1.2** Code respects module boundaries (`plan/architecture.md` §3): `cmd/`,
+- [x] **1.2** Code respects module boundaries (`.plan/architecture.md` §3): `cmd/`,
       `internal/api`, `internal/platform/*`, `internal/jobs`, `internal/auth` (interface
       only), `web/`, `migrations/`, `api/`, `deploy/`.
 - [x] **1.3** Unit tests written; integration tests added for cross-package boundaries;
@@ -39,7 +39,7 @@ Tick the boxes that are satisfied today; leave open items for the sprints that o
       `internal/api`, `internal/platform/{config,bootstrap,db,diagnostics,errors,i18n,log}`,
       `internal/jobs`, the OpenAPI spec, the Dockerfile, the SPA scaffold.
 
-## i18n acceptance (`plan/i18n-localization.md` §6)
+## i18n acceptance (`.plan/i18n-localization.md` §6)
 
 - [x] **i18n.1** No user-facing hardcoded strings — verified by `make i18n-check` and
       the `cmd/i18n-check` Go tool that compares the en-US ↔ tr-TR key sets across both
@@ -81,4 +81,4 @@ Tick the boxes that are satisfied today; leave open items for the sprints that o
 
 **Reviewer cross-check**: every checked item must be linked to a file, command, or test
 elsewhere in this repo. Items left unchecked are intentional carry-overs documented in
-the relevant sprint folder under [`plan/`](../plan/).
+the relevant sprint folder under [`.plan/`](../.plan/).

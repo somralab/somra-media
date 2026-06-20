@@ -5,11 +5,11 @@ server (library + metadata + transcoding/streaming + requests + automation) deli
 single Docker install, built from scratch.
 
 > This file is the agent-facing companion to the human docs. The **authoritative product and
-> scope source of truth lives in [`plan/`](./plan/)**. When in doubt about *what*
-> to build or whether something is in scope, read `plan/project-brief.md` first. This file
+> scope source of truth lives in [`.plan/`](./.plan/)**. When in doubt about *what*
+> to build or whether something is in scope, read `.plan/project-brief.md` first. This file
 > tells you *how* to work in the repo.
 >
-> Language note: this file, planning docs under `plan/`, and all source code / code comments /
+> Language note: this file, planning docs under `.plan/`, and all source code / code comments /
 > commit messages are in **English** (the project's source locale is `en-US`). User-facing
 > strings are localized (`en-US` + `tr-TR`); see the i18n rules below.
 
@@ -25,14 +25,14 @@ single Docker install, built from scratch.
 - **License:** **AGPL-3.0** with **DCO** sign-off (no CLA). Any dependency must be
   AGPL-3.0-compatible.
 
-Key references in [`plan/`](./plan/):
+Key references in [`.plan/`](./.plan/):
 
-- [`plan/project-brief.md`](./plan/project-brief.md) — vision, scope (in/out), decisions, governance.
-- [`plan/architecture.md`](./plan/architecture.md) — modules, data flow, decided architecture.
-- [`plan/tech-stack.md`](./plan/tech-stack.md) — closed technology decisions (§7).
-- [`plan/definition-of-done.md`](./plan/definition-of-done.md) — DoD, coding standards, test/coverage, CI gates.
-- [`plan/i18n-localization.md`](./plan/i18n-localization.md) — binding i18n rules.
-- [`plan/roadmap.md`](./plan/roadmap.md) — sprint/milestone plan.
+- [`.plan/project-brief.md`](./.plan/project-brief.md) — vision, scope (in/out), decisions, governance.
+- [`.plan/architecture.md`](./.plan/architecture.md) — modules, data flow, decided architecture.
+- [`.plan/tech-stack.md`](./.plan/tech-stack.md) — closed technology decisions (§7).
+- [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) — DoD, coding standards, test/coverage, CI gates.
+- [`.plan/i18n-localization.md`](./.plan/i18n-localization.md) — binding i18n rules.
+- [`.plan/roadmap.md`](./.plan/roadmap.md) — sprint/milestone plan.
 
 ## Tech stack (decided — do not swap without Tech Lead approval + doc update)
 
@@ -64,7 +64,7 @@ Key references in [`plan/`](./plan/):
 ```
 .
 ├── AGENTS.md            # this file
-├── plan/                # authoritative planning docs (source of truth for scope)
+├── .plan/                # authoritative planning docs (source of truth for scope)
 ├── cmd/                 # Go entrypoint(s)
 ├── internal/            # Go modules (api, auth, library, metadata, streaming, settings, jobs, ...)
 ├── web/                 # React + Vite SPA (frontend)
@@ -74,7 +74,7 @@ Key references in [`plan/`](./plan/):
 └── Makefile             # standard dev tasks
 ```
 
-Module boundaries must match [`plan/architecture.md`](./plan/architecture.md) §3. In this
+Module boundaries must match [`.plan/architecture.md`](./.plan/architecture.md) §3. In this
 monorepo you may add **nested `AGENTS.md`** files (e.g. `web/AGENTS.md`) for subproject-specific
 instructions — the closest file to an edited file wins.
 
@@ -107,7 +107,7 @@ Backend: Go (current stable). Frontend: Node LTS + `pnpm` (under `web/`). Keep b
 
 ## Testing instructions
 
-Per [`plan/definition-of-done.md`](./plan/definition-of-done.md) §4 / §4.1:
+Per [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) §4 / §4.1:
 
 - Unit tests are **mandatory** for business logic and pure functions.
 - Integration tests for boundaries: DB, file scanning, transcode pipeline.
@@ -130,7 +130,7 @@ keys; `coverage-gate` fails below the thresholds above.
 
 ## Internationalization (binding)
 
-See [`plan/i18n-localization.md`](./plan/i18n-localization.md).
+See [`.plan/i18n-localization.md`](./.plan/i18n-localization.md).
 
 - Source/fallback locale: **`en-US`**; first translation: **`tr-TR`**.
 - **No user-facing hardcoded text** — always resolve via keys (`domain.context.key`).
@@ -140,8 +140,8 @@ See [`plan/i18n-localization.md`](./plan/i18n-localization.md).
 
 ## Security considerations
 
-See [`plan/definition-of-done.md`](./plan/definition-of-done.md) §6 and
-[`plan/sprint-03-auth-users/04-security-tasks.md`](./plan/sprint-03-auth-users/04-security-tasks.md).
+See [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) §6 and
+[`.plan/sprint-03-auth-users/04-security-tasks.md`](./.plan/sprint-03-auth-users/04-security-tasks.md).
 
 - Least privilege; validate **all** input; parameterized queries (no string-built SQL).
 - Never hardcode secrets; provider API keys are user-supplied and stored securely.
@@ -161,7 +161,7 @@ See [`plan/definition-of-done.md`](./plan/definition-of-done.md) §6 and
 
 ## Scope & governance (anti-drift)
 
-- **Do not expand scope** beyond [`plan/project-brief.md`](./plan/project-brief.md) §6; items in
+- **Do not expand scope** beyond [`.plan/project-brief.md`](./.plan/project-brief.md) §6; items in
   §7 (e.g. native mobile/TV apps, live TV/DVR, server federation) are **out of scope** unless
   the brief is updated first.
 - Technology/architecture decisions are **closed** (see `tech-stack.md` §7, `architecture.md`
@@ -170,8 +170,8 @@ See [`plan/definition-of-done.md`](./plan/definition-of-done.md) §6 and
 
 ## Good first pointers for an agent
 
-1. Read [`plan/project-brief.md`](./plan/project-brief.md) and the current sprint folder under [`plan/`](./plan/).
-2. Confirm the task is in scope and identify the owning module ([`plan/architecture.md`](./plan/architecture.md) §3).
+1. Read [`.plan/project-brief.md`](./.plan/project-brief.md) and the current sprint folder under [`.plan/`](./.plan/).
+2. Confirm the task is in scope and identify the owning module ([`.plan/architecture.md`](./.plan/architecture.md) §3).
 3. Implement with tests + i18n keys; run `make lint test i18n-check coverage`.
 4. Open a focused, DCO-signed PR referencing the task and its acceptance criteria.
 
@@ -180,9 +180,9 @@ See [`plan/definition-of-done.md`](./plan/definition-of-done.md) §6 and
 Notes for future cloud agents (the startup update script and toolchain are already applied;
 do not re-run installs here).
 
-- **Repository is greenfield.** Only `AGENTS.md` and `plan/` exist; there is no `go.mod`,
+- **Repository is greenfield.** Only `AGENTS.md` and `.plan/` exist; there is no `go.mod`,
   `web/package.json`, `Makefile`, or application code yet (the runnable codebase is bootstrapped
-  in Sprint 01 — see `plan/sprint-01-foundation/`). Until then there is no app/test suite to run;
+  in Sprint 01 — see `.plan/sprint-01-foundation/`). Until then there is no app/test suite to run;
   the `make ...` targets above are the agreed *target* and do not exist yet.
 - **Toolchain available in the VM snapshot:** Go (current stable, installed at `/usr/local/go`,
   on `PATH` via `/usr/local/bin/go`), Node 22 + `pnpm` 10, `ffmpeg`/`ffprobe` 6.x,

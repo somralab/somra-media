@@ -15,7 +15,7 @@ const envDataDir = "SOMRA_DATA_DIR"
 
 // defaultDataDir is the relative fallback location for the SQLite database
 // file when no environment override is provided. It matches the volume layout
-// documented in plan/sprint-01-foundation/05-devops-tasks.md.
+// documented in .plan/sprint-01-foundation/05-devops-tasks.md.
 const defaultDataDir = "./data"
 
 // defaultDBFile is the file name of the primary SQLite database.

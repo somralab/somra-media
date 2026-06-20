@@ -7,7 +7,7 @@ import (
 )
 
 // Negotiate resolves the best language tag using the priority order
-// defined in plan/i18n-localization.md §3:
+// defined in .plan/i18n-localization.md §3:
 //
 //  1. userPref       — the authenticated user's persisted preference
 //  2. systemDefault  — the operator-defined default
