@@ -4,7 +4,7 @@
 // localized error envelopes without reaching for global state.
 //
 // Resource files live under locales/ and are embedded at build time.
-// The fallback/source language is en-US per plan/i18n-localization.md §1.
+// The fallback/source language is en-US per .plan/i18n-localization.md §1.
 package i18n
 
 import (

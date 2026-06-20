@@ -1062,7 +1062,7 @@ export interface components {
             code: string;
             /**
              * @description i18n key resolvable on the client (e.g. `auth.login.invalid_credentials`).
-             *     Format: `domain.context.key`. See `plan/i18n-localization.md`.
+             *     Format: `domain.context.key`. See `.plan/i18n-localization.md`.
              * @example system.health.unavailable
              */
             messageKey: string;

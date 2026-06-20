@@ -2,11 +2,11 @@
 // handler. It contains interfaces and value types only; no JWT signing,
 // password hashing, or refresh-token persistence lives here.
 //
-// Implementation lives in Sprint 03 (see plan/sprint-03-auth-users/). By
+// Implementation lives in Sprint 03 (see .plan/sprint-03-auth-users/). By
 // pinning the contract early we let downstream packets depend on stable
 // types without forcing premature security decisions.
 //
-// Security policy reference: plan/sprint-03-auth-users/04-security-tasks.md.
+// Security policy reference: .plan/sprint-03-auth-users/04-security-tasks.md.
 package auth
 
 import (

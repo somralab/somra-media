@@ -15,7 +15,7 @@ info:
     the `ErrorResponse` schema, which is a superset compatible with RFC 7807
     "Problem Details for HTTP APIs" (the `messageKey` field carries an
     i18n key resolvable by the client; `message` carries the
-    already-localized human text). See `plan/i18n-localization.md` for the
+    already-localized human text). See `.plan/i18n-localization.md` for the
     binding i18n rules.
   license:
     name: AGPL-3.0-or-later
@@ -1483,7 +1483,7 @@ components:
           type: string
           description: |
             i18n key resolvable on the client (e.g. `auth.login.invalid_credentials`).
-            Format: `domain.context.key`. See `plan/i18n-localization.md`.
+            Format: `domain.context.key`. See `.plan/i18n-localization.md`.
           examples: [system.health.unavailable]
         message:
           type: string

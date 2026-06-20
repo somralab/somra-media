@@ -7,7 +7,7 @@ alwaysApply: true
 
 ## PR açarken
 - **Küçük ve odaklı** tut (tek mantıksal değişiklik). Büyük işi parçala.
-- Açıklamada ilgili görevi ve **kabul kriterini** referansla ([`plan/`](../../plan/) sprint dosyaları).
+- Açıklamada ilgili görevi ve **kabul kriterini** referansla ([`.plan/`](../../.plan/) sprint dosyaları).
 - Şablon:
 
 ```md
@@ -15,7 +15,7 @@ alwaysApply: true
 <değişiklik ve gerekçe>
 
 ## İlgili görev
-plan/sprint-XX-.../NN-...-tasks.md → <epik/görev>
+.plan/sprint-XX-.../NN-...-tasks.md → <epik/görev>
 
 ## Test
 <unit/integration/e2e + coverage notu>
@@ -27,10 +27,10 @@ plan/sprint-XX-.../NN-...-tasks.md → <epik/görev>
 ## Birleştirme (merge) ön koşulları
 - Tüm CI kapıları yeşil: `lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build`.
 - En az **1 onay**; mimariyi etkileyen değişiklikte **Tech Lead onayı** zorunlu.
-- [`plan/definition-of-done.md`](../../plan/definition-of-done.md) §1 karşılanmış olmalı.
+- [`.plan/definition-of-done.md`](../../.plan/definition-of-done.md) §1 karşılanmış olmalı.
 
 ## Reviewer kontrol listesi
-- Kapsam: değişiklik brief'e/sprint hedefine uygun mu? (kapsam dışına çıkmıyor mu — [`plan/project-brief.md`](../../plan/project-brief.md) §7)
+- Kapsam: değişiklik brief'e/sprint hedefine uygun mu? (kapsam dışına çıkmıyor mu — [`.plan/project-brief.md`](../../.plan/project-brief.md) §7)
 - Doğruluk + test yeterliliği (eşikler: çekirdek ≥%80, kritik ≥%90).
 - i18n: hardcoded metin yok, iki dil tam.
 - Güvenlik: girdi doğrulama, yetki kontrolü, sır sızıntısı yok, path traversal/SSRF.

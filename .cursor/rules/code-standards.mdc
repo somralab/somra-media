@@ -6,11 +6,11 @@ alwaysApply: true
 # Kod Yazma Standartları
 
 Kaynak kod, yorum ve commit mesajları **İngilizce**. Detay: [`AGENTS.md`](../../AGENTS.md),
-[`plan/definition-of-done.md`](../../plan/definition-of-done.md), [`plan/tech-stack.md`](../../plan/tech-stack.md).
+[`.plan/definition-of-done.md`](../../.plan/definition-of-done.md), [`.plan/tech-stack.md`](../../.plan/tech-stack.md).
 
 ## Genel
 - Kararlı teknolojiyi değiştirme (chi, modernc.org/sqlite, goose, TanStack Query, Tailwind...). Değişiklik = Tech Lead onayı + doküman güncellemesi.
-- Modül sınırlarına uy ([`plan/architecture.md`](../../plan/architecture.md) §3). Build CGO'suz kalmalı.
+- Modül sınırlarına uy ([`.plan/architecture.md`](../../.plan/architecture.md) §3). Build CGO'suz kalmalı.
 - Yorum yalnızca niyet/ödünleşim/kısıt açıklar; ne yaptığını anlatan yorum yazma.
 
 ## Go

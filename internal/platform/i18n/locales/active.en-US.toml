@@ -1,5 +1,5 @@
 # Source-locale (en-US) message catalog for the errors namespace.
-# Keys follow the `domain.context.key` convention from plan/i18n-localization.md §4.1.
+# Keys follow the `domain.context.key` convention from .plan/i18n-localization.md §4.1.
 # Quoted table headers preserve dot-delimited message IDs.
 
 ["errors.internal"]
