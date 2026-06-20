@@ -56,7 +56,37 @@ func TestAutomationRepo_HandoffAndDownload(t *testing.T) {
 	require.NoError(t, repo.UpdateDownloadProgress(ctx, dlID, AutomationDownloadCompleted, 1, "/downloads/x", ""))
 	require.NoError(t, repo.UpdateHandoffStatus(ctx, handoffID, HandoffCompleted, ""))
 
+	active, err := repo.ListActiveDownloads(ctx, 10)
+	require.NoError(t, err)
+	require.Empty(t, active)
+
 	profiles, err := repo.ListQualityProfiles(ctx)
 	require.NoError(t, err)
 	require.NotEmpty(t, profiles)
+
+	defaultProfile, err := repo.GetDefaultQualityProfile(ctx)
+	require.NoError(t, err)
+	require.True(t, defaultProfile.IsDefault)
+
+	byName, err := repo.GetQualityProfileByName(ctx, defaultProfile.Name)
+	require.NoError(t, err)
+	require.Equal(t, defaultProfile.ID, byName.ID)
+
+	customID, err := repo.CreateQualityProfile(ctx, "custom-test", `{"preferredResolutions":["720p"]}`, false)
+	require.NoError(t, err)
+	require.Positive(t, customID)
+
+	allDownloads, err := repo.ListDownloads(ctx, 10)
+	require.NoError(t, err)
+	require.NotEmpty(t, allDownloads)
+
+	got, err := repo.GetDownloadByID(ctx, dlID)
+	require.NoError(t, err)
+	require.Equal(t, dlID, got.ID)
+
+	_, err = repo.GetDownloadByID(ctx, 999999)
+	require.Error(t, err)
+
+	_, err = repo.GetQualityProfileByName(ctx, "missing-profile")
+	require.Error(t, err)
 }

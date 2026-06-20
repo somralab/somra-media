@@ -49,3 +49,41 @@ func TestPinnedClient_RejectsHostMismatch(t *testing.T) {
 	_, err = c.Get(context.Background(), "http://evil.example/api", nil)
 	require.Error(t, err)
 }
+
+func TestNewPinnedClient_InvalidURL(t *testing.T) {
+	_, err := NewPinnedClient("://bad", 0)
+	require.Error(t, err)
+	_, err = NewPinnedClient("example.com", 0)
+	require.Error(t, err)
+}
+
+func TestPinnedClient_PostForm(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		require.Equal(t, http.MethodPost, r.Method)
+		require.Equal(t, "application/x-www-form-urlencoded", r.Header.Get("Content-Type"))
+		require.NoError(t, r.ParseForm())
+		require.Equal(t, "v", r.Form.Get("k"))
+		w.WriteHeader(http.StatusOK)
+	}))
+	t.Cleanup(srv.Close)
+
+	c, err := NewPinnedClient(srv.URL, 0, AllowPrivateHosts())
+	require.NoError(t, err)
+	resp, err := c.PostForm(context.Background(), "/form", map[string][]string{"k": {"v"}})
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.NoError(t, resp.Body.Close())
+}
+
+func TestPinnedClient_NotInitialized(t *testing.T) {
+	var c *PinnedClient
+	_, err := c.Get(context.Background(), "/api", nil)
+	require.Error(t, err)
+}
+
+func TestPinnedClient_BlocksLoopbackIP(t *testing.T) {
+	c, err := NewPinnedClient("http://example.com", 0)
+	require.NoError(t, err)
+	_, err = c.Get(context.Background(), "http://127.0.0.1/", nil)
+	require.Error(t, err)
+}
