@@ -11,6 +11,56 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestPluginHandlers_DisableViaPatch(t *testing.T) {
+	h, _, token := newPluginTestRouter(t)
+
+	body := []byte(`{"pluginType":"indexer","implementation":"stub","name":"disable-me","enabled":true}`)
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, body)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	id := int64(created["id"].(float64))
+
+	patchBody := []byte(`{"enabled":false}`)
+	req = authRequest(http.MethodPatch, fmt.Sprintf("/api/v1/plugins/instances/%d", id), token, patchBody)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var patched map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &patched))
+	assert.Equal(t, false, patched["enabled"])
+}
+
+func TestPluginHandlers_PatchConfigOnly(t *testing.T) {
+	h, _, token := newPluginTestRouter(t)
+
+	body := []byte(`{"pluginType":"indexer","implementation":"stub","name":"cfg-only","config":{"prefix":"a"}}`)
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, body)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	id := int64(created["id"].(float64))
+
+	patchBody := []byte(`{"config":{"prefix":"b","apiKey":"new-secret"}}`)
+	req = authRequest(http.MethodPatch, fmt.Sprintf("/api/v1/plugins/instances/%d", id), token, patchBody)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var patched map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &patched))
+	cfg := patched["config"].(map[string]any)
+	assert.Equal(t, "b", cfg["prefix"])
+	assert.Equal(t, true, cfg["apiKeySet"])
+}
+
 func TestPluginHandlers_EnableViaPatch(t *testing.T) {
 	h, _, token := newPluginTestRouter(t)
 

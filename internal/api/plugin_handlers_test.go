@@ -166,6 +166,275 @@ func (s *pluginTestStore) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
+type failingListStore struct {
+	plugin.Store
+}
+
+func (f failingListStore) List(context.Context) ([]plugin.InstanceRecord, error) {
+	return nil, fmt.Errorf("list failed")
+}
+
+type failingCreateStore struct {
+	plugin.Store
+}
+
+func (f failingCreateStore) Create(context.Context, plugin.InstanceRecord) (int64, error) {
+	return 0, fmt.Errorf("create failed")
+}
+
+type failingUpdateStore struct {
+	plugin.Store
+}
+
+func (f failingUpdateStore) UpdateConfig(context.Context, int64, json.RawMessage, string) error {
+	return fmt.Errorf("update failed")
+}
+
+type failingDeleteStore struct {
+	plugin.Store
+}
+
+func (f failingDeleteStore) Delete(context.Context, int64) error {
+	return fmt.Errorf("delete failed")
+}
+
+type failingRenameStore struct {
+	plugin.Store
+}
+
+func (f failingRenameStore) UpdateName(context.Context, int64, string) error {
+	return fmt.Errorf("rename failed")
+}
+
+func pluginTestHandler(t *testing.T, d *db.DB, mgr *plugin.Manager) http.Handler {
+	t.Helper()
+	svc := newTestAuthService(t, d)
+	return New(Options{
+		AuthHandlers:   &AuthHandlers{Service: svc},
+		AuthMiddleware: &AuthMiddleware{Service: svc},
+		PluginHandlers: &PluginHandlers{Manager: mgr},
+	})
+}
+
+func pluginAdminToken(t *testing.T, h http.Handler) string {
+	t.Helper()
+	setupBody, _ := json.Marshal(map[string]string{"username": "admin", "password": "AdminPass1"})
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/setup/admin", bytes.NewReader(setupBody))
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+	var tok map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &tok))
+	return tok["accessToken"].(string)
+}
+
+func newPluginTestRouterWithManager(t *testing.T, d *db.DB, mgr *plugin.Manager) (http.Handler, string) {
+	t.Helper()
+	h := pluginTestHandler(t, d, mgr)
+	return h, pluginAdminToken(t, h)
+}
+
+func TestPluginHandlers_ListInstancesError(t *testing.T) {
+	d := openTestDB(t)
+	mgr := plugin.NewManager(failingListStore{newPluginTestStore(d)}, plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(stub.NewIndexerFactory()))
+	h, token := newPluginTestRouterWithManager(t, d, mgr)
+
+	req := authRequest(http.MethodGet, "/api/v1/plugins/instances", token, nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+}
+
+func TestPluginHandlers_CreateInternalError(t *testing.T) {
+	d := openTestDB(t)
+	mgr := plugin.NewManager(failingCreateStore{newPluginTestStore(d)}, plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(stub.NewIndexerFactory()))
+	h, token := newPluginTestRouterWithManager(t, d, mgr)
+
+	body := []byte(`{"pluginType":"indexer","implementation":"stub","name":"fail-create","config":{}}`)
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, body)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+}
+
+func TestPluginHandlers_PatchInternalError(t *testing.T) {
+	d := openTestDB(t)
+	base := newPluginTestStore(d)
+	mgr := plugin.NewManager(base, plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(stub.NewIndexerFactory()))
+	h, token := newPluginTestRouterWithManager(t, d, mgr)
+
+	body := []byte(`{"pluginType":"indexer","implementation":"stub","name":"patch-fail","config":{}}`)
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, body)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	id := int64(created["id"].(float64))
+
+	mgr2 := plugin.NewManager(failingUpdateStore{base}, plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr2.RegisterFactory(stub.NewIndexerFactory()))
+	h2 := pluginTestHandler(t, d, mgr2)
+
+	patchBody := []byte(`{"config":{"prefix":"x"}}`)
+	req = authRequest(http.MethodPatch, fmt.Sprintf("/api/v1/plugins/instances/%d", id), token, patchBody)
+	rec = httptest.NewRecorder()
+	h2.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+}
+
+func TestPluginHandlers_DeleteInternalError(t *testing.T) {
+	d := openTestDB(t)
+	base := newPluginTestStore(d)
+	mgr := plugin.NewManager(base, plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(stub.NewIndexerFactory()))
+	h, token := newPluginTestRouterWithManager(t, d, mgr)
+
+	body := []byte(`{"pluginType":"indexer","implementation":"stub","name":"del-fail","config":{}}`)
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, body)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	id := int64(created["id"].(float64))
+
+	mgr2 := plugin.NewManager(failingDeleteStore{base}, plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr2.RegisterFactory(stub.NewIndexerFactory()))
+	h2 := pluginTestHandler(t, d, mgr2)
+
+	req = authRequest(http.MethodDelete, fmt.Sprintf("/api/v1/plugins/instances/%d", id), token, nil)
+	rec = httptest.NewRecorder()
+	h2.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+}
+
+func TestPluginHandlers_GetInstanceCorruptSecrets(t *testing.T) {
+	d := openTestDB(t)
+	repo := db.NewPluginInstanceRepo(d.Querier())
+	id, err := repo.Create(context.Background(), db.PluginInstance{
+		PluginType:     db.PluginInstanceTypeIndexer,
+		Implementation: stub.Implementation,
+		Name:           "corrupt-secrets",
+		SecretsEnc:     "not-valid-ciphertext",
+	})
+	require.NoError(t, err)
+
+	mgr := plugin.NewManager(newPluginTestStore(d), plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(stub.NewIndexerFactory()))
+	h, token := newPluginTestRouterWithManager(t, d, mgr)
+
+	req := authRequest(http.MethodGet, fmt.Sprintf("/api/v1/plugins/instances/%d", id), token, nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+}
+
+func TestPluginHandlers_TestMissingFactory(t *testing.T) {
+	d := openTestDB(t)
+	repo := db.NewPluginInstanceRepo(d.Querier())
+	id, err := repo.Create(context.Background(), db.PluginInstance{
+		PluginType:     db.PluginInstanceTypeIndexer,
+		Implementation: "missing-impl",
+		Name:           "ghost",
+	})
+	require.NoError(t, err)
+
+	mgr := plugin.NewManager(newPluginTestStore(d), plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(stub.NewIndexerFactory()))
+	h, token := newPluginTestRouterWithManager(t, d, mgr)
+
+	req := authRequest(http.MethodPost, fmt.Sprintf("/api/v1/plugins/instances/%d/test", id), token, nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+}
+
+type apiBadFactory struct{}
+
+func (apiBadFactory) Implementation() string { return "bad" }
+func (apiBadFactory) Type() plugin.PluginType {
+	return plugin.PluginTypeIndexer
+}
+
+func (apiBadFactory) New(_ context.Context, instanceID string, _ []byte) (plugin.Plugin, error) {
+	return &apiBadPlugin{id: instanceID}, nil
+}
+
+type apiBadPlugin struct{ id string }
+
+func (p *apiBadPlugin) ID() string              { return p.id }
+func (p *apiBadPlugin) Type() plugin.PluginType { return plugin.PluginTypeIndexer }
+func (p *apiBadPlugin) ContractVersion() string { return "0" }
+
+func TestPluginHandlers_EnableBadPluginFails(t *testing.T) {
+	d := openTestDB(t)
+	mgr := plugin.NewManager(newPluginTestStore(d), plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(apiBadFactory{}))
+	h, token := newPluginTestRouterWithManager(t, d, mgr)
+
+	body := []byte(`{"pluginType":"indexer","implementation":"bad","name":"bad-enable","enabled":false}`)
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, body)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	id := int64(created["id"].(float64))
+
+	patchBody := []byte(`{"enabled":true}`)
+	req = authRequest(http.MethodPatch, fmt.Sprintf("/api/v1/plugins/instances/%d", id), token, patchBody)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestPluginHandlers_EmptyCatalog(t *testing.T) {
+	d := openTestDB(t)
+	mgr := plugin.NewManager(newPluginTestStore(d), plugin.ManagerOptions{EncryptionKey: "k"})
+	h, token := newPluginTestRouterWithManager(t, d, mgr)
+
+	req := authRequest(http.MethodGet, "/api/v1/plugins/catalog", token, nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var out map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &out))
+	catalog := out["catalog"].([]any)
+	assert.Empty(t, catalog)
+}
+
+func TestPluginHandlers_PatchRenameInternalError(t *testing.T) {
+	d := openTestDB(t)
+	base := newPluginTestStore(d)
+	mgr := plugin.NewManager(base, plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(stub.NewIndexerFactory()))
+	h, token := newPluginTestRouterWithManager(t, d, mgr)
+
+	body := []byte(`{"pluginType":"indexer","implementation":"stub","name":"rename-fail","config":{}}`)
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, body)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	id := int64(created["id"].(float64))
+
+	mgr2 := plugin.NewManager(failingRenameStore{base}, plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr2.RegisterFactory(stub.NewIndexerFactory()))
+	h2 := pluginTestHandler(t, d, mgr2)
+
+	patchBody := []byte(`{"name":"new-name"}`)
+	req = authRequest(http.MethodPatch, fmt.Sprintf("/api/v1/plugins/instances/%d", id), token, patchBody)
+	rec = httptest.NewRecorder()
+	h2.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+}
+
 func TestPluginHandlers_CatalogAndCRUD(t *testing.T) {
 	h, _, token := newPluginTestRouter(t)
 
@@ -299,12 +568,97 @@ func TestPluginHandlers_CreateInvalid(t *testing.T) {
 	require.Equal(t, http.StatusBadRequest, rec.Code)
 }
 
+func TestPluginHandlers_CreateDuplicateName(t *testing.T) {
+	h, _, token := newPluginTestRouter(t)
+	body := []byte(`{"pluginType":"indexer","implementation":"stub","name":"dup-name","config":{}}`)
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, body)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+
+	req = authRequest(http.MethodPost, "/api/v1/plugins/instances", token, body)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
 func TestPluginHandlers_NotFound(t *testing.T) {
 	h, _, token := newPluginTestRouter(t)
 	req := authRequest(http.MethodGet, "/api/v1/plugins/instances/99999", token, nil)
 	rec := httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusNotFound, rec.Code)
+}
+
+func TestPluginHandlers_NilManagerUnavailable(t *testing.T) {
+	d := openTestDB(t)
+	svc := newTestAuthService(t, d)
+	h := New(Options{
+		AuthHandlers:   &AuthHandlers{Service: svc},
+		AuthMiddleware: &AuthMiddleware{Service: svc},
+		PluginHandlers: &PluginHandlers{Manager: nil},
+	})
+	token := pluginAdminToken(t, h)
+
+	for _, tc := range []struct {
+		method string
+		path   string
+		body   []byte
+		want   int
+	}{
+		{http.MethodGet, "/api/v1/plugins/catalog", nil, http.StatusServiceUnavailable},
+		{http.MethodGet, "/api/v1/plugins/instances", nil, http.StatusServiceUnavailable},
+		{http.MethodPost, "/api/v1/plugins/instances", []byte(`{"pluginType":"indexer","implementation":"stub","name":"x"}`), http.StatusServiceUnavailable},
+	} {
+		req := authRequest(tc.method, tc.path, token, tc.body)
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, req)
+		require.Equal(t, tc.want, rec.Code, tc.path)
+	}
+}
+
+func TestPluginHandlers_PatchNotFound(t *testing.T) {
+	h, _, token := newPluginTestRouter(t)
+	patchBody := []byte(`{"name":"ghost"}`)
+	req := authRequest(http.MethodPatch, "/api/v1/plugins/instances/99999", token, patchBody)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusNotFound, rec.Code)
+}
+
+type failingDisableStore struct {
+	plugin.Store
+}
+
+func (f failingDisableStore) SetEnabled(context.Context, int64, bool) error {
+	return fmt.Errorf("disable failed")
+}
+
+func TestPluginHandlers_DisableInternalError(t *testing.T) {
+	d := openTestDB(t)
+	base := newPluginTestStore(d)
+	mgr := plugin.NewManager(base, plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(stub.NewIndexerFactory()))
+	h, token := newPluginTestRouterWithManager(t, d, mgr)
+
+	body := []byte(`{"pluginType":"indexer","implementation":"stub","name":"disable-fail","enabled":true}`)
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, body)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	id := int64(created["id"].(float64))
+
+	mgr2 := plugin.NewManager(failingDisableStore{base}, plugin.ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr2.RegisterFactory(stub.NewIndexerFactory()))
+	h2 := pluginTestHandler(t, d, mgr2)
+
+	patchBody := []byte(`{"enabled":false}`)
+	req = authRequest(http.MethodPatch, fmt.Sprintf("/api/v1/plugins/instances/%d", id), token, patchBody)
+	rec = httptest.NewRecorder()
+	h2.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
 }
 
 func TestPluginHandlers_UserDenied(t *testing.T) {

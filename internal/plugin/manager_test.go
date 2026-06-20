@@ -557,6 +557,38 @@ func TestManager_ConfigureDisabledInstance(t *testing.T) {
 	assert.ErrorIs(t, err, ErrPluginDisabled)
 }
 
+func TestManager_TestBadContract(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(badFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "bad",
+		Name:           "bad-test",
+	})
+	require.NoError(t, err)
+
+	result, err := mgr.Test(ctx, id)
+	require.NoError(t, err)
+	assert.False(t, result.Success)
+	assert.Equal(t, "plugins.instances.test.failed", result.MessageKey)
+}
+
+func TestManager_NilStoreExtendedGuards(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(nil, ManagerOptions{})
+	require.Error(t, mgr.PatchConfig(ctx, 1, json.RawMessage(`{}`)))
+	require.Error(t, mgr.UpdateName(ctx, 1, "x"))
+	require.Error(t, mgr.Delete(ctx, 1))
+	_, err := mgr.PublicConfig(ctx, 1)
+	require.Error(t, err)
+	_, err = mgr.Test(ctx, 1)
+	require.Error(t, err)
+}
+
 func TestManager_TestNotFound(t *testing.T) {
 	t.Parallel()
 	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
