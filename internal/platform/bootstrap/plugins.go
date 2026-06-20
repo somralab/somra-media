@@ -15,12 +15,15 @@ type PluginsBundle struct {
 }
 
 // WirePlugins constructs the plugin lifecycle manager and hydrates enabled instances.
-func WirePlugins(c *Components) (*PluginsBundle, error) {
+func WirePlugins(c *Components, encryptionKey string) (*PluginsBundle, error) {
 	if c == nil || c.DB == nil {
 		return nil, fmt.Errorf("bootstrap plugins: db required")
 	}
 	repo := db.NewPluginInstanceRepo(c.DB.Querier())
-	mgr := plugin.NewManager(newPluginStore(repo), plugin.ManagerOptions{Logger: c.Logger})
+	mgr := plugin.NewManager(newPluginStore(repo), plugin.ManagerOptions{
+		Logger:        c.Logger,
+		EncryptionKey: encryptionKey,
+	})
 
 	for _, f := range []plugin.Factory{
 		stub.NewIndexerFactory(),

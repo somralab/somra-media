@@ -349,6 +349,88 @@ func TestManager_NilStoreGuards(t *testing.T) {
 	require.Error(t, err)
 }
 
+func TestManager_ConfigureWithSecrets(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "test-key"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "secret-indexer",
+		Enabled:        true,
+		Config:         json.RawMessage(`{"prefix":"p","apiKey":"secret-value"}`),
+	})
+	require.NoError(t, err)
+
+	rec, err := mgr.Get(ctx, id)
+	require.NoError(t, err)
+	assert.NotContains(t, string(rec.Config), "secret-value")
+	assert.NotEmpty(t, rec.SecretsEnc)
+
+	idx, err := mgr.Indexer(ctx, id)
+	require.NoError(t, err)
+	results, err := idx.Search(ctx, SearchQuery{Title: "X", MediaKind: MediaKindMovie})
+	require.NoError(t, err)
+	assert.Equal(t, "p:X", results[0].Title)
+
+	pub, err := mgr.PublicConfig(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, true, pub["apiKeySet"])
+	assert.NotContains(t, pub, "apiKey")
+
+	require.NoError(t, mgr.PatchConfig(ctx, id, json.RawMessage(`{"apiKey":"rotated-key"}`)))
+	pub, err = mgr.PublicConfig(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, true, pub["apiKeySet"])
+}
+
+func TestManager_Delete(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "to-delete",
+		Enabled:        true,
+	})
+	require.NoError(t, err)
+	require.Len(t, mgr.EnabledIndexers(), 1)
+
+	require.NoError(t, mgr.Delete(ctx, id))
+	assert.Len(t, mgr.EnabledIndexers(), 0)
+	_, err = mgr.Get(ctx, id)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrPluginNotFound)
+}
+
+func TestManager_CatalogAndTest(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+	require.NoError(t, mgr.RegisterFactory(testDownloadClientFactory{}))
+
+	catalog := mgr.Catalog()
+	require.Len(t, catalog, 2)
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "testable",
+	})
+	require.NoError(t, err)
+
+	result, err := mgr.Test(ctx, id)
+	require.NoError(t, err)
+	assert.True(t, result.Success)
+	assert.Equal(t, "plugins.instances.test.success", result.MessageKey)
+}
+
 func TestManager_CreateActivateFailureLeavesPersisted(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()

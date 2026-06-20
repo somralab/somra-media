@@ -28,6 +28,7 @@ func (s *pluginStore) Create(ctx context.Context, rec plugin.InstanceRecord) (in
 		Implementation: rec.Implementation,
 		Name:           rec.Name,
 		Config:         config,
+		SecretsEnc:     rec.SecretsEnc,
 		Enabled:        rec.Enabled,
 	})
 	if err != nil {
@@ -39,12 +40,25 @@ func (s *pluginStore) Create(ctx context.Context, rec plugin.InstanceRecord) (in
 	return id, nil
 }
 
-func (s *pluginStore) UpdateConfig(ctx context.Context, id int64, config json.RawMessage) error {
+func (s *pluginStore) UpdateConfig(ctx context.Context, id int64, config json.RawMessage, secretsEnc string) error {
 	raw := string(config)
 	if raw == "" {
 		raw = "{}"
 	}
-	return s.repo.UpdateConfig(ctx, id, raw)
+	return s.repo.UpdateConfig(ctx, id, raw, secretsEnc)
+}
+
+func (s *pluginStore) UpdateName(ctx context.Context, id int64, name string) error {
+	if err := s.repo.UpdateName(ctx, id, name); err != nil {
+		if errors.Is(err, db.ErrPluginInstanceDuplicate) {
+			return fmt.Errorf("update plugin instance name: %w", plugin.ErrDuplicateInstance)
+		}
+		if errors.Is(err, db.ErrPluginInstanceNotFound) {
+			return plugin.ErrPluginNotFound
+		}
+		return err
+	}
+	return nil
 }
 
 func (s *pluginStore) SetEnabled(ctx context.Context, id int64, enabled bool) error {
@@ -74,6 +88,16 @@ func (s *pluginStore) List(ctx context.Context) ([]plugin.InstanceRecord, error)
 	return out, nil
 }
 
+func (s *pluginStore) Delete(ctx context.Context, id int64) error {
+	if err := s.repo.Delete(ctx, id); err != nil {
+		if errors.Is(err, db.ErrPluginInstanceNotFound) {
+			return plugin.ErrPluginNotFound
+		}
+		return err
+	}
+	return nil
+}
+
 func toInstanceRecord(inst db.PluginInstance) plugin.InstanceRecord {
 	config := json.RawMessage(inst.Config)
 	if len(config) == 0 {
@@ -85,6 +109,7 @@ func toInstanceRecord(inst db.PluginInstance) plugin.InstanceRecord {
 		Implementation: inst.Implementation,
 		Name:           inst.Name,
 		Config:         config,
+		SecretsEnc:     inst.SecretsEnc,
 		Enabled:        inst.Enabled,
 		CreatedAt:      inst.CreatedAt,
 		UpdatedAt:      inst.UpdatedAt,

@@ -36,7 +36,7 @@ func TestPluginInstanceRepo_CRUD(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, rows, 1)
 
-	require.NoError(t, repo.UpdateConfig(ctx, id, `{"prefix":"updated"}`))
+	require.NoError(t, repo.UpdateConfig(ctx, id, `{"prefix":"updated"}`, ""))
 	inst, err = repo.GetByID(ctx, id)
 	require.NoError(t, err)
 	assert.Contains(t, inst.Config, "updated")
@@ -80,7 +80,7 @@ func TestPluginInstanceRepo_NotFound(t *testing.T) {
 	assert.ErrorIs(t, err, ErrPluginInstanceNotFound)
 
 	require.Error(t, repo.SetEnabled(ctx, 999, false))
-	require.Error(t, repo.UpdateConfig(ctx, 999, `{}`))
+	require.Error(t, repo.UpdateConfig(ctx, 999, `{}`, ""))
 }
 
 func TestPluginInstanceRepo_CreateValidation(t *testing.T) {
@@ -129,7 +129,7 @@ func TestPluginInstanceRepo_UpdateConfigEmpty(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	require.NoError(t, repo.UpdateConfig(ctx, id, ""))
+	require.NoError(t, repo.UpdateConfig(ctx, id, "", ""))
 	inst, err := repo.GetByID(ctx, id)
 	require.NoError(t, err)
 	assert.Equal(t, "{}", inst.Config)
@@ -215,6 +215,6 @@ func TestPluginInstanceRepo_CreateOnClosedDB(t *testing.T) {
 	_, err = repo.List(ctx)
 	require.Error(t, err)
 
-	require.Error(t, repo.UpdateConfig(ctx, 1, `{}`))
+	require.Error(t, repo.UpdateConfig(ctx, 1, `{}`, ""))
 	require.Error(t, repo.SetEnabled(ctx, 1, false))
 }

@@ -27,7 +27,7 @@ func testComponents(t *testing.T) *Components {
 func TestWirePlugins_EmptyDatabase(t *testing.T) {
 	c := testComponents(t)
 
-	bundle, err := WirePlugins(c)
+	bundle, err := WirePlugins(c, "test-jwt-secret")
 	require.NoError(t, err)
 	require.NotNil(t, bundle)
 	require.NotNil(t, bundle.Manager)
@@ -49,7 +49,7 @@ func TestWirePlugins_HydratesEnabledInstance(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	bundle, err := WirePlugins(c)
+	bundle, err := WirePlugins(c, "test-jwt-secret")
 	require.NoError(t, err)
 	require.Len(t, bundle.Manager.EnabledIndexers(), 1)
 
@@ -74,7 +74,7 @@ func TestWirePlugins_SkipsBrokenEnabledInstance(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	bundle, err := WirePlugins(c)
+	bundle, err := WirePlugins(c, "test-jwt-secret")
 	require.NoError(t, err)
 	assert.Len(t, bundle.Manager.EnabledIndexers(), 0)
 }
@@ -82,7 +82,7 @@ func TestWirePlugins_SkipsBrokenEnabledInstance(t *testing.T) {
 func TestWirePlugins_RequiresDB(t *testing.T) {
 	c, err := New(nil)
 	require.NoError(t, err)
-	_, err = WirePlugins(c)
+	_, err = WirePlugins(c, "test-jwt-secret")
 	require.Error(t, err)
 }
 
@@ -105,7 +105,7 @@ func TestPluginStore_CRUD(t *testing.T) {
 	assert.Equal(t, "store-indexer", rec.Name)
 	assert.True(t, rec.Enabled)
 
-	require.NoError(t, store.UpdateConfig(ctx, id, json.RawMessage(`{"prefix":"new"}`)))
+	require.NoError(t, store.UpdateConfig(ctx, id, json.RawMessage(`{"prefix":"new"}`), ""))
 	rec, err = store.GetByID(ctx, id)
 	require.NoError(t, err)
 	assert.Contains(t, string(rec.Config), "new")

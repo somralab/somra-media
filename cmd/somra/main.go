@@ -94,11 +94,10 @@ func run() error {
 	streamBundle := bootstrap.WireStreaming(components, cfg, logger)
 	subtitlesBundle := bootstrap.WireSubtitles(components, cfg, settingsBundle.Settings, logger)
 
-	pluginsBundle, err := bootstrap.WirePlugins(components)
+	pluginsBundle, err := bootstrap.WirePlugins(components, cfg.Auth.JWTSecret)
 	if err != nil {
 		return fmt.Errorf("bootstrap plugins: %w", err)
 	}
-	_ = pluginsBundle
 
 	localeFn := func(r *http.Request) string {
 		if loc, ok := api.AcceptLanguageFromContext(r.Context()); ok && loc != "" {
@@ -194,6 +193,7 @@ func run() error {
 	}
 	apiOpts.RequestHandlers = requestsBundle.Requests
 	apiOpts.NotificationHandlers = requestsBundle.Notifications
+	apiOpts.PluginHandlers = &api.PluginHandlers{Manager: pluginsBundle.Manager}
 	handler := api.New(apiOpts)
 
 	srv := &http.Server{

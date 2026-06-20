@@ -31,6 +31,7 @@ func testAuthMiddleware(next http.Handler) http.Handler {
 				auth.PermRequestsRead,
 				auth.PermRequestsManage,
 				auth.PermNotificationsManage,
+				auth.PermPluginsManage,
 			},
 			Profile: db.UserProfile{UserID: "test-user", Locale: "en-US", Theme: "cinematic"},
 		}
