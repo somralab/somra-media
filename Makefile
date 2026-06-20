@@ -29,10 +29,13 @@ LDFLAGS := -s -w \
 
 .DEFAULT_GOAL := help
 
-.PHONY: help dev dev-backend dev-frontend build build-go build-web \
-        test test-go test-web lint lint-go lint-web \
+GO_TAGS       ?=
+ACQ_TAGS      := -tags acquisition
+
+.PHONY: help dev dev-backend dev-frontend build build-go build-acquisition build-web \
+        test test-go test-acquisition test-web lint lint-go lint-web \
         migrate coverage coverage-go coverage-web coverage-gate \
-        i18n-check docker docker-multiarch openapi-types e2e clean
+        i18n-check docker docker-acquisition docker-multiarch openapi-types e2e clean
 
 ## help: show this list
 help:
@@ -61,10 +64,15 @@ dev-frontend:
 ## build: build everything (backend + frontend)
 build: build-go build-web
 
-## build-go: compile the Go binary (CGO disabled)
+## build-go: compile the Go binary (CGO disabled, core — no acquisition adapters)
 build-go:
 	@mkdir -p $(BIN_DIR)
 	CGO_ENABLED=0 $(GO) build -trimpath -ldflags '$(LDFLAGS)' -o $(BINARY) ./cmd/somra
+
+## build-acquisition: compile with acquisition plugin adapters (full image)
+build-acquisition:
+	@mkdir -p $(BIN_DIR)
+	CGO_ENABLED=0 $(GO) build $(ACQ_TAGS) -trimpath -ldflags '$(LDFLAGS)' -o $(BINARY)-acquisition ./cmd/somra
 
 ## build-web: produce the SPA static bundle
 build-web:
@@ -77,6 +85,10 @@ test: test-go test-web
 ## test-go: run all Go unit tests (CGO-free; no -race — see CI unit-test job)
 test-go:
 	$(GO) test ./... -count=1
+
+## test-acquisition: run Go tests including acquisition-tagged packages
+test-acquisition:
+	$(GO) test $(ACQ_TAGS) ./... -count=1
 
 ## test-web: run frontend tests once
 test-web:
@@ -129,7 +141,7 @@ coverage-gate: coverage
 i18n-check:
 	bash scripts/i18n-check.sh
 
-## docker: build the container image for the local architecture
+## docker: build the container image for the local architecture (core)
 docker:
 	docker buildx build \
 	  --platform $$(uname -m | sed 's/x86_64/linux\/amd64/;s/aarch64/linux\/arm64/;s/arm64/linux\/arm64/') \
@@ -138,6 +150,18 @@ docker:
 	  --build-arg BUILT_AT=$(BUILT_AT) \
 	  -f deploy/Dockerfile \
 	  -t $(IMAGE):$(TAG) \
+	  --load .
+
+## docker-acquisition: build image with acquisition adapters enabled
+docker-acquisition:
+	docker buildx build \
+	  --platform $$(uname -m | sed 's/x86_64/linux\/amd64/;s/aarch64/linux\/arm64/;s/arm64/linux\/arm64/') \
+	  --build-arg VERSION=$(VERSION) \
+	  --build-arg COMMIT=$(COMMIT) \
+	  --build-arg BUILT_AT=$(BUILT_AT) \
+	  --build-arg BUILD_TAGS=acquisition \
+	  -f deploy/Dockerfile \
+	  -t $(IMAGE):$(TAG)-acquisition \
 	  --load .
 
 ## docker-multiarch: build + push multi-arch (amd64 + arm64) image

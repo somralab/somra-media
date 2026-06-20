@@ -103,6 +103,9 @@ type Options struct {
 	// PluginHandlers mounts plugin catalog/instance management endpoints.
 	PluginHandlers *PluginHandlers
 
+	// AutomationHandlers mounts indexer search, downloads, and quality profiles.
+	AutomationHandlers *AutomationHandlers
+
 	// Onboarding, when set, is notified after first admin creation.
 	Onboarding *settings.Onboarding
 }
@@ -211,6 +214,9 @@ func mountProtectedRoutes(r chi.Router, opts Options) {
 	}
 	if opts.PluginHandlers != nil {
 		opts.PluginHandlers.Mount(r)
+	}
+	if opts.AutomationHandlers != nil {
+		opts.AutomationHandlers.Mount(r)
 	}
 }
 

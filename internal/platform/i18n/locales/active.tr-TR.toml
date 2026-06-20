@@ -225,3 +225,33 @@ other = "Eklenti bağlantı testi başarısız."
 
 ["plugins.instances.test.success"]
 other = "Eklenti bağlantı testi başarılı."
+
+["automation.indexers.search.unavailable"]
+other = "Dizin araması kullanılamıyor."
+
+["automation.indexers.search.invalid"]
+other = "Geçersiz dizin arama isteği."
+
+["automation.indexers.search.failed"]
+other = "Dizin araması başarısız."
+
+["automation.downloads.list.failed"]
+other = "İndirmeler listelenemedi."
+
+["automation.downloads.get.failed"]
+other = "İndirme alınamadı."
+
+["automation.downloads.id.invalid"]
+other = "Geçersiz indirme kimliği."
+
+["automation.downloads.not_found"]
+other = "İndirme bulunamadı."
+
+["automation.quality_profiles.list.failed"]
+other = "Kalite profilleri listelenemedi."
+
+["automation.quality_profiles.create.failed"]
+other = "Kalite profili oluşturulamadı."
+
+["automation.quality_profiles.create.invalid"]
+other = "Geçersiz kalite profili isteği."

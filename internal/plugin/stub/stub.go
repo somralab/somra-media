@@ -123,6 +123,9 @@ func (s *stubDownloadClient) Status(_ context.Context, downloadID string) (plugi
 	if !ok {
 		return plugin.DownloadItem{}, plugin.ErrUnsupportedCapability
 	}
+	item.Status = plugin.DownloadStatusCompleted
+	item.Progress = 1
+	s.items[downloadID] = item
 	return item, nil
 }
 

@@ -226,3 +226,33 @@ other = "Plugin connection test failed."
 
 ["plugins.instances.test.success"]
 other = "Plugin connection test succeeded."
+
+["automation.indexers.search.unavailable"]
+other = "Indexer search is unavailable."
+
+["automation.indexers.search.invalid"]
+other = "Invalid indexer search request."
+
+["automation.indexers.search.failed"]
+other = "Indexer search failed."
+
+["automation.downloads.list.failed"]
+other = "Failed to list downloads."
+
+["automation.downloads.get.failed"]
+other = "Failed to get download."
+
+["automation.downloads.id.invalid"]
+other = "Invalid download id."
+
+["automation.downloads.not_found"]
+other = "Download not found."
+
+["automation.quality_profiles.list.failed"]
+other = "Failed to list quality profiles."
+
+["automation.quality_profiles.create.failed"]
+other = "Failed to create quality profile."
+
+["automation.quality_profiles.create.invalid"]
+other = "Invalid quality profile request."

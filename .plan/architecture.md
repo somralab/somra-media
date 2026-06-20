@@ -98,6 +98,7 @@ flowchart TB
 - The core stays **neutral**; indexer/torrent/usenet capabilities are optional plugins.
 - Clear interface contract: `Search`, `Capabilities`, `Download`, etc.
 - Legal risk isolation: plugins can be packaged/distributed separately. See [`project-brief.md`](./project-brief.md) §7 and Sprint 09.
+- **Packaging model:** acquisition adapters live under `internal/plugin/<name>/` and are included only when built with the `acquisition` Go build tag; default builds register `stub` adapters only. Image variants, contributor workflow, and config schemas are documented in [`docs/plugin-packaging.md`](../docs/plugin-packaging.md).
 
 ## 7. Cross-Cutting Concerns
 

@@ -9,6 +9,7 @@
 #
 # Build:
 #   docker build -f deploy/Dockerfile -t somra:dev .
+#   docker build -f deploy/Dockerfile --build-arg BUILD_TAGS=acquisition -t somra:full .
 #
 # Multi-arch:
 #   docker buildx build --platform linux/amd64,linux/arm64 \
@@ -56,10 +57,11 @@ ARG TARGETARCH
 ARG VERSION=dev
 ARG COMMIT=unknown
 ARG BUILT_AT=unknown
+ARG BUILD_TAGS=
 ENV CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH
 RUN --mount=type=cache,id=gomodcache,target=/go/pkg/mod \
     --mount=type=cache,id=gobuildcache,target=/root/.cache/go-build \
-    go build -trimpath \
+    go build -tags "${BUILD_TAGS}" -trimpath \
       -ldflags "-s -w -X main.version=${VERSION} -X main.commit=${COMMIT} -X main.builtAt=${BUILT_AT}" \
       -o /build/bin/somra ./cmd/somra
 

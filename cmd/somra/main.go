@@ -191,9 +191,14 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("bootstrap requests: %w", err)
 	}
+	automationBundle, err := bootstrap.WireAutomation(components, libBundle, pluginsBundle, requestsBundle)
+	if err != nil {
+		return fmt.Errorf("bootstrap automation: %w", err)
+	}
 	apiOpts.RequestHandlers = requestsBundle.Requests
 	apiOpts.NotificationHandlers = requestsBundle.Notifications
 	apiOpts.PluginHandlers = &api.PluginHandlers{Manager: pluginsBundle.Manager}
+	apiOpts.AutomationHandlers = automationBundle.Handlers
 	handler := api.New(apiOpts)
 
 	srv := &http.Server{

@@ -14,16 +14,16 @@
 ## Epics and Tasks
 
 ### Epic A: Plugin contract
-- [ ] A1 — `Indexer` and `DownloadClient` interface contracts (Search, Capabilities, Add, Status) | Acceptance: clear, versioned interface.
-- [ ] A2 — Plugin lifecycle (register, enable, configure, disable) | Acceptance: managed at runtime.
+- [x] A1 — `Indexer` and `DownloadClient` interface contracts (Search, Capabilities, Add, Status) | Acceptance: clear, versioned interface.
+- [x] A2 — Plugin lifecycle (register, enable, configure, disable) | Acceptance: managed at runtime.
 
 ### Epic B: Isolation & security
-- [ ] B1 — Core runs independently of plugins (system fully functional without plugins) | Acceptance: plugin-less mode tested.
-- [ ] B2 — Plugin configuration/secret management (secure storage) | Acceptance: secrets protected.
-- [ ] B3 — Plugin distribution/packaging strategy (separately packageable) | Acceptance: legal isolation documented.
+- [x] B1 — Core runs independently of plugins (system fully functional without plugins) | Acceptance: plugin-less mode tested.
+- [x] B2 — Plugin configuration/secret management (secure storage) | Acceptance: secrets protected.
+- [x] B3 — Plugin distribution/packaging strategy (separately packageable) | Acceptance: legal isolation documented.
 
 ### Epic C: Management API
-- [ ] C1 — Plugin list/configure/test connection API | Acceptance: coordinated with frontend.
+- [x] C1 — Plugin list/configure/test connection API | Acceptance: coordinated with frontend.
 
 ## Acceptance Criteria (Sprint Output)
 - Core is neutral; indexer/download capabilities run as pluggable, isolated plugins.
