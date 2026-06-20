@@ -69,3 +69,18 @@ func TestMergeConfig(t *testing.T) {
 	assert.Equal(t, "a", obj["prefix"])
 	assert.Equal(t, "k", obj["apiKey"])
 }
+
+func TestSplitConfigWithExtraFields(t *testing.T) {
+	t.Parallel()
+	pub, sec, err := SplitConfig(json.RawMessage(`{"customToken":"abc","url":"http://x"}`), []string{"customToken"})
+	require.NoError(t, err)
+	assert.Equal(t, "abc", sec["customToken"])
+	assert.Contains(t, string(pub), "http://x")
+}
+
+func TestMergeConfigPatchNonStringSecretIgnored(t *testing.T) {
+	t.Parallel()
+	_, sec, err := MergeConfigPatch(json.RawMessage(`{}`), map[string]string{"apiKey": "old"}, json.RawMessage(`{"apiKey":123}`), nil)
+	require.NoError(t, err)
+	assert.Equal(t, "old", sec["apiKey"])
+}

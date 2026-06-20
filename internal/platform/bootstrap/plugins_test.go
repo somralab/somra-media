@@ -115,7 +115,45 @@ func TestPluginStore_CRUD(t *testing.T) {
 	require.NoError(t, err)
 	assert.False(t, rec.Enabled)
 
+	require.NoError(t, store.UpdateName(ctx, id, "renamed-indexer"))
+	rec, err = store.GetByID(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, "renamed-indexer", rec.Name)
+
+	require.NoError(t, store.Delete(ctx, id))
+	_, err = store.GetByID(ctx, id)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, plugin.ErrPluginNotFound)
+
 	_, err = store.GetByID(ctx, 9999)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, plugin.ErrPluginNotFound)
+}
+
+func TestPluginStore_UpdateNameDuplicate(t *testing.T) {
+	ctx := context.Background()
+	c := testComponents(t)
+	store := newPluginStore(db.NewPluginInstanceRepo(c.DB.Querier()))
+
+	_, err := store.Create(ctx, plugin.InstanceRecord{
+		PluginType: plugin.PluginTypeIndexer, Implementation: stub.Implementation, Name: "taken",
+	})
+	require.NoError(t, err)
+	id, err := store.Create(ctx, plugin.InstanceRecord{
+		PluginType: plugin.PluginTypeIndexer, Implementation: stub.Implementation, Name: "other",
+	})
+	require.NoError(t, err)
+
+	err = store.UpdateName(ctx, id, "taken")
+	require.Error(t, err)
+	assert.ErrorIs(t, err, plugin.ErrDuplicateInstance)
+}
+
+func TestPluginStore_DeleteNotFound(t *testing.T) {
+	ctx := context.Background()
+	c := testComponents(t)
+	store := newPluginStore(db.NewPluginInstanceRepo(c.DB.Querier()))
+	err := store.Delete(ctx, 9999)
 	require.Error(t, err)
 	assert.ErrorIs(t, err, plugin.ErrPluginNotFound)
 }

@@ -431,6 +431,140 @@ func TestManager_CatalogAndTest(t *testing.T) {
 	assert.Equal(t, "plugins.instances.test.success", result.MessageKey)
 }
 
+func TestManager_UpdateName(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "old-name",
+		Enabled:        true,
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, mgr.UpdateName(ctx, id, "new-name"))
+	rec, err := mgr.Get(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, "new-name", rec.Name)
+}
+
+func TestManager_TestDownloadClient(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testDownloadClientFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeDownloadClient,
+		Implementation: "test-client",
+		Name:           "dl-test",
+	})
+	require.NoError(t, err)
+
+	result, err := mgr.Test(ctx, id)
+	require.NoError(t, err)
+	assert.True(t, result.Success)
+}
+
+func TestManager_ConfigureReplacesConfig(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "cfg-replace",
+		Enabled:        true,
+		Config:         json.RawMessage(`{"prefix":"v1","apiKey":"key1"}`),
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, mgr.Configure(ctx, id, json.RawMessage(`{"prefix":"v2","apiKey":"key2"}`)))
+	pub, err := mgr.PublicConfig(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, true, pub["apiKeySet"])
+}
+
+type secretFieldsFactory struct {
+	testIndexerFactory
+}
+
+func (secretFieldsFactory) SecretFields() []string { return []string{"customSecret"} }
+
+func TestManager_SecretFieldsProvider(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(secretFieldsFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "custom-secret",
+		Config:         json.RawMessage(`{"customSecret":"hidden","prefix":"x"}`),
+	})
+	require.NoError(t, err)
+	pub, err := mgr.PublicConfig(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, true, pub["customSecretSet"])
+}
+
+func TestManager_PatchConfigWhileEnabled(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "patch-enabled",
+		Enabled:        true,
+		Config:         json.RawMessage(`{"prefix":"before"}`),
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, mgr.PatchConfig(ctx, id, json.RawMessage(`{"prefix":"after"}`)))
+	idx, err := mgr.Indexer(ctx, id)
+	require.NoError(t, err)
+	results, err := idx.Search(ctx, SearchQuery{Title: "Z", MediaKind: MediaKindMovie})
+	require.NoError(t, err)
+	assert.Equal(t, "after:Z", results[0].Title)
+}
+
+func TestManager_ConfigureDisabledInstance(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "disabled-cfg",
+		Config:         json.RawMessage(`{"prefix":"v1"}`),
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, mgr.Configure(ctx, id, json.RawMessage(`{"prefix":"v2"}`)))
+	_, err = mgr.Indexer(ctx, id)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrPluginDisabled)
+}
+
+func TestManager_TestNotFound(t *testing.T) {
+	t.Parallel()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	_, err := mgr.Test(context.Background(), 404)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrPluginNotFound)
+}
+
 func TestManager_CreateActivateFailureLeavesPersisted(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()

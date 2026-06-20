@@ -185,6 +185,42 @@ func TestPluginInstanceRepo_SetEnabledToggle(t *testing.T) {
 	assert.True(t, inst.Enabled)
 }
 
+func TestPluginInstanceRepo_UpdateNameAndDelete(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	repo := NewPluginInstanceRepo(d.Querier())
+	id, err := repo.Create(ctx, PluginInstance{
+		PluginType:     PluginInstanceTypeIndexer,
+		Implementation: "stub",
+		Name:           "before-rename",
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, repo.UpdateName(ctx, id, "after-rename"))
+	inst, err := repo.GetByID(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, "after-rename", inst.Name)
+
+	id2, err := repo.Create(ctx, PluginInstance{
+		PluginType:     PluginInstanceTypeIndexer,
+		Implementation: "stub",
+		Name:           "other-indexer",
+	})
+	require.NoError(t, err)
+	require.Error(t, repo.UpdateName(ctx, id2, "after-rename"))
+
+	require.NoError(t, repo.Delete(ctx, id))
+	_, err = repo.GetByID(ctx, id)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrPluginInstanceNotFound)
+
+	require.Error(t, repo.UpdateName(ctx, 999, "x"))
+	require.Error(t, repo.Delete(ctx, 999))
+	require.NoError(t, repo.Delete(ctx, id2))
+}
+
 func TestPluginInstanceRepo_ListEmpty(t *testing.T) {
 	ctx := context.Background()
 	d := openTestDB(t)

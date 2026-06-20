@@ -230,6 +230,67 @@ func TestPluginHandlers_CatalogAndCRUD(t *testing.T) {
 	require.Equal(t, http.StatusNoContent, rec.Code)
 }
 
+func TestPluginHandlers_PatchNameAndDisable(t *testing.T) {
+	h, _, token := newPluginTestRouter(t)
+
+	createBody, _ := json.Marshal(map[string]any{
+		"pluginType":     "indexer",
+		"implementation": stub.Implementation,
+		"name":           "patch-me",
+		"enabled":        true,
+	})
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, createBody)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	id := int64(created["id"].(float64))
+
+	patchBody, _ := json.Marshal(map[string]any{"name": "renamed", "enabled": false})
+	req = authRequest(http.MethodPatch, fmt.Sprintf("/api/v1/plugins/instances/%d", id), token, patchBody)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var patched map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &patched))
+	assert.Equal(t, "renamed", patched["name"])
+	assert.Equal(t, false, patched["enabled"])
+}
+
+func TestPluginHandlers_DownloadClientTest(t *testing.T) {
+	h, _, token := newPluginTestRouter(t)
+
+	createBody, _ := json.Marshal(map[string]any{
+		"pluginType":     "download_client",
+		"implementation": stub.Implementation,
+		"name":           "dl-client",
+	})
+	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, createBody)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	id := int64(created["id"].(float64))
+
+	req = authRequest(http.MethodPost, fmt.Sprintf("/api/v1/plugins/instances/%d/test", id), token, nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestPluginHandlers_InvalidInstanceID(t *testing.T) {
+	h, _, token := newPluginTestRouter(t)
+	req := authRequest(http.MethodGet, "/api/v1/plugins/instances/not-a-number", token, nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
 func TestPluginHandlers_CreateInvalid(t *testing.T) {
 	h, _, token := newPluginTestRouter(t)
 	req := authRequest(http.MethodPost, "/api/v1/plugins/instances", token, []byte(`{"pluginType":"indexer"}`))
