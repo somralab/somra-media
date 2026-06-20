@@ -84,7 +84,7 @@ func (c *PinnedClient) do(ctx context.Context, method, path string, query url.Va
 		return nil, err
 	}
 	if !c.allowPrivateHosts {
-		if err := blockPrivateHost(target.Hostname()); err != nil {
+		if err := blockPrivateHost(ctx, target.Hostname()); err != nil {
 			return nil, err
 		}
 	}
@@ -126,7 +126,7 @@ func validateSameHost(base, target *url.URL) error {
 	return nil
 }
 
-func blockPrivateHost(host string) error {
+func blockPrivateHost(ctx context.Context, host string) error {
 	if host == "" {
 		return fmt.Errorf("empty host")
 	}
@@ -136,12 +136,12 @@ func blockPrivateHost(host string) error {
 		}
 		return nil
 	}
-	addrs, err := net.LookupIP(host)
+	addrs, err := net.DefaultResolver.LookupIPAddr(ctx, host)
 	if err != nil {
 		return fmt.Errorf("dns lookup %q: %w", host, err)
 	}
 	for _, addr := range addrs {
-		if addr.IsLoopback() || addr.IsPrivate() || addr.IsLinkLocalUnicast() {
+		if addr.IP.IsLoopback() || addr.IP.IsPrivate() || addr.IP.IsLinkLocalUnicast() {
 			return fmt.Errorf("blocked private ip for %q", host)
 		}
 	}
