@@ -20,8 +20,8 @@ single Docker install, built from scratch.
 - **Goal:** Replace the fragmented stack (Jellyfin/Plex + Sonarr/Radarr + Prowlarr + Bazarr +
   Overseerr + download clients) with one unified product. Philosophy: **minimum
   configuration, maximum optimization**.
-- **Status:** Sprint 01 (M1) complete. **Active sprint:** 02 — Library & Metadata.
-  See [`.plan/00-index.md`](./.plan/00-index.md) for the current dashboard.
+- **Status:** Sprints 01–08 complete. **Active sprint:** 09 — Automation & Indexers.
+  See [`.plan/00-index.md`](./.plan/00-index.md) for the current dashboard and task order.
 - **License:** **AGPL-3.0** with **DCO** sign-off (no CLA). Any dependency must be
   AGPL-3.0-compatible.
 

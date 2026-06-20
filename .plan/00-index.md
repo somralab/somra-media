@@ -9,17 +9,43 @@ Related: `[project-brief.md](./project-brief.md)` · `[roadmap.md](./roadmap.md)
 
 ## Active sprint
 
+| Field | Value |
+|---|---|
+| **Sprint** | **09 — Automation & Indexers** |
+| **Status** | **In progress** (Sprints 01–08 complete) |
+| **Milestone target** | **M5** — requests + automation + indexers (Sprint 08 done; Sprint 09 completes M5) |
+| **Folder** | [`sprint-09-automation-indexers/`](./sprint-09-automation-indexers/) |
+| **DoD** | [`definition-of-done.md`](./definition-of-done.md) §1–2 · sprint task acceptance criteria below |
+| **Dependencies** | Sprint 08 request handoff (done) · Sprint 02 library/import · [`architecture.md`](./architecture.md) §6 (plugin isolation) |
 
-| Field                | Value                                                                      |
-| -------------------- | -------------------------------------------------------------------------- |
-| **Sprint**           | **02 — Library & Metadata**                                                |
-| **Status**           | In progress (Sprint 01 / M1 complete)                                      |
-| **Milestone target** | M2 — login + scanned library with metadata (with Sprint 03)                |
-| **Folder**           | `[sprint-02-library-metadata/](./sprint-02-library-metadata/)`             |
-| **DoD checklist**    | `[../docs/sprint-02-dod-checklist.md](../docs/sprint-02-dod-checklist.md)` |
+### Sprint 09 task files (implementation order)
 
+| Order | File | Focus |
+|---|---|---|
+| 1 | [`01-plugin-architecture-tasks.md`](./sprint-09-automation-indexers/01-plugin-architecture-tasks.md) | Plugin contract, lifecycle, isolation |
+| 2 | [`02-indexer-integration-tasks.md`](./sprint-09-automation-indexers/02-indexer-integration-tasks.md) | Torrent/Usenet indexer (Prowlarr-like) |
+| 3 | [`03-download-client-tasks.md`](./sprint-09-automation-indexers/03-download-client-tasks.md) | Download clients + *arr automation |
+| 4 | [`04-frontend-tasks.md`](./sprint-09-automation-indexers/04-frontend-tasks.md) | Plugin/indexer/download UI |
+| 5 | [`05-qa-tasks.md`](./sprint-09-automation-indexers/05-qa-tasks.md) | Regression + end-to-end acquisition flow |
 
-When the active sprint changes, update this table only — details stay in `[roadmap.md](./roadmap.md)`.
+When the active sprint changes, update this section only — details stay in [`roadmap.md`](./roadmap.md).
+
+---
+
+## Completed sprints
+
+| Sprint | Name | Milestone | Status |
+|---|---|---|---|
+| 01 | Foundation & Architecture | M1 | **Done** |
+| 02 | Library & Metadata | M2 (partial) | **Done** |
+| 03 | Auth & Users | M2 | **Done** |
+| 04 | Streaming & Transcode | M3 (partial) | **Done** |
+| 05 | Web UI | M3 | **Done** |
+| 06 | Onboarding & Optimization | M4 (partial) | **Done** |
+| 07 | Hardware Acceleration | M4 | **Done** |
+| 08 | Request Management | M5 (partial) | **Done** |
+| 09 | Automation & Indexers | M5 | **In progress** ← active |
+| 10 | Polish & Open Source | M6 | Planned |
 
 ---
 
@@ -64,14 +90,14 @@ Agent entry: `[../AGENTS.md](../AGENTS.md)`
 Full definitions: `[roadmap.md](./roadmap.md)` §3.
 
 
-| Milestone | Sprints | Outcome                                              |
-| --------- | ------- | ---------------------------------------------------- |
-| **M1**    | 01      | Runnable skeleton via `docker run` — **done**        |
-| **M2**    | 02–03   | Login + scanned library with metadata                |
-| **M3**    | 04–05   | Browser playback incl. transcode — first alpha       |
-| **M4**    | 06–07   | Zero-config setup + HW acceleration — beta candidate |
-| **M5**    | 08–09   | Requests + automation + indexers                     |
-| **M6**    | 10      | OSS release — 1.0                                    |
+| Milestone | Sprints | Outcome | Status |
+| --------- | ------- | ------- | ------ |
+| **M1** | 01 | Runnable skeleton via `docker run` | **Done** |
+| **M2** | 02–03 | Login + scanned library with metadata | **Done** |
+| **M3** | 04–05 | Browser playback incl. transcode — first alpha | **Done** |
+| **M4** | 06–07 | Zero-config setup + HW acceleration — beta candidate | **Done** |
+| **M5** | 08–09 | Requests + automation + indexers | **In progress** (Sprint 09 active) |
+| **M6** | 10 | OSS release — 1.0 | Planned |
 
 
 ---

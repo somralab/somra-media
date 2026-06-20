@@ -7,12 +7,10 @@
 > [`.plan/project-brief.md`](./.plan/project-brief.md) for the full vision
 > and scope.
 
-**Status:** Sprint 01 (M1 foundation — **complete**). **Active sprint:**
-02 — Library & Metadata. The repository ships a runnable skeleton —
-chi gateway, SQLite (WAL) + goose migrations, in-house scheduler,
-i18n-aware error envelopes, diagnostics registry, SSE event stream,
-typed React SPA — plus CI gates and the container image. See
-[`.plan/00-index.md`](./.plan/00-index.md) for the planning dashboard.
+**Status:** Sprints **01–08 complete**. **Active sprint:** **09 — Automation &
+Indexers** (plugin architecture, indexers, download automation). See
+[`.plan/00-index.md`](./.plan/00-index.md) for the planning dashboard and
+Sprint 09 task order.
 
 **License:** [AGPL-3.0-or-later](./LICENSE) with
 [Developer Certificate of Origin](https://developercertificate.org)
@@ -29,10 +27,10 @@ Summary only — full sprint plan and dependencies:
 | Milestone | Sprints | Outcome | Status |
 | --------- | ------- | ------- | ------ |
 | **M1** | 01 | Runnable skeleton via `docker run` | Done |
-| **M2** | 02–03 | Login + scanned library with metadata | In progress |
-| **M3** | 04–05 | Browser playback incl. transcode — first alpha | Planned |
-| **M4** | 06–07 | Zero-config setup + HW acceleration — beta | Planned |
-| **M5** | 08–09 | Requests + automation + indexers | Planned |
+| **M2** | 02–03 | Login + scanned library with metadata | Done |
+| **M3** | 04–05 | Browser playback incl. transcode — first alpha | Done |
+| **M4** | 06–07 | Zero-config setup + HW acceleration — beta | Done |
+| **M5** | 08–09 | Requests + automation + indexers | In progress |
 | **M6** | 10 | Open source release — 1.0 | Planned |
 
 Track execution via [GitHub Issues](https://github.com/somralab/somra-media/issues)
