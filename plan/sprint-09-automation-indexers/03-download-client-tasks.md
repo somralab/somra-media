@@ -1,36 +1,36 @@
-# Sprint 09 — İndirme & Otomasyon Görevleri (*arr İşlevi)
+# Sprint 09 — Download & Automation Tasks (*arr Functionality)
 
-> **Sprint hedefi:** İndirme istemcisi entegrasyonu + kalite profilleri + otomatik kapma (grab)
-> ve içe aktarma (import) (Sonarr/Radarr işlevi). İstek yönetimiyle uçtan uca otomasyon.
+> **Sprint goal:** Download client integration + quality profiles + automatic grab
+> and import (Sonarr/Radarr functionality). End-to-end automation with request management.
 >
-> **İlgili:** [`02-indexer-integration-tasks.md`](./02-indexer-integration-tasks.md) · Sprint 08 (istek handoff) · Sprint 02 (kütüphane/import)
+> **Related:** [`02-indexer-integration-tasks.md`](./02-indexer-integration-tasks.md) · Sprint 08 (request handoff) · Sprint 02 (library/import)
 
-## Sorumlu Rol(ler)
-- Backend (birincil)
+## Responsible Role(s)
+- Backend (primary)
 
-## Bağımlılıklar
-- [`01-plugin-architecture-tasks.md`](./01-plugin-architecture-tasks.md), [`02-indexer-integration-tasks.md`](./02-indexer-integration-tasks.md), Sprint 08 istek akışı.
+## Dependencies
+- [`01-plugin-architecture-tasks.md`](./01-plugin-architecture-tasks.md), [`02-indexer-integration-tasks.md`](./02-indexer-integration-tasks.md), Sprint 08 request flow.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: İndirme istemcisi adaptörleri
-- [ ] A1 — Torrent + Usenet indirme istemcisi adaptör arayüzü (ekle, durum, tamamlandı) | Kabul: yaygın istemciler eklenebilir.
-- [ ] A2 — İndirme durumu izleme (scheduler) | Kabul: ilerleme/tamamlanma takip edilir.
+### Epic A: Download client adapters
+- [ ] A1 — Torrent + Usenet download client adapter interface (add, status, completed) | Acceptance: common clients can be added.
+- [ ] A2 — Download status monitoring (scheduler) | Acceptance: progress/completion tracked.
 
-### Epik B: Kalite profilleri & karar
-- [ ] B1 — Kalite profili tanımı (çözünürlük/kodek/boyut tercihleri) | Kabul: profil bazlı seçim.
-- [ ] B2 — Indexer sonuçlarını profile göre skorlama + otomatik kapma | Kabul: en iyi sürüm seçilir.
+### Epic B: Quality profiles & decision
+- [ ] B1 — Quality profile definition (resolution/codec/size preferences) | Acceptance: profile-based selection.
+- [ ] B2 — Score indexer results by profile + automatic grab | Acceptance: best release selected.
 
-### Epik C: İçe aktarma & izleme listeleri
-- [ ] C1 — Tamamlanan indirmeyi kütüphaneye import (yeniden adlandırma/taşıma + tarama tetikleme) | Kabul: medya kütüphanede belirir.
-- [ ] C2 — İzleme listesi/monitör (dizi bölümleri otomatik takip) | Kabul: yeni bölüm otomatik aranır.
-- [ ] C3 — İstek → onay → otomatik edinme uçtan uca akışı (Sprint 08 ile bağlama) | Kabul: onaylı istek otomatik tamamlanır.
+### Epic C: Import & watchlists
+- [ ] C1 — Import completed download to library (rename/move + trigger scan) | Acceptance: media appears in library.
+- [ ] C2 — Watchlist/monitor (automatic episode tracking for series) | Acceptance: new episodes searched automatically.
+- [ ] C3 — Request → approval → automatic acquisition end-to-end flow (integration with Sprint 08) | Acceptance: approved request completed automatically.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Onaylı bir istek; indexer arama → kalite seçimi → indirme → import → kütüphane akışını otomatik tamamlar.
+## Acceptance Criteria (Sprint Output)
+- An approved request automatically completes the indexer search → quality selection → download → import → library flow.
 
-## Riskler
-- Karmaşık uçtan uca akış + yasal hassasiyet → eklenti izolasyonu ve sağlam hata yönetimi.
+## Risks
+- Complex end-to-end flow + legal sensitivity → plugin isolation and robust error handling.
 
-## Kapsam Dışı
-- Tam Lidarr/Readarr (müzik/kitap) paritesi — bu plan kapsamı dışında (bkz. brief §7).
+## Out of Scope
+- Full Lidarr/Readarr (music/books) parity — out of scope for this plan (see brief §7).

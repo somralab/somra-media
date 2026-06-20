@@ -1,38 +1,38 @@
-# Sprint 02 — Backend Görevleri (Kütüphane & Tarama)
+# Sprint 02 — Backend Tasks (Library & Scanning)
 
-> **Sprint hedefi:** Medya kütüphanesi tanımı, dosya tarama, dosya izleme (watch) ve
-> ffprobe ile teknik metadata çıkarımı. M2'nin temeli.
+> **Sprint goal:** Media library definition, file scanning, file watching, and
+> technical metadata extraction with ffprobe. Foundation for M2.
 >
-> **İlgili:** [`../architecture.md`](../architecture.md) §3 · [`../project-brief.md`](../project-brief.md) · [`../definition-of-done.md`](../definition-of-done.md) · Sprint 01
+> **Related:** [`../architecture.md`](../architecture.md) §3 · [`../project-brief.md`](../project-brief.md) · [`../definition-of-done.md`](../definition-of-done.md) · Sprint 01
 
-## Sorumlu Rol(ler)
-- Backend (birincil), Tech Lead (gözetim)
+## Responsible Role(s)
+- Backend (primary), Tech Lead (oversight)
 
-## Bağımlılıklar
-- Sprint 01: job scheduler, veri katmanı, API gateway.
+## Dependencies
+- Sprint 01: job scheduler, data layer, API gateway.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Kütüphane tanımı
-- [x] A1 — Kütüphane (library) kavramı: tür (film/dizi/müzik), kaynak klasör(ler), tarama ayarları | Kabul: CRUD API + test.
-- [x] A2 — Çoklu klasör/volume desteği | Kabul: birden fazla yol taranabilir.
+### Epic A: Library definition
+- [x] A1 — Library concept: type (movie/series/music), source folder(s), scan settings | Acceptance: CRUD API + test.
+- [x] A2 — Multi-folder/volume support | Acceptance: multiple paths can be scanned.
 
-### Epik B: Dosya tarama motoru
-- [x] B1 — Tam tarama (full scan) işi: dosya keşfi, desteklenen format filtresi | Kabul: büyük klasörde stabil çalışır, ilerleme raporlar.
-- [x] B2 — Artımlı tarama (yalnızca değişenler) | Kabul: değişiklik tespiti çalışır.
-- [x] B3 — ffprobe ile teknik metadata (kodek, çözünürlük, süre, ses/altyazı kanalları) | Kabul: doğru parse, test verisiyle doğrulanır.
-- [x] B4 — Dosya adı/klasör yapısından ön ayrıştırma (başlık, yıl, sezon/bölüm) | Kabul: yaygın adlandırma kalıpları çözülür.
+### Epic B: File scanning engine
+- [x] B1 — Full scan job: file discovery, supported format filter | Acceptance: stable on large folders, reports progress.
+- [x] B2 — Incremental scan (changed items only) | Acceptance: change detection works.
+- [x] B3 — Technical metadata via ffprobe (codec, resolution, duration, audio/subtitle tracks) | Acceptance: correct parse, verified with test data.
+- [x] B4 — Pre-parsing from filename/folder structure (title, year, season/episode) | Acceptance: common naming patterns resolved.
 
-### Epik C: Dosya izleme (watch)
-- [x] C1 — Dosya sistemi izleyici (ekleme/silme/taşıma) | Kabul: değişiklikte artımlı tarama tetiklenir.
-- [x] C2 — Debounce/toplu işleme | Kabul: kütle değişimde sistem boğulmaz.
+### Epic C: File watching
+- [x] C1 — Filesystem watcher (add/delete/move) | Acceptance: incremental scan triggered on change.
+- [x] C2 — Debounce/batch processing | Acceptance: system does not choke on bulk changes.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Bir kütüphane tanımlanıp taranır; teknik metadata DB'ye yazılır; izleme aktif.
-- Tüm işler scheduler üzerinden, ilerleme raporlu.
+## Acceptance Criteria (Sprint Output)
+- A library is defined and scanned; technical metadata written to DB; watching active.
+- All jobs run via scheduler with progress reporting.
 
-## Riskler
-- Çeşitli adlandırma/format kombinasyonları → kapsamlı test verisi gerekir.
+## Risks
+- Various naming/format combinations → comprehensive test data required.
 
-## Kapsam Dışı
-- Zenginleştirilmiş (harici sağlayıcı) metadata — bkz. [`03-metadata-providers-tasks.md`](./03-metadata-providers-tasks.md).
+## Out of Scope
+- Enriched (external provider) metadata — see [`03-metadata-providers-tasks.md`](./03-metadata-providers-tasks.md).

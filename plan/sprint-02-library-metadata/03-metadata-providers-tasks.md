@@ -1,41 +1,41 @@
-# Sprint 02 — Metadata Sağlayıcı Görevleri
+# Sprint 02 — Metadata Provider Tasks
 
-> **Sprint hedefi:** Harici metadata sağlayıcılarından (TMDB/TVDB/MusicBrainz/fanart) zengin
-> bilgi çekme, eşleştirme ve görsel indirme.
+> **Sprint goal:** Fetch rich information from external metadata providers (TMDB/TVDB/MusicBrainz/fanart),
+> matching, and image download.
 >
-> **İlgili:** [`../tech-stack.md`](../tech-stack.md) §5 · [`../architecture.md`](../architecture.md) §3 · [`01-backend-tasks.md`](./01-backend-tasks.md) · [`../i18n-localization.md`](../i18n-localization.md)
+> **Related:** [`../tech-stack.md`](../tech-stack.md) §5 · [`../architecture.md`](../architecture.md) §3 · [`01-backend-tasks.md`](./01-backend-tasks.md) · [`../i18n-localization.md`](../i18n-localization.md)
 
-## Sorumlu Rol(ler)
-- Backend (birincil)
+## Responsible Role(s)
+- Backend (primary)
 
-## Bağımlılıklar
-- [`01-backend-tasks.md`](./01-backend-tasks.md) (ön ayrıştırma çıktısı), [`02-database-tasks.md`](./02-database-tasks.md) (şema).
+## Dependencies
+- [`01-backend-tasks.md`](./01-backend-tasks.md) (pre-parsing output), [`02-database-tasks.md`](./02-database-tasks.md) (schema).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Sağlayıcı soyutlaması
-- [x] A1 — Ortak `MetadataProvider` arayüzü (arama, detay, görseller) | Kabul: sağlayıcılar takılabilir.
-- [x] A2 — API anahtarı yönetimi + oran sınırı (rate limit) + önbellek | Kabul: sınır aşımı engellenir, sonuçlar cache'lenir.
+### Epic A: Provider abstraction
+- [x] A1 — Common `MetadataProvider` interface (search, detail, images) | Acceptance: providers pluggable.
+- [x] A2 — API key management + rate limit + cache | Acceptance: limit exceeded prevented, results cached.
 
-### Epik B: Sağlayıcı entegrasyonları
-- [x] B1 — TMDB (film + dizi) | Kabul: doğru eşleşme oranı, test edilir.
-- [x] B2 — TVDB (dizi) ve MusicBrainz (müzik) temel entegrasyonu | Kabul: temel alanlar çekilir.
-- [x] B3 — fanart.tv / görsel sağlayıcı (poster/backdrop/logo) | Kabul: görseller indirilip cache'lenir.
+### Epic B: Provider integrations
+- [x] B1 — TMDB (movie + series) | Acceptance: correct match rate, tested.
+- [x] B2 — TVDB (series) and MusicBrainz (music) basic integration | Acceptance: basic fields fetched.
+- [x] B3 — fanart.tv / image provider (poster/backdrop/logo) | Acceptance: images downloaded and cached.
 
-### Epik C-dil: Çok dilli metadata
-- [x] CL1 — Sağlayıcı sorgularında dil parametresi (kullanıcı/sistem locale'i: en-US/tr-TR) | Kabul: açıklama/başlık tercih edilen dilde çekilir, eksikse en-US'e düşülür. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §2.
-- [x] CL2 — Çok dilli metadata saklama/önbellek stratejisi | Kabul: aynı öğe için TR+EN metin tutulabilir.
+### Epic C-lang: Multilingual metadata
+- [x] CL1 — Language parameter in provider queries (user/system locale: en-US/tr-TR) | Acceptance: description/title fetched in preferred language, falls back to en-US if missing. See [`../i18n-localization.md`](../i18n-localization.md) §2.
+- [x] CL2 — Multilingual metadata storage/cache strategy | Acceptance: TR+EN text can be stored for same item.
 
-### Epik C: Eşleştirme (matching)
-- [x] C1 — Ön ayrıştırma + sağlayıcı sonuçlarını eşleştirme algoritması (skorlama) | Kabul: yaygın durumlar doğru eşleşir.
-- [x] C2 — Manuel düzeltme/yeniden eşleştirme API'si | Kabul: yanlış eşleşme düzeltilebilir.
-- [x] C3 — Periyodik metadata yenileme işi (scheduler) | Kabul: güncellemeler alınır.
+### Epic C: Matching
+- [x] C1 — Pre-parsing + provider result matching algorithm (scoring) | Acceptance: common cases match correctly.
+- [x] C2 — Manual correction/re-match API | Acceptance: wrong match can be corrected.
+- [x] C3 — Periodic metadata refresh job (scheduler) | Acceptance: updates fetched.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Taranan öğeler zengin metadata + görsellerle eşleşir; manuel düzeltme mümkün.
+## Acceptance Criteria (Sprint Output)
+- Scanned items matched with rich metadata + images; manual correction possible.
 
-## Riskler
-- Sağlayıcı oran sınırları ve eşleşme doğruluğu → cache + skorlama önemli.
+## Risks
+- Provider rate limits and match accuracy → cache + scoring important.
 
-## Kapsam Dışı
-- Altyazı indirme otomasyonu — Sprint 06.
+## Out of Scope
+- Subtitle download automation — Sprint 06.

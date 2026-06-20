@@ -1,33 +1,33 @@
-# Sprint 08 — Frontend Görevleri (İstek Arayüzü)
+# Sprint 08 — Frontend Tasks (Request UI)
 
-> **Sprint hedefi:** İçerik keşfi/istek oluşturma, istek takibi ve admin onay arayüzleri.
+> **Sprint goal:** Content discovery/request creation, request tracking, and admin approval interfaces.
 >
-> **İlgili:** [`01-backend-tasks.md`](./01-backend-tasks.md) · Sprint 05 (gezinme UI deseni)
+> **Related:** [`01-backend-tasks.md`](./01-backend-tasks.md) · Sprint 05 (browsing UI pattern)
 
-## Sorumlu Rol(ler)
-- Frontend (birincil)
+## Responsible Role(s)
+- Frontend (primary)
 
-## Bağımlılıklar
-- [`01-backend-tasks.md`](./01-backend-tasks.md) istek API'leri.
+## Dependencies
+- [`01-backend-tasks.md`](./01-backend-tasks.md) request APIs.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: İstek oluşturma
-- [x] A1 — Keşif/arama (kütüphanede olmayan içerik) + "iste" akışı | Kabul: kullanıcı istek oluşturur.
-- [x] A2 — Kalite/çözünürlük tercihi seçimi | Kabul: backend'e iletilir.
+### Epic A: Request creation
+- [x] A1 — Discovery/search (content not in library) + "request" flow | Acceptance: user creates request.
+- [x] A2 — Quality/resolution preference selection | Acceptance: sent to backend.
 
-### Epik B: İstek takibi
-- [x] B1 — "İsteklerim" ekranı + durum gösterimi | Kabul: gerçek zamanlı durum.
+### Epic B: Request tracking
+- [x] B1 — "My Requests" screen + status display | Acceptance: real-time status.
 
-### Epik C: Admin onayı
-- [x] C1 — Bekleyen istekler + onay/ret arayüzü | Kabul: durum güncellenir.
-- [x] C2 — Kota/politika ayar arayüzü | Kabul: backend politikasına bağlı.
+### Epic C: Admin approval
+- [x] C1 — Pending requests + approve/reject interface | Acceptance: status updated.
+- [x] C2 — Quota/policy settings interface | Acceptance: tied to backend policy.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kullanıcı istek oluşturup takip eder; admin onaylar/reddeder.
+## Acceptance Criteria (Sprint Output)
+- User creates and tracks requests; admin approves/rejects.
 
-## Riskler
-- Durum senkronizasyonu → WS/SSE ile canlı güncelleme.
+## Risks
+- Status synchronization → live updates via WS/SSE.
 
-## Kapsam Dışı
-- Otomasyon ayar ekranları — Sprint 09.
+## Out of Scope
+- Automation settings screens — Sprint 09.

@@ -1,33 +1,33 @@
-# Sprint 03 — Frontend Görevleri (Kimlik & Kullanıcı UI)
+# Sprint 03 — Frontend Tasks (Identity & User UI)
 
-> **Sprint hedefi:** Giriş/çıkış, kullanıcı yönetimi, profil ve ebeveyn kontrolü arayüzleri.
+> **Sprint goal:** Login/logout, user management, profile, and parental control interfaces.
 >
-> **İlgili:** Sprint 01 SPA iskeleti · [`01-backend-tasks.md`](./01-backend-tasks.md)
+> **Related:** Sprint 01 SPA skeleton · [`01-backend-tasks.md`](./01-backend-tasks.md)
 
-## Sorumlu Rol(ler)
-- Frontend (birincil)
+## Responsible Role(s)
+- Frontend (primary)
 
-## Bağımlılıklar
-- Bu sprint backend kimlik/RBAC API'leri.
+## Dependencies
+- This sprint backend identity/RBAC APIs.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Kimlik akışları
-- [x] A1 — Giriş/çıkış ekranları + oturum yönetimi (token saklama, yenileme) | Kabul: güvenli, korumalı rotalar.
-- [x] A2 — Korumalı rota / yetki bazlı UI gösterimi | Kabul: yetkisiz kullanıcı kısıtlı görür.
+### Epic A: Identity flows
+- [x] A1 — Login/logout screens + session management (token storage, refresh) | Acceptance: secure, protected routes.
+- [x] A2 — Protected route / permission-based UI display | Acceptance: unauthorized user sees limited UI.
 
-### Epik B: Kullanıcı yönetimi (admin)
-- [x] B1 — Kullanıcı listesi/oluştur/düzenle + rol atama | Kabul: RBAC API'sine bağlı.
-- [x] B2 — Ebeveyn kontrolü ayar arayüzü | Kabul: rating sınırı ayarlanabilir.
+### Epic B: User management (admin)
+- [x] B1 — User list/create/edit + role assignment | Acceptance: connected to RBAC API.
+- [x] B2 — Parental control settings UI | Acceptance: rating limit configurable.
 
-### Epik C: Profil
-- [x] C1 — Profil düzenleme (dil seçimi tr-TR/en-US, **tema seçimi** Cinematic/Aurora/Noir/Minimal, avatar, tercihler) | Kabul: dil ve tema değişimi anında arayüze uygulanır ve kalıcı saklanır; tarayıcı dili ile otomatik ön seçim; oturumsuzken `localStorage`'taki tema oturum açılınca profile taşınır. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §3 ve [`04-frontend-tasks.md`](../sprint-01-foundation/04-frontend-tasks.md) C1b.
+### Epic C: Profile
+- [x] C1 — Profile editing (language selection tr-TR/en-US, **theme selection** Cinematic/Aurora/Noir/Minimal, avatar, preferences) | Acceptance: language and theme changes apply instantly to UI and persist; browser language auto-preselect; theme from `localStorage` when unauthenticated migrates to profile on login. See [`../i18n-localization.md`](../i18n-localization.md) §3 and [`04-frontend-tasks.md`](../sprint-01-foundation/04-frontend-tasks.md) C1b.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kullanıcı giriş yapar, admin kullanıcıları yönetir, ebeveyn kontrolü ayarlanır.
+## Acceptance Criteria (Sprint Output)
+- User logs in, admin manages users, parental controls configured.
 
-## Riskler
-- Token saklama güvenliği → güvenli pratikler (Sprint 03 güvenlik görevleriyle uyumlu).
+## Risks
+- Token storage security → secure practices (aligned with Sprint 03 security tasks).
 
-## Kapsam Dışı
-- Oynatıcı/gezinme ekranları — Sprint 05.
+## Out of Scope
+- Player/browsing screens — Sprint 05.

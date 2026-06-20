@@ -186,7 +186,7 @@ Locale negotiation order: user profile → system default →
 ```
 .
 ├── AGENTS.md           # agent-facing how-to (companion to plan/)
-├── plan/               # authoritative planning docs (Turkish, scope-of-truth)
+├── plan/               # authoritative planning docs (scope-of-truth)
 ├── cmd/                # Go entrypoint(s)               (Paket 1)
 ├── internal/           # Go modules                     (Paket 1 / 4 / 5)
 ├── web/                # React + Vite SPA                (Paket 3)
@@ -201,7 +201,7 @@ Locale negotiation order: user profile → system default →
 
 ## Planning & governance
 
-The authoritative documents (Turkish) live under [`plan/`](./plan/):
+The authoritative documents live under [`plan/`](./plan/):
 
 - [`plan/project-brief.md`](./plan/project-brief.md) — vision, scope (in / out), decisions.
 - [`plan/architecture.md`](./plan/architecture.md) — modules, data flow, decisions.

@@ -1,34 +1,34 @@
-# Sprint 02 — QA Görevleri
+# Sprint 02 — QA Tasks
 
-> **Sprint hedefi:** Tarama ve metadata pipeline'ının doğruluğunu ve dayanıklılığını doğrulamak.
+> **Sprint goal:** Verify accuracy and resilience of the scanning and metadata pipeline.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) §4 · [`01-backend-tasks.md`](./01-backend-tasks.md) · [`03-metadata-providers-tasks.md`](./03-metadata-providers-tasks.md)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) §4 · [`01-backend-tasks.md`](./01-backend-tasks.md) · [`03-metadata-providers-tasks.md`](./03-metadata-providers-tasks.md)
 
-## Sorumlu Rol(ler)
-- QA (birincil), Backend (test verisi)
+## Responsible Role(s)
+- QA (primary), Backend (test data)
 
-## Bağımlılıklar
-- Sprint 01 test çatıları.
+## Dependencies
+- Sprint 01 test harnesses.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Tarama testleri
-- [x] A1 — Çeşitli adlandırma/klasör yapısı test seti | Kabul: ayrıştırma doğruluğu ölçülür.
-- [x] A2 — Bozuk/desteklenmeyen dosya dayanıklılık testi | Kabul: tarama çökmeden devam eder.
-- [x] A3 — Büyük kütüphane performans testi (temel) | Kabul: süre/kaynak raporlanır.
+### Epic A: Scanning tests
+- [x] A1 — Test set of various naming/folder structures | Acceptance: parsing accuracy measured.
+- [x] A2 — Corrupt/unsupported file resilience test | Acceptance: scan continues without crashing.
+- [x] A3 — Large library performance test (basic) | Acceptance: time/resource reported.
 
-### Epik B: Metadata testleri
-- [x] B1 — Sağlayıcı eşleştirme doğruluğu (mock + gerçek örnek) | Kabul: kabul edilebilir eşleşme oranı.
-- [x] B2 — Oran sınırı/cache davranışı testi | Kabul: sınır aşımı yaşanmaz.
+### Epic B: Metadata tests
+- [x] B1 — Provider matching accuracy (mock + real sample) | Acceptance: acceptable match rate.
+- [x] B2 — Rate limit/cache behavior test | Acceptance: limit not exceeded.
 
-### Epik C: Regresyon
-- [x] C1 — Sprint 02 regresyon paketi | Kabul: CI'da koşar.
+### Epic C: Regression
+- [x] C1 — Sprint 02 regression package | Acceptance: runs in CI.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Tarama/metadata akışları test kapsamında; kritik hata yok.
+## Acceptance Criteria (Sprint Output)
+- Scan/metadata flows under test coverage; no critical bugs.
 
-## Riskler
-- Harici sağlayıcı testleri kırılgan → mock + sınırlı gerçek test dengesi.
+## Risks
+- External provider tests are fragile → balance of mock + limited real tests.
 
-## Kapsam Dışı
-- Oynatma/streaming testleri — Sprint 04.
+## Out of Scope
+- Playback/streaming tests — Sprint 04.

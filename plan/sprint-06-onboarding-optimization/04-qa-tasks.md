@@ -1,32 +1,32 @@
-# Sprint 06 — QA Görevleri
+# Sprint 06 — QA Tasks
 
-> **Sprint hedefi:** Kurulum sihirbazı, akıllı varsayılanlar ve altyazı otomasyonunu doğrulamak.
+> **Sprint goal:** Verify setup wizard, smart defaults, and subtitle automation.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) · [`02-frontend-wizard-tasks.md`](./02-frontend-wizard-tasks.md)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) · [`02-frontend-wizard-tasks.md`](./02-frontend-wizard-tasks.md)
 
-## Sorumlu Rol(ler)
-- QA (birincil)
+## Responsible Role(s)
+- QA (primary)
 
-## Bağımlılıklar
-- Bu sprint backend/frontend/altyazı çıktıları.
+## Dependencies
+- This sprint's backend/frontend/subtitle deliverables.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Onboarding
-- [x] A1 — Sıfırdan kurulum e2e (<10 dk hedefi ölçümü) | Kabul: hedef süre doğrulanır.
-- [x] A2 — Akıllı varsayılan doğruluğu (farklı sistem profilleri) | Kabul: makul öneriler.
+### Epic A: Onboarding
+- [x] A1 — Fresh install e2e (<10 min target measurement) | Acceptance: target duration is verified.
+- [x] A2 — Smart default accuracy (different system profiles) | Acceptance: reasonable recommendations.
 
-### Epik B: Altyazı
-- [x] B1 — Eksik tespit + otomatik indirme + manuel akış testi | Kabul: akışlar geçer.
+### Epic B: Subtitles
+- [x] B1 — Missing detection + automatic download + manual flow test | Acceptance: flows pass.
 
-### Epik C: Regresyon
-- [x] C1 — Ayar değişikliklerinin sistem davranışına etkisi | Kabul: ayarlar uygulanır.
+### Epic C: Regression
+- [x] C1 — Effect of settings changes on system behavior | Acceptance: settings are applied.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kurulum ve altyazı akışları test kapsamında; kurulum süresi hedefi karşılanır.
+## Acceptance Criteria (Sprint Output)
+- Setup and subtitle flows are under test coverage; setup duration target is met.
 
-## Riskler
-- Donanım çeşitliliği → birkaç profil simüle edilmeli.
+## Risks
+- Hardware variety → several profiles should be simulated.
 
-## Kapsam Dışı
-- Donanım hızlandırma testi — Sprint 07.
+## Out of Scope
+- Hardware acceleration testing — Sprint 07.

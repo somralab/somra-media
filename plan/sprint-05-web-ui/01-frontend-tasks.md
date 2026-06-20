@@ -1,41 +1,41 @@
-# Sprint 05 — Frontend Görevleri (Kütüphane Gezinme & Keşif)
+# Sprint 05 — Frontend Tasks (Library Browsing & Discovery)
 
-> **Sprint hedefi:** Zengin kütüphane gezinme, detay sayfaları, arama/filtre ve ana sayfa keşfi.
-> Sprint 04 oynatıcısıyla birleşince M3 (kullanılabilir alfa) tamamlanır.
+> **Sprint goal:** Rich library browsing, detail pages, search/filter, and home page discovery.
+> Combined with the Sprint 04 player, completes M3 (usable alpha).
 >
-> **İlgili:** Sprint 02 (metadata), Sprint 04 (oynatıcı) · [`03-design-tasks.md`](./03-design-tasks.md) · [`02-backend-api-tasks.md`](./02-backend-api-tasks.md)
+> **Related:** Sprint 02 (metadata), Sprint 04 (player) · [`03-design-tasks.md`](./03-design-tasks.md) · [`02-backend-api-tasks.md`](./02-backend-api-tasks.md)
 
-## Sorumlu Rol(ler)
-- Frontend (birincil), UX/UI (tasarım)
+## Responsible Role(s)
+- Frontend (primary), UX/UI (design)
 
-## Bağımlılıklar
-- Sprint 02 metadata + Sprint 03 kullanıcı + Sprint 04 oynatma API'leri.
+## Dependencies
+- Sprint 02 metadata + Sprint 03 user + Sprint 04 playback APIs.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Ana sayfa & keşif
-- [x] A1 — Ana sayfa: "izlemeye devam et", "yeni eklenenler", öneri rafları | Kabul: kullanıcı bazlı raflar.
-- [x] A2 — Kütüphane görünümü (grid/list, poster, lazy load, sanal liste) | Kabul: büyük kütüphane akıcı.
+### Epic A: Home page & discovery
+- [x] A1 — Home page: "continue watching", "recently added", recommendation shelves | Acceptance: user-specific shelves.
+- [x] A2 — Library view (grid/list, poster, lazy load, virtual list) | Acceptance: large library is smooth.
 
-### Epik B: Detay sayfaları
-- [x] B1 — Film/dizi/sezon/bölüm detay sayfaları (metadata, oyuncular, görseller) | Kabul: zengin görünüm.
-- [x] B2 — "Oynat" / "devam et" / favori / izleme listesi aksiyonları | Kabul: backend'e bağlı.
+### Epic B: Detail pages
+- [x] B1 — Movie/series/season/episode detail pages (metadata, cast, images) | Acceptance: rich presentation.
+- [x] B2 — "Play" / "continue" / favorite / watchlist actions | Acceptance: connected to backend.
 
-### Epik C: Arama & filtre
-- [x] C1 — Hızlı arama (FTS) + sonuç önizleme | Kabul: anlık sonuç.
-- [x] C2 — Filtre/sıralama (tür, yıl, izlenme durumu) | Kabul: kombine filtreler.
+### Epic C: Search & filter
+- [x] C1 — Quick search (FTS) + result preview | Acceptance: instant results.
+- [x] C2 — Filter/sort (genre, year, watch status) | Acceptance: combined filters.
 
-### Epik D: Sorumluluk & durum
-- [x] D1 — Yükleme/boş/hata durumları + iskelet (skeleton) | Kabul: tutarlı UX.
-- [x] D2 — Ebeveyn kontrolüne göre içerik filtreleme (UI) | Kabul: çocuk profili kısıtlı görür.
-- [x] D3 — Tüm metinlerin i18n anahtarlarıyla (en-US + tr-TR) gelmesi ve metin uzunluğu/taşma dayanıklılığı | Kabul: hardcoded metin yok, TR↔EN'de düzen bozulmaz. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §5.
-- [x] D4 — Dört temanın (Cinematic varsayılan/Aurora/Noir/Minimal) tüm ekranlara uygulanması + hızlı tema değiştirici (menü/ayar) | Kabul: tema anında değişir, tüm ekranlarda tutarlı, seçim kalıcı (oturumsuz `localStorage`, oturumlu profil). Bkz. [`04-frontend-tasks.md`](../sprint-01-foundation/04-frontend-tasks.md) C1b ve [`03-design-tasks.md`](./03-design-tasks.md) Epik D.
+### Epic D: Responsiveness & state
+- [x] D1 — Loading/empty/error states + skeleton | Acceptance: consistent UX.
+- [x] D2 — Content filtering by parental controls (UI) | Acceptance: child profile sees restricted content.
+- [x] D3 — All text delivered via i18n keys (en-US + tr-TR) and text length/overflow resilience | Acceptance: no hardcoded text, layout holds across TR↔EN. See [`../i18n-localization.md`](../i18n-localization.md) §5.
+- [x] D4 — Four themes (Cinematic default/Aurora/Noir/Minimal) applied to all screens + quick theme switcher (menu/settings) | Acceptance: theme changes instantly, consistent across all screens, selection persists (sessionless `localStorage`, session profile). See [`04-frontend-tasks.md`](../sprint-01-foundation/04-frontend-tasks.md) C1b and [`03-design-tasks.md`](./03-design-tasks.md) Epic D.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kullanıcı kütüphaneyi gezip arar, detay görür ve içeriği oynatır (uçtan uca alfa akışı).
+## Acceptance Criteria (Sprint Output)
+- User browses the library, searches, views details, and plays content (end-to-end alpha flow).
 
-## Riskler
-- Büyük kütüphane performansı → sanal liste + sayfalama şart.
+## Risks
+- Large library performance → virtual list + pagination required.
 
-## Kapsam Dışı
-- Kurulum sihirbazı — Sprint 06.
+## Out of Scope
+- Setup wizard — Sprint 06.

@@ -5,13 +5,13 @@ server (library + metadata + transcoding/streaming + requests + automation) deli
 single Docker install, built from scratch.
 
 > This file is the agent-facing companion to the human docs. The **authoritative product and
-> scope source of truth lives in [`plan/`](./plan/)** (Turkish). When in doubt about *what*
+> scope source of truth lives in [`plan/`](./plan/)**. When in doubt about *what*
 > to build or whether something is in scope, read `plan/project-brief.md` first. This file
 > tells you *how* to work in the repo.
 >
-> Language note: this file and all source code / code comments / commit messages are in
-> **English** (the project's source locale is `en-US`). User-facing strings are localized
-> (`en-US` + `tr-TR`); see the i18n rules below. Planning docs under `plan/` are in Turkish.
+> Language note: this file, planning docs under `plan/`, and all source code / code comments /
+> commit messages are in **English** (the project's source locale is `en-US`). User-facing
+> strings are localized (`en-US` + `tr-TR`); see the i18n rules below.
 
 ---
 

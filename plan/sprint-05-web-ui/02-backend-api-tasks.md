@@ -1,33 +1,33 @@
-# Sprint 05 — Backend API Görevleri (Gezinme & Keşif)
+# Sprint 05 — Backend API Tasks (Browsing & Discovery)
 
-> **Sprint hedefi:** Kütüphane gezinme, keşif rafları, arama ve filtreleme için verimli API'ler.
+> **Sprint goal:** Efficient APIs for library browsing, discovery shelves, search, and filtering.
 >
-> **İlgili:** [`01-frontend-tasks.md`](./01-frontend-tasks.md) · Sprint 02 şema/FTS
+> **Related:** [`01-frontend-tasks.md`](./01-frontend-tasks.md) · Sprint 02 schema/FTS
 
-## Sorumlu Rol(ler)
-- Backend (birincil)
+## Responsible Role(s)
+- Backend (primary)
 
-## Bağımlılıklar
-- Sprint 02 (medya/FTS), Sprint 03 (kullanıcı/izleme durumu/ebeveyn kontrolü).
+## Dependencies
+- Sprint 02 (media/FTS), Sprint 03 (user/watch state/parental controls).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Gezinme API'leri
-- [x] A1 — Sayfalı/filtreli kütüphane listesi endpoint'i | Kabul: hızlı, indeks kullanır.
-- [x] A2 — Öğe/sezon/bölüm detay endpoint'leri | Kabul: tek çağrıda gerekli veri.
+### Epic A: Browsing APIs
+- [x] A1 — Paginated/filtered library list endpoint | Acceptance: fast, uses indexes.
+- [x] A2 — Item/season/episode detail endpoints | Acceptance: required data in a single call.
 
-### Epik B: Keşif rafları
-- [x] B1 — "Devam et", "yeni eklenenler", öneri rafı endpoint'leri (kullanıcı bazlı) | Kabul: izleme durumuna göre.
-- [x] B2 — Ebeveyn kontrolü filtre uygulaması (sunucu tarafı) | Kabul: kısıtlı içerik dönmez.
+### Epic B: Discovery shelves
+- [x] B1 — "Continue", "recently added", recommendation shelf endpoints (user-specific) | Acceptance: based on watch state.
+- [x] B2 — Parental control filter application (server-side) | Acceptance: restricted content is not returned.
 
-### Epik C: Arama
-- [x] C1 — FTS tabanlı arama endpoint'i (debounce dostu) | Kabul: düşük gecikme.
+### Epic C: Search
+- [x] C1 — FTS-based search endpoint (debounce-friendly) | Acceptance: low latency.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Frontend gezinme/keşif/arama ihtiyaçlarını karşılayan performanslı API'ler hazır.
+## Acceptance Criteria (Sprint Output)
+- Performant APIs ready to meet frontend browsing/discovery/search needs.
 
-## Riskler
-- Sunucu tarafı ebeveyn filtresi tutarlılığı → her endpoint'te uygulanmalı.
+## Risks
+- Server-side parental filter consistency → must be applied on every endpoint.
 
-## Kapsam Dışı
-- Akıllı öneri/ML — bu plan kapsamı dışında (basit kural tabanlı raflar).
+## Out of Scope
+- Smart recommendations/ML — out of scope for this plan (simple rule-based shelves).

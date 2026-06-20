@@ -1,37 +1,37 @@
-# Sprint 01 — QA Görevleri
+# Sprint 01 — QA Tasks
 
-> **Sprint hedefi:** Test stratejisini kurmak, otomasyon iskeletini hazırlamak ve DoD
-> doğrulama sürecini başlatmak.
+> **Sprint goal:** Establish test strategy, prepare automation skeleton, and start DoD
+> validation process.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) §4 · [`../project-brief.md`](../project-brief.md)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) §4 · [`../project-brief.md`](../project-brief.md)
 
-## Sorumlu Rol(ler)
-- QA (birincil), tüm geliştiriciler (test yazımı)
+## Responsible Role(s)
+- QA (primary), all developers (test writing)
 
-## Bağımlılıklar
-- CI hattı ([`05-devops-tasks.md`](./05-devops-tasks.md) Epik B).
+## Dependencies
+- CI pipeline ([`05-devops-tasks.md`](./05-devops-tasks.md) Epic B).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Test stratejisi
-- [x] A1 — Test piramidi ve kapsam politikası dokümante | Kabul: birim/entegrasyon/e2e sınırları net.
-- [x] A2 — Hata/issue yönetim süreci ve önem seviyeleri | Kabul: kritik/yüksek/orta/düşük tanımlı.
-- [x] A3 — Coverage standardının ([`../definition-of-done.md`](../definition-of-done.md) §4.1) operasyonel tanımı: ölçüm aracı, kritik modül listesi, rapor formatı | Kabul: çekirdek ≥%80, kritik ≥%90, frontend bileşen ≥%70 eşikleri uygulanabilir.
+### Epic A: Test strategy
+- [x] A1 — Test pyramid and coverage policy documented | Acceptance: unit/integration/e2e boundaries clear.
+- [x] A2 — Bug/issue management process and severity levels | Acceptance: critical/high/medium/low defined.
+- [x] A3 — Operational definition of coverage standard ([`../definition-of-done.md`](../definition-of-done.md) §4.1): measurement tool, critical module list, report format | Acceptance: core ≥80%, critical ≥90%, frontend components ≥70 thresholds enforceable.
 
-### Epik B: Otomasyon iskeleti
-- [x] B1 — Backend entegrasyon test çatısı (izole DB ile) | Kabul: örnek test CI'da koşar.
-- [x] B2 — E2E test çatısı kurulumu (web akışları için) | Kabul: `health` sayfası smoke testi geçer.
+### Epic B: Automation skeleton
+- [x] B1 — Backend integration test harness (with isolated DB) | Acceptance: sample test runs in CI.
+- [x] B2 — E2E test harness setup (for web flows) | Acceptance: `health` page smoke test passes.
 
-### Epik C: DoD doğrulama
-- [x] C1 — Sprint kapanış kontrol listesi (DoD §1–§2) | Kabul: her sprintte uygulanır.
-- [x] C2 — i18n kabul ölçütü kontrol listesi (hardcoded metin yok, en-US+tr-TR tam) | Kabul: her sprintte i18n doğrulanır. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §6.
+### Epic C: DoD validation
+- [x] C1 — Sprint closure checklist (DoD §1–§2) | Acceptance: applied every sprint.
+- [x] C2 — i18n acceptance criteria checklist (no hardcoded text, en-US+tr-TR complete) | Acceptance: i18n validated every sprint. See [`../i18n-localization.md`](../i18n-localization.md) §6.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Test çatıları CI'da çalışır; smoke testleri yeşil.
-- Test stratejisi ve hata süreci dokümante.
+## Acceptance Criteria (Sprint Output)
+- Test harnesses run in CI; smoke tests green.
+- Test strategy and bug process documented.
 
-## Riskler
-- Erken test altyapısı eksikliği teknik borç biriktirir → bu sprintte temel atılır.
+## Risks
+- Missing early test infrastructure accumulates technical debt → foundation laid this sprint.
 
-## Kapsam Dışı
-- Özellik bazlı kapsamlı test senaryoları — ilgili sprintlerde.
+## Out of Scope
+- Feature-specific comprehensive test scenarios — in relevant sprints.

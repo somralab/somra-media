@@ -1,427 +1,427 @@
-# Sprint 01 — Multitask Prompt Paketi
+# Sprint 01 — Multitask Prompt Package
 
-> **Amaç:** M1 milestone — `docker run` ile boş ama çalışan Somra iskeleti.  
-> **Kullanım:** Agents Window → Cloud Agent (önerilir) → `/multitask` → aşağıdaki promptları sırayla veya dalga (wave) bazında yapıştır.  
-> **Repo durumu:** Greenfield (yalnızca `plan/` + `AGENTS.md` mevcut).  
-> **Referanslar:** [`AGENTS.md`](../../AGENTS.md) · [`01-architecture-tasks.md`](./01-architecture-tasks.md) · [`definition-of-done.md`](../definition-of-done.md)
+> **Purpose:** M1 milestone — empty but working Somra skeleton via `docker run`.  
+> **Usage:** Agents Window → Cloud Agent (recommended) → `/multitask` → paste the prompts below in order or by wave.  
+> **Repo status:** Greenfield (only `plan/` + `AGENTS.md` exist).  
+> **References:** [`AGENTS.md`](../../AGENTS.md) · [`01-architecture-tasks.md`](./01-architecture-tasks.md) · [`definition-of-done.md`](../definition-of-done.md)
 
 ---
 
-## 0. Önce bunu çalıştır — Orkestratör (tek mesaj)
+## 0. Run this first — Orchestrator (single message)
 
 ```
-Sprint 01 (M1) foundation iskeletini kur. Repo greenfield; plan/ ve AGENTS.md tek doğruluk kaynağı.
+Set up Sprint 01 (M1) foundation skeleton. Repo is greenfield; plan/ and AGENTS.md are the single source of truth.
 
-HEDEF (M1):
-- Go tek binary derlenir, ayağa kalkar, graceful shutdown yapar
-- GET /api/v1/health ve GET /api/v1/version → 200
-- SQLite WAL + goose migrasyon (örnek tablo)
-- OpenAPI 3.1 spec → FE tip üretimi
-- React/Vite SPA iskeleti health/version gösterir
-- make lint test i18n-check coverage build docker yeşil
-- docker compose up → health yanıt verir
+GOAL (M1):
+- Go single binary compiles, starts, graceful shutdown
+- GET /api/v1/health and GET /api/v1/version → 200
+- SQLite WAL + goose migration (sample table)
+- OpenAPI 3.1 spec → FE type generation
+- React/Vite SPA skeleton shows health/version
+- make lint test i18n-check coverage build docker green
+- docker compose up → health responds
 
-KURALLAR (bağlayıcı):
-- Teknoloji değiştirme: chi, modernc.org/sqlite, goose, TanStack Query, Tailwind, Radix — bkz. plan/tech-stack.md
-- CGO'suz build (modernc.org/sqlite)
-- Kod/yorum/commit İngilizce; kullanıcı metni i18n anahtarı (en-US + tr-TR birlikte)
-- Modül sınırları: plan/architecture.md §3
-- İş mantığı YOK (tarama, oynatma, auth logic — sadece iskelet/sözleşme)
-- Her PR/commit DCO: git commit -s
-- Branch: feat/sprint-01-<paket-adı>
+RULES (binding):
+- Do not change technology: chi, modernc.org/sqlite, goose, TanStack Query, Tailwind, Radix — see plan/tech-stack.md
+- CGO-free build (modernc.org/sqlite)
+- Code/comments/commits in English; user-facing text via i18n keys (en-US + tr-TR together)
+- Module boundaries: plan/architecture.md §3
+- NO business logic (scanning, playback, auth logic — skeleton/contract only)
+- Every PR/commit DCO: git commit -s
+- Branch: feat/sprint-01-<package-name>
 
-DIZIN YAPISI (AGENTS.md hedefi):
+DIRECTORY STRUCTURE (AGENTS.md target):
 cmd/ internal/ web/ migrations/ api/ deploy/ Makefile
 
-Bu mesajı koordine et; bağımsız işleri paralel subagent'lara böl. Bağımlılık sırasına uy.
-Bitince: make lint test i18n-check coverage build && docker compose up smoke test.
-PR açma — commit'le branch'te bırak; merge kullanıcıya bırak.
+Coordinate this message; split independent work across parallel subagents. Follow dependency order.
+When done: make lint test i18n-check coverage build && docker compose up smoke test.
+Do not open PR — leave on branch with commits; merge is up to the user.
 ```
 
 ---
 
-## Dalga planı (bağımlılık sırası)
+## Wave plan (dependency order)
 
 ```mermaid
 flowchart LR
-  W0[Wave 0: Orkestratör] --> W1
-  subgraph W1 [Wave 1 — paralel]
-    P1[Paket 1: Monorepo + API Gateway]
-    P2[Paket 2: OpenAPI + Makefile]
-    P3[Paket 3: FE scaffold]
+  W0[Wave 0: Orchestrator] --> W1
+  subgraph W1 [Wave 1 — parallel]
+    P1[Package 1: Monorepo + API Gateway]
+    P2[Package 2: OpenAPI + Makefile]
+    P3[Package 3: FE scaffold]
   end
   W1 --> W2
-  subgraph W2 [Wave 2 — paralel]
-    P4[Paket 4: DB katmanı]
-    P5[Paket 5: Backend core + jobs]
-    P6[Paket 6: FE tamamlama]
+  subgraph W2 [Wave 2 — parallel]
+    P4[Package 4: DB layer]
+    P5[Package 5: Backend core + jobs]
+    P6[Package 6: FE completion]
   end
   W2 --> W3
   subgraph W3 [Wave 3]
-    P7[Paket 7: DevOps + CI]
-    P8[Paket 8: QA + entegrasyon]
+    P7[Package 7: DevOps + CI]
+    P8[Package 8: QA + integration]
   end
 ```
 
-| Dalga | Paralel mi? | Paketler |
+| Wave | Parallel? | Packages |
 |---|---|---|
-| 0 | Hayır | Orkestratör (§0) |
-| 1 | Evet (3 subagent) | §1 + §2 + §3 |
-| 2 | Evet (3 subagent) | §4 + §5 + §6 |
-| 3 | Sıralı önce §7, sonra §8 | DevOps → QA entegrasyon |
+| 0 | No | Orchestrator (§0) |
+| 1 | Yes (3 subagents) | §1 + §2 + §3 |
+| 2 | Yes (3 subagents) | §4 + §5 + §6 |
+| 3 | Sequential first §7, then §8 | DevOps → QA integration |
 
-**Worktree önerisi:** Her paket için ayrı branch/worktree; Wave 3'te ana branch'e merge.
+**Worktree recommendation:** Separate branch/worktree per package; merge to main branch in Wave 3.
 
 ---
 
-## Paket 1 — Monorepo iskelet + API Gateway
+## Package 1 — Monorepo skeleton + API Gateway
 
 **Branch:** `feat/sprint-01-api-gateway`  
-**Bağımlılık:** Yok (Wave 1)
+**Dependency:** None (Wave 1)
 
 ```
 Branch: feat/sprint-01-api-gateway
 
-Sprint 01 Paket 1 — Monorepo iskelet + API Gateway.
+Sprint 01 Package 1 — Monorepo skeleton + API Gateway.
 
-Kaynak: plan/sprint-01-foundation/01-architecture-tasks.md (Epik A1–A3 kısmen, B, C)
-AGENTS.md dizin yapısı ve plan/architecture.md §3 modül sınırları.
+Source: plan/sprint-01-foundation/01-architecture-tasks.md (Epic A1–A3 partially, B, C)
+AGENTS.md directory structure and plan/architecture.md §3 module boundaries.
 
-YAP:
-1. go.mod (module: github.com/somralab/somra-media veya repo'daki gerçek path)
-2. Dizinler: cmd/somra/, internal/api/, internal/auth/, internal/library/, internal/metadata/, internal/streaming/, internal/settings/, internal/jobs/, internal/platform/ (config, log, errors)
-3. chi router + middleware: request log, recover, CORS, rate-limit iskeleti
-4. GET /api/v1/health, GET /api/v1/version — birim testleri
-5. Bootstrap: config (env + varsayılan), structured logger, graceful shutdown (SIGTERM)
-6. WebSocket/SSE iskelet: örnek /api/v1/events/stream endpoint, test event yayını
-7. Auth iskelet (Sprint 03 sözleşmesi): internal/auth/ paket yapısı, JWT+refresh token interface'leri (implementasyon minimal)
+DO:
+1. go.mod (module: github.com/somralab/somra-media or actual repo path)
+2. Directories: cmd/somra/, internal/api/, internal/auth/, internal/library/, internal/metadata/, internal/streaming/, internal/settings/, internal/jobs/, internal/platform/ (config, log, errors)
+3. chi router + middleware: request log, recover, CORS, rate-limit skeleton
+4. GET /api/v1/health, GET /api/v1/version — unit tests
+5. Bootstrap: config (env + defaults), structured logger, graceful shutdown (SIGTERM)
+6. WebSocket/SSE skeleton: sample /api/v1/events/stream endpoint, test event broadcast
+7. Auth skeleton (Sprint 03 contract): internal/auth/ package structure, JWT+refresh token interfaces (minimal implementation)
 
-KABUL:
-- go test ./... geçer (bu paket kapsamı)
+ACCEPTANCE:
+- go test ./... passes (this package scope)
 - curl localhost:8080/api/v1/health → 200 JSON
-- Middleware birim testleri var
-- golangci-lint temiz
+- Middleware unit tests exist
+- golangci-lint clean
 
-KAPSAM DIŞI: domain iş mantığı, gerçek auth, DB tabloları (Paket 4'te)
+OUT OF SCOPE: domain business logic, real auth, DB tables (Package 4)
 
 Commit: feat(api): add monorepo skeleton and api gateway foundation
-DCO sign-off (-s). PR açma.
+DCO sign-off (-s). Do not open PR.
 ```
 
 ---
 
-## Paket 2 — OpenAPI spec + Makefile + go mod bootstrap
+## Package 2 — OpenAPI spec + Makefile + go mod bootstrap
 
 **Branch:** `feat/sprint-01-openapi-makefile`  
-**Bağımlılık:** Yok (Wave 1; health/version path'leri spec'e yazılır)
+**Dependency:** None (Wave 1; health/version paths written to spec)
 
 ```
 Branch: feat/sprint-01-openapi-makefile
 
-Sprint 01 Paket 2 — OpenAPI 3.1 + Makefile + repo kök altyapı.
+Sprint 01 Package 2 — OpenAPI 3.1 + Makefile + repo root infrastructure.
 
-Kaynak: plan/sprint-01-foundation/01-architecture-tasks.md (A4), 05-devops-tasks.md (C2)
+Source: plan/sprint-01-foundation/01-architecture-tasks.md (A4), 05-devops-tasks.md (C2)
 
-YAP:
-1. api/openapi.yaml — OpenAPI 3.1: /api/v1/health, /api/v1/version şemaları
-2. web/ için tip üretim hattı: openapi-typescript veya oapi-codegen (AGENTS.md ile uyumlu, script dokümante)
-3. Kök Makefile hedefleri: dev, build, test, lint, migrate, coverage, docker, i18n-check (iskelet — CI Paket 7 tamamlar)
+DO:
+1. api/openapi.yaml — OpenAPI 3.1: /api/v1/health, /api/v1/version schemas
+2. Type generation pipeline for web/: openapi-typescript or oapi-codegen (compatible with AGENTS.md, script documented)
+3. Root Makefile targets: dev, build, test, lint, migrate, coverage, docker, i18n-check (skeleton — CI Package 7 completes)
 4. .gitignore (Go, Node, SQLite, .env)
-5. README.md — geliştirme hızlı başlangıç (make dev, make test)
+5. README.md — development quick start (make dev, make test)
 
-KABUL:
-- make build (henüz minimal binary derlenebilir veya stub)
-- OpenAPI'den web/src/api/generated/ (veya eşdeğer) tip üretimi çalışır
-- Spec health/version endpoint'lerini tanımlar
+ACCEPTANCE:
+- make build (minimal binary compiles or stub for now)
+- Type generation from OpenAPI to web/src/api/generated/ (or equivalent) works
+- Spec defines health/version endpoints
 
-KAPSAM DIŞI: CI workflow (Paket 7), Docker (Paket 7)
+OUT OF SCOPE: CI workflow (Package 7), Docker (Package 7)
 
 Commit: chore(foundation): add openapi spec and makefile targets
-DCO sign-off (-s). PR açma.
+DCO sign-off (-s). Do not open PR.
 ```
 
 ---
 
-## Paket 3 — Frontend SPA iskelet (Vite + React)
+## Package 3 — Frontend SPA skeleton (Vite + React)
 
 **Branch:** `feat/sprint-01-frontend-scaffold`  
-**Bağımlılık:** Yok (Wave 1; API URL env ile)
+**Dependency:** None (Wave 1; API URL via env)
 
 ```
 Branch: feat/sprint-01-frontend-scaffold
 
-Sprint 01 Paket 3 — React + Vite SPA iskelet (Wave 1, API entegrasyonu minimal).
+Sprint 01 Package 3 — React + Vite SPA skeleton (Wave 1, minimal API integration).
 
-Kaynak: plan/sprint-01-foundation/04-frontend-tasks.md (Epik A, C kısmen)
+Source: plan/sprint-01-foundation/04-frontend-tasks.md (Epic A, C partially)
 
-YAP:
+DO:
 1. web/ — Vite + React + TypeScript strict + Tailwind + Radix UI + pnpm
-2. Router: layout + 2 rota (ör. / status sayfası, /about veya /settings stub)
-3. TanStack Query + Zustand iskelet
+2. Router: layout + 2 routes (e.g. / status page, /about or /settings stub)
+3. TanStack Query + Zustand skeleton
 4. i18n: i18next + react-i18next; locales/en-US/common.json, locales/tr-TR/common.json
-   - Anahtar standardı: domain.context.key
-   - Dil değiştirici UI; hardcoded metin YOK
-5. Theme provider: token tabanlı; temalar cinematic (default), aurora, noir, minimal
-   - localStorage ile kalıcılık
-   - Yeni tema = yalnızca token seti ekleme
-6. Temel bileşenler: Button, Input, Card, Modal, Toast (Radix + erişilebilir)
+   - Key standard: domain.context.key
+   - Language switcher UI; NO hardcoded text
+5. Theme provider: token-based; themes cinematic (default), aurora, noir, minimal
+   - Persistence via localStorage
+   - New theme = add token set only
+6. Base components: Button, Input, Card, Modal, Toast (Radix + accessible)
 7. ESLint + Prettier config
 
-KABUL:
-- pnpm --dir web run build başarılı
-- pnpm --dir web run lint temiz
-- Tema anında değişir, reload'da hatırlanır
-- Dil en-US ↔ tr-TR çalışır
+ACCEPTANCE:
+- pnpm --dir web run build succeeds
+- pnpm --dir web run lint clean
+- Theme changes instantly, remembered on reload
+- Language en-US ↔ tr-TR works
 
-KAPSAM DIŞI: health/version API çağrısı (Paket 6), WS client (Paket 6), e2e (Paket 8)
+OUT OF SCOPE: health/version API call (Package 6), WS client (Package 6), e2e (Package 8)
 
 Commit: feat(web): add vite react spa scaffold with i18n and themes
-DCO sign-off (-s). PR açma.
+DCO sign-off (-s). Do not open PR.
 ```
 
 ---
 
-## Paket 4 — SQLite + goose migrasyon
+## Package 4 — SQLite + goose migration
 
 **Branch:** `feat/sprint-01-database`  
-**Bağımlılık:** Paket 1 (bootstrap hook noktası)
+**Dependency:** Package 1 (bootstrap hook point)
 
 ```
 Branch: feat/sprint-01-database
 
-Sprint 01 Paket 4 — SQLite veri katmanı + goose migrasyon.
+Sprint 01 Package 4 — SQLite data layer + goose migration.
 
-Kaynak: plan/sprint-01-foundation/03-database-tasks.md
+Source: plan/sprint-01-foundation/03-database-tasks.md
 Tech: modernc.org/sqlite (CGO-free), pressly/goose embed.FS
 
-YAP:
-1. migrations/ — goose SQL migrasyonları (örnek: schema_migrations + settings stub tablosu)
-2. internal/platform/db/ — bağlantı yönetimi: WAL, pragma, pool
-3. Repository deseni iskelet + transaction helpers
-4. Startup'ta otomatik migrate up
-5. Test: izole temp DB, CRUD + rollback/commit testleri, WAL concurrent read testi
-6. DB path: env SOMRA_DATA_DIR (default ./data), deploy volume stratejisiyle uyumlu
+DO:
+1. migrations/ — goose SQL migrations (sample: schema_migrations + settings stub table)
+2. internal/platform/db/ — connection management: WAL, pragma, pool
+3. Repository pattern skeleton + transaction helpers
+4. Automatic migrate up on startup
+5. Test: isolated temp DB, CRUD + rollback/commit tests, WAL concurrent read test
+6. DB path: env SOMRA_DATA_DIR (default ./data), compatible with deploy volume strategy
 
-KABUL:
-- go test ./internal/platform/db/... geçer
-- Uygulama açılışta migrasyon uygular
-- PRAGMA integrity_check akışı dokümante veya test edilir
+ACCEPTANCE:
+- go test ./internal/platform/db/... passes
+- Application applies migration on startup
+- PRAGMA integrity_check flow documented or tested
 
-KAPSAM DIŞI: users/media domain tabloları
+OUT OF SCOPE: users/media domain tables
 
 Commit: feat(db): add sqlite wal layer with goose migrations
-DCO sign-off (-s). PR açma.
+DCO sign-off (-s). Do not open PR.
 ```
 
 ---
 
-## Paket 5 — Backend core: scheduler + i18n + diagnostics
+## Package 5 — Backend core: scheduler + i18n + diagnostics
 
 **Branch:** `feat/sprint-01-backend-core`  
-**Bağımlılık:** Paket 1 + Paket 4
+**Dependency:** Package 1 + Package 4
 
 ```
 Branch: feat/sprint-01-backend-core
 
-Sprint 01 Paket 5 — Job scheduler + backend i18n + diagnostics.
+Sprint 01 Package 5 — Job scheduler + backend i18n + diagnostics.
 
-Kaynak: plan/sprint-01-foundation/02-backend-tasks.md
+Source: plan/sprint-01-foundation/02-backend-tasks.md
 
-YAP:
-1. internal/jobs/ — robfig/cron/v3 + hafif scheduler wrapper
-   - Örnek periyodik job (heartbeat log)
-   - Job status: running/success/error; overlap/collision koruması
-   - Job queue interface iskeleti (Sprint 02 için)
-2. /api/v1/health zenginleştir: uptime, db status, scheduler status
+DO:
+1. internal/jobs/ — robfig/cron/v3 + lightweight scheduler wrapper
+   - Sample periodic job (heartbeat log)
+   - Job status: running/success/error; overlap/collision protection
+   - Job queue interface skeleton (for Sprint 02)
+2. Enrich /api/v1/health: uptime, db status, scheduler status
 3. Backend i18n: go-i18n/v2 + golang.org/x/text
    - active.en-US.toml, active.tr-TR.toml (errors namespace)
    - Locale negotiation: Accept-Language → en-US fallback
-   - API hata yanıtı: { code, messageKey, message } (localized)
-4. Ortak error types + JSON error envelope
+   - API error response: { code, messageKey, message } (localized)
+4. Shared error types + JSON error envelope
 
-KABUL:
-- Örnek cron job loglanır, test edilir
-- Locale tr-TR ile örnek hata mesajı Türkçe döner
-- go test ./internal/jobs/... geçer
+ACCEPTANCE:
+- Sample cron job logged and tested
+- Sample error message returns Turkish with tr-TR locale
+- go test ./internal/jobs/... passes
 
 Commit: feat(backend): add job scheduler and backend i18n foundation
-DCO sign-off (-s). PR açma.
+DCO sign-off (-s). Do not open PR.
 ```
 
 ---
 
-## Paket 6 — Frontend API entegrasyonu + WS client
+## Package 6 — Frontend API integration + WS client
 
 **Branch:** `feat/sprint-01-frontend-integration`  
-**Bağımlılık:** Paket 2 (OpenAPI tipleri) + Paket 1 (API ayakta) + Paket 3 (SPA)
+**Dependency:** Package 2 (OpenAPI types) + Package 1 (API running) + Package 3 (SPA)
 
 ```
 Branch: feat/sprint-01-frontend-integration
 
-Sprint 01 Paket 6 — FE API client + realtime + status UI.
+Sprint 01 Package 6 — FE API client + realtime + status UI.
 
-Kaynak: plan/sprint-01-foundation/04-frontend-tasks.md (Epik B)
+Source: plan/sprint-01-foundation/04-frontend-tasks.md (Epic B)
 
-YAP:
-1. OpenAPI'den üretilmiş tiplerle tipli HTTP client (health, version)
+DO:
+1. Typed HTTP client with OpenAPI-generated types (health, version)
 2. TanStack Query: useHealth, useVersion hooks
-3. Status sayfası: backend health/version bilgisini i18n anahtarlarıyla göster
-4. WS/SSE client iskelet: /api/v1/events/stream bağlan, son olayı UI'da göster
-5. Intl ile tarih/sayı format örneği (demo alanı)
-6. Bileşen testleri: temel Button/Status (vitest); coverage hedefi ≥%70 iskelet
+3. Status page: display backend health/version with i18n keys
+4. WS/SSE client skeleton: connect to /api/v1/events/stream, show latest event in UI
+5. Date/number formatting example with Intl (demo area)
+6. Component tests: base Button/Status (vitest); coverage target ≥70% skeleton
 
-KABUL:
-- SPA backend'e bağlanıp health/version render eder (make dev ile)
-- Hardcoded metin yok; en-US + tr-TR anahtarları tam
-- pnpm --dir web test geçer
+ACCEPTANCE:
+- SPA connects to backend and renders health/version (with make dev)
+- No hardcoded text; en-US + tr-TR keys complete
+- pnpm --dir web test passes
 
 Commit: feat(web): wire typed api client and status dashboard
-DCO sign-off (-s). PR açma.
+DCO sign-off (-s). Do not open PR.
 ```
 
 ---
 
-## Paket 7 — DevOps: Docker + CI/CD
+## Package 7 — DevOps: Docker + CI/CD
 
 **Branch:** `feat/sprint-01-devops`  
-**Bağımlılık:** Paket 1–6 merge edilmiş veya birleştirilebilir durumda
+**Dependency:** Packages 1–6 merged or in mergeable state
 
 ```
 Branch: feat/sprint-01-devops
 
-Sprint 01 Paket 7 — Docker + CI/CD + Makefile tamamlama.
+Sprint 01 Package 7 — Docker + CI/CD + Makefile completion.
 
-Kaynak: plan/sprint-01-foundation/05-devops-tasks.md
+Source: plan/sprint-01-foundation/05-devops-tasks.md
 
-YAP:
+DO:
 1. deploy/Dockerfile — multi-stage: Go build (CGO_ENABLED=0) + web static + ffmpeg/ffprobe
 2. deploy/docker-compose.yml — volumes: config, media, transcode-cache, data (SQLite)
-3. .github/workflows/ci.yml — kapılar sırasıyla:
+3. .github/workflows/ci.yml — gates in order:
    lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build
-4. golangci-lint config; web ESLint/Prettier CI adımı
-5. i18n-check script: eksik/kullanılmayan anahtar, en-US/tr-TR tamlık
-6. coverage-gate: Go core ≥80%, FE components ≥70% (Sprint 01 iskelet için makul alt küme)
-7. GHCR image-build iskelet (push main/tag'de)
-8. Makefile hedeflerini tamamla: make docker, make dev, make i18n-check, make coverage
+4. golangci-lint config; web ESLint/Prettier CI step
+5. i18n-check script: missing/unused keys, en-US/tr-TR completeness
+6. coverage-gate: Go core ≥80%, FE components ≥70% (reasonable subset for Sprint 01 skeleton)
+7. GHCR image-build skeleton (push on main/tag)
+8. Complete Makefile targets: make docker, make dev, make i18n-check, make coverage
 
-KABUL:
+ACCEPTANCE:
 - docker compose -f deploy/docker-compose.yml up → curl health 200
-- CI workflow YAML geçer (act veya push ile doğrula)
-- make lint test i18n-check coverage build yeşil
+- CI workflow YAML valid (verify with act or push)
+- make lint test i18n-check coverage build green
 
 Commit: ci(devops): add docker multi-stage build and github actions pipeline
-DCO sign-off (-s). PR açma.
+DCO sign-off (-s). Do not open PR.
 ```
 
 ---
 
-## Paket 8 — QA: test çatısı + entegrasyon + M1 doğrulama
+## Package 8 — QA: test harness + integration + M1 validation
 
 **Branch:** `feat/sprint-01-qa`  
-**Bağımlılık:** Paket 7 (CI hazır)
+**Dependency:** Package 7 (CI ready)
 
 ```
 Branch: feat/sprint-01-qa
 
-Sprint 01 Paket 8 — QA otomasyon + M1 smoke + dokümantasyon.
+Sprint 01 Package 8 — QA automation + M1 smoke + documentation.
 
-Kaynak: plan/sprint-01-foundation/06-qa-tasks.md
+Source: plan/sprint-01-foundation/06-qa-tasks.md
 
-YAP:
-1. docs/testing-strategy.md — test piramidi, coverage politikası (DoD §4.1)
-2. docs/issue-severity.md — kritik/yüksek/orta/düşük
-3. Backend integration test harness (testcontainers veya temp sqlite — CGO-free)
-4. E2E: Playwright iskelet — health status sayfası smoke (web/)
-5. Sprint kapanış checklist: docs/sprint-01-dod-checklist.md (DoD §1–§2 + i18n §6)
-6. Tüm paketleri main'e merge et (conflict çöz); make lint test i18n-check coverage build docker koş
-7. README güncelle: M1 demo adımları
+DO:
+1. docs/testing-strategy.md — test pyramid, coverage policy (DoD §4.1)
+2. docs/issue-severity.md — critical/high/medium/low
+3. Backend integration test harness (testcontainers or temp sqlite — CGO-free)
+4. E2E: Playwright skeleton — health status page smoke (web/)
+5. Sprint closure checklist: docs/sprint-01-dod-checklist.md (DoD §1–§2 + i18n §6)
+6. Merge all packages to main (resolve conflicts); run make lint test i18n-check coverage build docker
+7. Update README: M1 demo steps
 
-KABUL:
-- CI'da integration + e2e smoke yeşil
-- M1: docker run → health/version OK; SPA status sayfası OK
-- plan/sprint-01-foundation/*.md görevleri checkbox olarak doğrulanabilir durumda
+ACCEPTANCE:
+- Integration + e2e smoke green in CI
+- M1: docker run → health/version OK; SPA status page OK
+- plan/sprint-01-foundation/*.md tasks verifiable via checkboxes
 
 Commit: test(qa): add integration and e2e harness for sprint 01
-DCO sign-off (-s). PR açma — kullanıcı review bekler.
+DCO sign-off (-s). Open PR — user awaits review.
 ```
 
 ---
 
-## Entegrasyon promptu (Wave 3 sonu — tek mesaj)
+## Integration prompt (end of Wave 3 — single message)
 
 ```
-Tüm feat/sprint-01-* branch'lerini tek integration branch'te birleştir: feat/sprint-01-m1
+Merge all feat/sprint-01-* branches into a single integration branch: feat/sprint-01-m1
 
-1. Conflict çöz; teknoloji kararlarını değiştirme
-2. make lint test i18n-check coverage build docker — hepsi yeşil olana kadar düzelt
-3. docker compose up smoke: health, version, SPA status, SSE/WS örnek olay
-4. Eksik en-US/tr-TR anahtarlarını tamamla
-5. AGENTS.md'deki hedef dizin yapısının tamamlandığını doğrula
-6. Tek özet commit veya mantıklı commit serisi; DCO sign-off
-7. PR body şablonu (plan/.cursor kuralları):
+1. Resolve conflicts; do not change technology decisions
+2. make lint test i18n-check coverage build docker — fix until all green
+3. docker compose up smoke: health, version, SPA status, SSE/WS sample event
+4. Complete missing en-US/tr-TR keys
+5. Verify AGENTS.md target directory structure is complete
+6. Single summary commit or logical commit series; DCO sign-off
+7. PR body template (plan/.cursor rules):
 
-## Ne / Neden
-Sprint 01 M1: çalışan iskelet servis + CI + Docker.
+## What / Why
+Sprint 01 M1: working skeleton service + CI + Docker.
 
-## İlgili görev
+## Related task
 plan/sprint-01-foundation/ → M1 milestone
 
 ## Test
 make lint test i18n-check coverage build docker
 e2e health smoke
 
-## Kontrol
-- [ ] DoD karşılandı
+## Checklist
+- [ ] DoD met
 - [ ] i18n en-US + tr-TR
-- [ ] CI yeşil
+- [ ] CI green
 
-PR aç ama merge etme.
+Open PR but do not merge.
 ```
 
 ---
 
-## Hızlı `/multitask` tek mesaj (5 paralel subagent)
+## Quick `/multitask` single message (5 parallel subagents)
 
-Tüm paketleri tek seferde dağıtmak için:
+To distribute all packages at once:
 
 ```
 /multitask
 
-Sprint 01 M1 foundation — 5 paralel subagent:
+Sprint 01 M1 foundation — 5 parallel subagents:
 
-Subagent A → Paket 1 (Monorepo + API Gateway) branch feat/sprint-01-api-gateway
-Subagent B → Paket 2 (OpenAPI + Makefile) branch feat/sprint-01-openapi-makefile
-Subagent C → Paket 3 (FE scaffold) branch feat/sprint-01-frontend-scaffold
-Subagent D → Paket 4 (DB) branch feat/sprint-01-database — Paket 1 bootstrap interface'ine uy
-Subagent E → Paket 5 (Backend core) branch feat/sprint-01-backend-core — Paket 1+4'e uy
+Subagent A → Package 1 (Monorepo + API Gateway) branch feat/sprint-01-api-gateway
+Subagent B → Package 2 (OpenAPI + Makefile) branch feat/sprint-01-openapi-makefile
+Subagent C → Package 3 (FE scaffold) branch feat/sprint-01-frontend-scaffold
+Subagent D → Package 4 (DB) branch feat/sprint-01-database — align with Package 1 bootstrap interface
+Subagent E → Package 5 (Backend core) branch feat/sprint-01-backend-core — align with Package 1+4
 
-Ortak kurallar: AGENTS.md, plan/tech-stack.md, CGO-free, i18n en-US+tr-TR, DCO commits, no business logic.
+Shared rules: AGENTS.md, plan/tech-stack.md, CGO-free, i18n en-US+tr-TR, DCO commits, no business logic.
 
-Bittikteninde sırayla: Paket 6 → 7 → 8 → Entegrasyon promptu.
+After completion in order: Package 6 → 7 → 8 → Integration prompt.
 
-Her subagent bitince kısa özet: dosyalar, test sonucu, blocker.
+Each subagent on completion: brief summary — files, test result, blockers.
 ```
 
 ---
 
-## Sabah review checklist (sizin)
+## Morning review checklist (yours)
 
-- [x] `make lint test i18n-check coverage build docker` yeşil
+- [x] `make lint test i18n-check coverage build docker` green
 - [x] `docker compose -f deploy/docker-compose.yml up --build` → `/api/v1/health` 200
-- [x] SPA status sayfası health/version gösteriyor
-- [x] Hardcoded kullanıcı metni yok (grep `"[A-Z][a-z]+ [a-z]+"` şüpheli alanlar)
-- [x] Modül sınırları `plan/architecture.md` §3 ile uyumlu
+- [x] SPA status page shows health/version
+- [x] No hardcoded user-facing text (grep `"[A-Z][a-z]+ [a-z]+"` for suspicious areas)
+- [x] Module boundaries compatible with `plan/architecture.md` §3
 - [x] CGO_ENABLED=0 build
-- [x] Commit'lerde `Signed-off-by:` var
-- [x] Kapsam dışı feature creep yok (auth logic, library scan, transcode)
+- [x] Commits have `Signed-off-by:`
+- [x] No out-of-scope feature creep (auth logic, library scan, transcode)
 
 ---
 
-## Bilinen riskler ve fallback
+## Known risks and fallback
 
 | Risk | Fallback prompt |
 |---|---|
-| Paralel branch conflict | Entegrasyon promptunu erken çalıştır; Platform paketlerini sırala |
-| CI coverage gate kırılır | "Sprint 01 iskelet için coverage alt kümesi tanımla; kritik paketler auth/jobs/api" |
-| ffmpeg Docker build fail | "Sprint 01'de ffmpeg binary presence check yeterli; transcode Sprint 04" |
-| i18n-check fail | "Eksik tr-TR anahtarlarını common/errors namespace'inde tamamla" |
+| Parallel branch conflict | Run integration prompt early; sequence Platform packages |
+| CI coverage gate fails | "Define coverage subset for Sprint 01 skeleton; critical packages auth/jobs/api" |
+| ffmpeg Docker build fail | "ffmpeg binary presence check sufficient for Sprint 01; transcode in Sprint 04" |
+| i18n-check fail | "Complete missing tr-TR keys in common/errors namespace" |

@@ -1,37 +1,37 @@
-# Sprint 10 — Performans & Sertleştirme Görevleri
+# Sprint 10 — Performance & Hardening Tasks
 
-> **Sprint hedefi:** Tüm sistemi performans, kararlılık ve kaynak verimliliği açısından
-> sertleştirmek. M6 (1.0) için kalite bariyeri.
+> **Sprint goal:** Harden the entire system for performance, stability, and resource efficiency.
+> Quality bar for M6 (1.0).
 >
-> **İlgili:** [`../project-brief.md`](../project-brief.md) (başarı kriterleri: ev donanımında verim) · [`../roadmap.md`](../roadmap.md) (M6)
+> **Related:** [`../project-brief.md`](../project-brief.md) (success criteria: efficiency on home hardware) · [`../roadmap.md`](../roadmap.md) (M6)
 
-## Sorumlu Rol(ler)
-- Tech Lead (birincil), Backend, Medya Uzmanı, Frontend
+## Responsible Role(s)
+- Tech Lead (primary), Backend, Media Specialist, Frontend
 
-## Bağımlılıklar
-- Tüm önceki sprintlerin çıktıları.
+## Dependencies
+- Outputs from all previous sprints.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Backend performans
-- [ ] A1 — Profilleme (CPU/bellek) + sıcak yol optimizasyonu | Kabul: ölçülen iyileşme.
-- [ ] A2 — DB sorgu/indeks optimizasyonu (büyük kütüphane) | Kabul: yavaş sorgular giderilir.
-- [ ] A3 — Tarama/metadata/otomasyon işlerinin kaynak verimi | Kabul: ev donanımında stabil.
+### Epic A: Backend performance
+- [ ] A1 — Profiling (CPU/memory) + hot path optimization | Acceptance: measured improvement.
+- [ ] A2 — DB query/index optimization (large library) | Acceptance: slow queries resolved.
+- [ ] A3 — Resource efficiency of scan/metadata/automation jobs | Acceptance: stable on home hardware.
 
-### Epik B: Streaming verimi
-- [ ] B1 — Transcode/HW oturum verimliliği ve gecikme | Kabul: hedef oturum sayısı karşılanır.
+### Epic B: Streaming efficiency
+- [ ] B1 — Transcode/HW session efficiency and latency | Acceptance: target session count met.
 
-### Epik C: Frontend performans
-- [ ] C1 — Bundle boyutu, lazy load, render optimizasyonu | Kabul: yükleme/etkileşim metrikleri iyi.
+### Epic C: Frontend performance
+- [ ] C1 — Bundle size, lazy load, render optimization | Acceptance: good load/interaction metrics.
 
-### Epik D: Kararlılık
-- [ ] D1 — Uzun süre çalışma (soak) testi + bellek sızıntısı kontrolü | Kabul: sızıntı yok.
+### Epic D: Stability
+- [ ] D1 — Long-running (soak) test + memory leak check | Acceptance: no leaks.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Sistem ev sunucusu donanımında (ör. 4 çekirdek/8GB) hedeflenen yükte stabil ve verimli çalışır.
+## Acceptance Criteria (Sprint Output)
+- System runs stably and efficiently at target load on home server hardware (e.g. 4 cores/8GB).
 
-## Riskler
-- Geç bulunan darboğazlar → erken profilleme alışkanlığı.
+## Risks
+- Late-discovered bottlenecks → early profiling habit.
 
-## Kapsam Dışı
-- Yeni özellik geliştirme — bu sprint cila odaklıdır.
+## Out of Scope
+- New feature development — this sprint is polish-focused.

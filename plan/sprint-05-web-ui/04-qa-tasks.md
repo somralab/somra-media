@@ -1,35 +1,35 @@
-# Sprint 05 — QA Görevleri
+# Sprint 05 — QA Tasks
 
-> **Sprint hedefi:** Uçtan uca kullanıcı akışını (giriş → gezinme → arama → oynatma) ve M3
-> alfa kalitesini doğrulamak.
+> **Sprint goal:** Verify the end-to-end user flow (login → browsing → search → playback) and M3
+> alpha quality.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) · [`../roadmap.md`](../roadmap.md) (M3)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) · [`../roadmap.md`](../roadmap.md) (M3)
 
-## Sorumlu Rol(ler)
-- QA (birincil)
+## Responsible Role(s)
+- QA (primary)
 
-## Bağımlılıklar
-- Bu sprint frontend/backend + Sprint 04 oynatıcı.
+## Dependencies
+- This sprint's frontend/backend + Sprint 04 player.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: E2E akışlar
-- [x] A1 — Giriş → kütüphane → detay → oynatma e2e | Kabul: kritik yol geçer.
-- [x] A2 — Arama/filtre/raf doğruluğu | Kabul: sonuçlar tutarlı.
+### Epic A: E2E flows
+- [x] A1 — Login → library → detail → playback e2e | Acceptance: critical path passes.
+- [x] A2 — Search/filter/shelf accuracy | Acceptance: results are consistent.
 
-### Epik B: Uyumluluk & erişilebilirlik
-- [x] B1 — Responsive/tarayıcı testi | Kabul: masaüstü/mobil tarayıcı.
-- [x] B2 — Erişilebilirlik kontrolü (klavye, kontrast) | Kabul: temel WCAG (her dört temada).
-- [x] B3 — Tema testi: dört temada tutarlılık + tema kalıcılığı | Kabul: tema değişir, hatırlanır, kontrast korunur.
+### Epic B: Compatibility & accessibility
+- [x] B1 — Responsive/browser test | Acceptance: desktop/mobile browsers.
+- [x] B2 — Accessibility check (keyboard, contrast) | Acceptance: basic WCAG (in all four themes).
+- [x] B3 — Theme test: consistency across four themes + theme persistence | Acceptance: theme changes, is remembered, contrast is preserved.
 
-### Epik C: Alfa kabul
-- [x] C1 — M3 alfa kabul kontrol listesi | Kabul: alfa demoya hazır.
+### Epic C: Alpha acceptance
+- [x] C1 — M3 alpha acceptance checklist | Acceptance: ready for alpha demo.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Uçtan uca akış test kapsamında; M3 alfa kriterleri karşılanır.
+## Acceptance Criteria (Sprint Output)
+- End-to-end flow is under test coverage; M3 alpha criteria are met.
 
-## Riskler
-- Performans regresyonu büyük kütüphanede → ölçümlü test.
+## Risks
+- Performance regression on large library → measured testing.
 
-## Kapsam Dışı
-- Onboarding sihirbazı testi — Sprint 06.
+## Out of Scope
+- Onboarding wizard testing — Sprint 06.

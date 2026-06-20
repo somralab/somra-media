@@ -1,38 +1,38 @@
-# Sprint 03 — Backend Görevleri (Kimlik & RBAC)
+# Sprint 03 — Backend Tasks (Identity & RBAC)
 
-> **Sprint hedefi:** Çoklu kullanıcı, kimlik doğrulama, RBAC, profiller, ebeveyn kontrolü ve
-> izleme durumu (resume) backend'i.
+> **Sprint goal:** Multi-user, authentication, RBAC, profiles, parental controls, and
+> watch state (resume) backend.
 >
-> **İlgili:** [`../architecture.md`](../architecture.md) §3/§5 · [`../project-brief.md`](../project-brief.md) (Kimlik kararı) · [`04-security-tasks.md`](./04-security-tasks.md)
+> **Related:** [`../architecture.md`](../architecture.md) §3/§5 · [`../project-brief.md`](../project-brief.md) (Identity decision) · [`04-security-tasks.md`](./04-security-tasks.md)
 
-## Sorumlu Rol(ler)
-- Backend (birincil), Tech Lead (oturum stratejisi)
+## Responsible Role(s)
+- Backend (primary), Tech Lead (session strategy)
 
-## Bağımlılıklar
-- Sprint 01 (API/oturum kararı, veri katmanı), Sprint 02 (medya öğeleri — izleme durumu için).
+## Dependencies
+- Sprint 01 (API/session decision, data layer), Sprint 02 (media items — for watch state).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Kimlik doğrulama
-- [x] A1 — Kullanıcı kaydı/giriş, parola hash (güçlü algoritma), oturum/token yönetimi | Kabul: güvenli akış, test edilir.
-- [x] A2 — Oturum yenileme/çıkış, çoklu cihaz oturumu | Kabul: oturumlar yönetilebilir.
-- [x] A3 — İlk kurulumda admin oluşturma akışı | Kabul: Sprint 06 onboarding ile uyumlu.
+### Epic A: Authentication
+- [x] A1 — User registration/login, password hash (strong algorithm), session/token management | Acceptance: secure flow, tested.
+- [x] A2 — Session refresh/logout, multi-device sessions | Acceptance: sessions manageable.
+- [x] A3 — Admin creation flow on first setup | Acceptance: compatible with Sprint 06 onboarding.
 
-### Epik B: RBAC ve profiller
-- [x] B1 — Rol/yetki modeli (admin, kullanıcı, çocuk) + yetki kontrol middleware'i | Kabul: korumalı uçlar yetkiye göre filtreler.
-- [x] B2 — Kullanıcı profilleri (avatar, dil tercihi `tr-TR`/`en-US`, **arayüz teması** `cinematic`/`aurora`/`noir`/`minimal`, tercihler) | Kabul: profil CRUD; dil tercihi dil pazarlığında en yüksek önceliklidir; tema tercihi kalıcı saklanır (varsayılan `cinematic`). Bkz. [`../i18n-localization.md`](../i18n-localization.md) §3.
-- [x] B3 — Ebeveyn kontrolü: yaş derecesi (rating) sınırı, içerik kısıtı | Kabul: kısıtlı içerik çocuk profilinde gizlenir.
+### Epic B: RBAC and profiles
+- [x] B1 — Role/permission model (admin, user, child) + authorization middleware | Acceptance: protected endpoints filtered by permission.
+- [x] B2 — User profiles (avatar, language preference `tr-TR`/`en-US`, **UI theme** `cinematic`/`aurora`/`noir`/`minimal`, preferences) | Acceptance: profile CRUD; language preference has highest priority in locale negotiation; theme preference persisted (default `cinematic`). See [`../i18n-localization.md`](../i18n-localization.md) §3.
+- [x] B3 — Parental controls: age rating limit, content restriction | Acceptance: restricted content hidden on child profile.
 
-### Epik C: İzleme durumu
-- [x] C1 — İzleme ilerleme/devam (resume) ve "izlendi" durumu | Kabul: kaldığı yerden devam.
-- [x] C2 — Kullanıcı bazlı favoriler/izleme listesi | Kabul: CRUD + filtre.
+### Epic C: Watch state
+- [x] C1 — Watch progress/resume and "watched" state | Acceptance: resume from where left off.
+- [x] C2 — Per-user favorites/watchlist | Acceptance: CRUD + filter.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Çoklu kullanıcı giriş yapar; roller ve ebeveyn kısıtları uygulanır; izleme durumu tutulur.
-- [`04-security-tasks.md`](./04-security-tasks.md) gereksinimleri karşılanır.
+## Acceptance Criteria (Sprint Output)
+- Multiple users log in; roles and parental restrictions applied; watch state maintained.
+- [`04-security-tasks.md`](./04-security-tasks.md) requirements met.
 
-## Riskler
-- Güvenlik kritik → Sprint 10 güvenlik denetimiyle de doğrulanır.
+## Risks
+- Security critical → also validated in Sprint 10 security audit.
 
-## Kapsam Dışı
-- Harici kimlik (OIDC/LDAP) — bu plan kapsamı dışında (gelecekte).
+## Out of Scope
+- External identity (OIDC/LDAP) — out of scope for this plan (future).

@@ -1,35 +1,35 @@
-# Sprint 06 — Altyazı Otomasyonu Görevleri (Bazarr İşlevi)
+# Sprint 06 — Subtitle Automation Tasks (Bazarr Functionality)
 
-> **Sprint hedefi:** Otomatik altyazı arama/indirme (Bazarr benzeri): eksik altyazı tespiti,
-> sağlayıcı entegrasyonu ve eşleştirme.
+> **Sprint goal:** Automatic subtitle search/download (Bazarr-like): missing subtitle detection,
+> provider integration, and matching.
 >
-> **İlgili:** [`../architecture.md`](../architecture.md) (Metadata/eklenti) · Sprint 04 (altyazı oynatma) · [`../project-brief.md`](../project-brief.md) (kapsam)
+> **Related:** [`../architecture.md`](../architecture.md) (Metadata/plugin) · Sprint 04 (subtitle playback) · [`../project-brief.md`](../project-brief.md) (scope)
 
-## Sorumlu Rol(ler)
-- Backend (birincil)
+## Responsible Role(s)
+- Backend (primary)
 
-## Bağımlılıklar
-- Sprint 02 (kütüphane/öğe), Sprint 04 (altyazı işleme).
+## Dependencies
+- Sprint 02 (library/item), Sprint 04 (subtitle handling).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Altyazı sağlayıcı entegrasyonu
-- [x] A1 — Açık altyazı sağlayıcı(ları) için ortak arayüz + entegrasyon | Kabul: arama/indirme çalışır.
-- [x] A2 — Dil tercihi ve kalite/eşleşme skorlama | Kabul: doğru altyazı seçilir.
+### Epic A: Subtitle provider integration
+- [x] A1 — Common interface + integration for open subtitle provider(s) | Acceptance: search/download works.
+- [x] A2 — Language preference and quality/match scoring | Acceptance: correct subtitle is selected.
 
-### Epik B: Otomasyon
-- [x] B1 — Eksik altyazı tespiti (kullanıcı dil tercihine göre) | Kabul: eksikler raporlanır.
-- [x] B2 — Periyodik otomatik indirme işi (scheduler) | Kabul: yeni içerikte altyazı otomatik gelir.
-- [x] B3 — Manuel altyazı arama/yükleme | Kabul: kullanıcı override edebilir.
+### Epic B: Automation
+- [x] B1 — Missing subtitle detection (based on user language preference) | Acceptance: gaps are reported.
+- [x] B2 — Periodic automatic download job (scheduler) | Acceptance: subtitles arrive automatically for new content.
+- [x] B3 — Manual subtitle search/upload | Acceptance: user can override.
 
-### Epik C: UI bağlantısı
-- [x] C1 — Detay sayfasında altyazı yönetimi (frontend ile koordine) | Kabul: altyazı durumu görünür.
+### Epic C: UI integration
+- [x] C1 — Subtitle management on detail page (coordinated with frontend) | Acceptance: subtitle status is visible.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Sistem eksik altyazıları tespit edip otomatik indirir; manuel yönetim mümkün.
+## Acceptance Criteria (Sprint Output)
+- System detects missing subtitles and downloads them automatically; manual management is possible.
 
-## Riskler
-- Sağlayıcı oran sınırı/lisans → cache + uyumlu sağlayıcı seçimi.
+## Risks
+- Provider rate limits/licensing → cache + compatible provider selection.
 
-## Kapsam Dışı
-- Altyazı senkron/AI çeviri — bu plan kapsamı dışında.
+## Out of Scope
+- Subtitle sync/AI translation — out of scope for this plan.

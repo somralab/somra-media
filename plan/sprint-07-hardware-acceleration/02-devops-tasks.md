@@ -1,34 +1,34 @@
-# Sprint 07 — DevOps Görevleri (GPU Passthrough & Paketleme)
+# Sprint 07 — DevOps Tasks (GPU Passthrough & Packaging)
 
-> **Sprint hedefi:** Docker içinde GPU/cihaz erişimi, hızlandırıcı sürücü/runtime entegrasyonu
-> ve imaj uyumluluğu.
+> **Sprint goal:** GPU/device access inside Docker, accelerator driver/runtime integration,
+> and image compatibility.
 >
-> **İlgili:** Sprint 01 [`../sprint-01-foundation/05-devops-tasks.md`](../sprint-01-foundation/05-devops-tasks.md) · [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md)
+> **Related:** Sprint 01 [`../sprint-01-foundation/05-devops-tasks.md`](../sprint-01-foundation/05-devops-tasks.md) · [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md)
 
-## Sorumlu Rol(ler)
-- DevOps/Platform (birincil), Medya Uzmanı (doğrulama)
+## Responsible Role(s)
+- DevOps/Platform (primary), Media Specialist (validation)
 
-## Bağımlılıklar
-- Sprint 01 Docker imajı, [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md).
+## Dependencies
+- Sprint 01 Docker image, [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Cihaz erişimi
-- [x] A1 — Intel/AMD VAAPI için `/dev/dri` passthrough + compose örneği | Kabul: konteyner GPU'ya erişir.
-- [x] A2 — NVIDIA için container toolkit/runtime entegrasyonu + örnek | Kabul: NVENC kullanılabilir.
+### Epic A: Device access
+- [x] A1 — `/dev/dri` passthrough for Intel/AMD VAAPI + compose example | Acceptance: container accesses GPU.
+- [x] A2 — NVIDIA container toolkit/runtime integration + example | Acceptance: NVENC is available.
 
-### Epik B: İmaj uyumluluğu
-- [x] B1 — ffmpeg'in HW hızlandırma destekli derlenmesi/paketlenmesi | Kabul: imajda HW kodlayıcılar mevcut.
-- [x] B2 — Multi-arch + HW uyumluluk doğrulaması | Kabul: hedef platformlarda çalışır.
+### Epic B: Image compatibility
+- [x] B1 — ffmpeg build/packaging with HW acceleration support | Acceptance: HW encoders present in image.
+- [x] B2 — Multi-arch + HW compatibility validation | Acceptance: works on target platforms.
 
-### Epik C: Dokümantasyon
-- [x] C1 — Kullanıcı için GPU kurulum rehberi (compose örnekleri) | Kabul: net adımlar.
+### Epic C: Documentation
+- [x] C1 — GPU setup guide for users (compose examples) | Acceptance: clear steps.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Docker'da en az bir GPU yolu (öncelik: Intel `/dev/dri`) sorunsuz çalışır ve belgelidir.
+## Acceptance Criteria (Sprint Output)
+- At least one GPU path (priority: Intel `/dev/dri`) works smoothly in Docker and is documented.
 
-## Riskler
-- Host sürücü bağımlılığı → net önkoşullar ve fallback dokümante edilmeli.
+## Risks
+- Host driver dependency → clear prerequisites and fallback must be documented.
 
-## Kapsam Dışı
-- macOS VideoToolbox (Docker'da kısıtlı) — best-effort, garanti yok.
+## Out of Scope
+- macOS VideoToolbox (limited in Docker) — best-effort, no guarantee.

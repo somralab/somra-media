@@ -1,32 +1,32 @@
-# Sprint 06 — Frontend Görevleri (Kurulum Sihirbazı & Ayarlar)
+# Sprint 06 — Frontend Tasks (Setup Wizard & Settings)
 
-> **Sprint hedefi:** İlk kurulum sihirbazı (minimum adım, maksimum otomatik) ve ayar arayüzleri.
+> **Sprint goal:** First-time setup wizard (minimum steps, maximum automation) and settings interfaces.
 >
-> **İlgili:** [`01-backend-tasks.md`](./01-backend-tasks.md) · [`../project-brief.md`](../project-brief.md) (kurulum başarı kriteri: <10 dk)
+> **Related:** [`01-backend-tasks.md`](./01-backend-tasks.md) · [`../project-brief.md`](../project-brief.md) (setup success criterion: <10 min)
 
-## Sorumlu Rol(ler)
-- Frontend (birincil), UX/UI (akış)
+## Responsible Role(s)
+- Frontend (primary), UX/UI (flow)
 
-## Bağımlılıklar
-- [`01-backend-tasks.md`](./01-backend-tasks.md) (tespit + ayar + onboarding state).
+## Dependencies
+- [`01-backend-tasks.md`](./01-backend-tasks.md) (detection + settings + onboarding state).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Kurulum sihirbazı
-- [x] A0 — İlk adım: dil seçimi (tr-TR/en-US, tarayıcı diliyle ön seçili) + sistem varsayılan dili belirleme | Kabul: seçilen dil tüm sihirbaza anında uygulanır. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §3.
-- [x] A1 — Adım akışı: admin oluştur → kütüphane ekle → otomatik tespit/öneri onayı → bitir | Kabul: <10 dk'da çalışır sistem.
-- [x] A2 — Akıllı varsayılanları gösterip "öner ve uygula" deneyimi | Kabul: kullanıcı manuel ayar yapmadan ilerler.
-- [x] A3 — İlk tarama ilerlemesini sihirbaz içinde gösterme | Kabul: canlı geri bildirim.
+### Epic A: Setup wizard
+- [x] A0 — First step: language selection (tr-TR/en-US, pre-selected from browser language) + set system default language | Acceptance: selected language applies instantly across the wizard. See [`../i18n-localization.md`](../i18n-localization.md) §3.
+- [x] A1 — Step flow: create admin → add library → confirm auto-detection/recommendations → finish | Acceptance: working system in <10 min.
+- [x] A2 — Show smart defaults with "recommend and apply" experience | Acceptance: user proceeds without manual configuration.
+- [x] A3 — Show first scan progress inside the wizard | Acceptance: live feedback.
 
-### Epik B: Ayar arayüzü
-- [x] B1 — Kategori bazlı ayar ekranları (genel, kütüphane, oynatma, kullanıcılar) | Kabul: backend ayar API'sine bağlı.
-- [x] B2 — "Gelişmiş" gizli/açık modu (basit varsayılan, isteyene detay) | Kabul: minimum konfig felsefesi.
+### Epic B: Settings interface
+- [x] B1 — Category-based settings screens (general, library, playback, users) | Acceptance: connected to backend settings API.
+- [x] B2 — "Advanced" hidden/visible mode (simple default, detail for those who want it) | Acceptance: minimum configuration philosophy.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Yeni kullanıcı sihirbazdan geçip çalışan, optimize bir sunucuya hızla ulaşır.
+## Acceptance Criteria (Sprint Output)
+- New user completes the wizard and quickly reaches a working, optimized server.
 
-## Riskler
-- Sihirbaz çok uzun olursa felsefeye aykırı → adım sayısı minimumda tutulur.
+## Risks
+- Wizard too long contradicts the philosophy → keep step count to a minimum.
 
-## Kapsam Dışı
-- GPU seçim arayüzü — Sprint 07.
+## Out of Scope
+- GPU selection interface — Sprint 07.

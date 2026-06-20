@@ -1,42 +1,42 @@
-# Sprint 05 — Tasarım Görevleri (UX/UI)
+# Sprint 05 — Design Tasks (UX/UI)
 
-> **Sprint hedefi:** Görsel kimlik (somra markası), gezinme/oynatma akış tasarımları ve
-> tasarım sistemini olgunlaştırmak.
+> **Sprint goal:** Visual identity (somra brand), browsing/playback flow designs, and
+> maturing the design system.
 >
-> **İlgili:** [`../project-brief.md`](../project-brief.md) (marka: somra) · Sprint 01 tasarım sistemi temeli · [`01-frontend-tasks.md`](./01-frontend-tasks.md)
+> **Related:** [`../project-brief.md`](../project-brief.md) (brand: somra) · Sprint 01 design system foundation · [`01-frontend-tasks.md`](./01-frontend-tasks.md)
 
-## Sorumlu Rol(ler)
-- UX/UI Tasarımcı (birincil), Frontend (uygulama)
+## Responsible Role(s)
+- UX/UI Designer (primary), Frontend (implementation)
 
-## Bağımlılıklar
-- Sprint 01 tasarım sistemi temeli.
+## Dependencies
+- Sprint 01 design system foundation.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Marka & görsel kimlik
-- [x] A1 — somra logo, renk paleti, tipografi | Kabul: marka kılavuzu (mini).
-- [x] A2 — İkonografi ve görsel dil | Kabul: tutarlı set.
+### Epic A: Brand & visual identity
+- [x] A1 — somra logo, color palette, typography | Acceptance: brand guide (mini).
+- [x] A2 — Iconography and visual language | Acceptance: consistent set.
 
-### Epik B: Akış tasarımları
-- [x] B1 — Ana sayfa, kütüphane, detay, oynatıcı ekran tasarımları | Kabul: onaylı mockup.
-- [x] B2 — Arama/filtre ve boş/hata durumları | Kabul: tüm durumlar tasarlanmış.
+### Epic B: Flow designs
+- [x] B1 — Home page, library, detail, player screen designs | Acceptance: approved mockups.
+- [x] B2 — Search/filter and empty/error states | Acceptance: all states designed.
 
-### Epik C: Tasarım sistemi olgunlaştırma
-- [x] C1 — Bileşen kütüphanesini genişletme (raf, kart, oynatıcı kontrolleri) | Kabul: frontend ile hizalı.
-- [x] C2 — Erişilebilirlik (kontrast, klavye, ARIA) kılavuzu | Kabul: WCAG temel uyum.
+### Epic C: Design system maturation
+- [x] C1 — Extend component library (shelf, card, player controls) | Acceptance: aligned with frontend.
+- [x] C2 — Accessibility guide (contrast, keyboard, ARIA) | Acceptance: basic WCAG compliance.
 
-### Epik D: Dinamik tema tasarımı
-- [x] D1 — Dört özgün tema token setinin tasarımı
-- [x] D2 — Tema seçici (theme switcher) UX'i ve önizleme
-- [x] D3 — Temaların tüm ekranlarda tutarlılık kontrolü
+### Epic D: Dynamic theme design
+- [x] D1 — Design of four distinct theme token sets
+- [x] D2 — Theme switcher UX and preview
+- [x] D3 — Consistency check of themes across all screens
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Onaylı görsel kimlik + temel ekran tasarımları + olgun tasarım sistemi + dört tema seti.
+## Acceptance Criteria (Sprint Output)
+- Approved visual identity + core screen designs + mature design system + four theme sets.
 
-## Riskler
-- Tasarım/uygulama uyumsuzluğu → frontend ile sıkı senkron.
-- **Marka/legal:** Tema adları bilinçli olarak **özgün ve jeneriktir** (Cinematic/Aurora/Noir/Minimal); üçüncü taraf marka adı kullanılmaz. Tasarım kuralı: hiçbir tema bir ticari servisin logosunu, marka rengini birebir veya görsel kimliğini taklit etmez. Sprint 10 marka/lisans görevinde son kontrol yapılır. Bkz. [`../sprint-10-polish-oss-release/02-docs-tasks.md`](../sprint-10-polish-oss-release/02-docs-tasks.md).
+## Risks
+- Design/implementation mismatch → tight sync with frontend.
+- **Brand/legal:** Theme names are intentionally **distinct and generic** (Cinematic/Aurora/Noir/Minimal); no third-party brand names are used. Design rule: no theme imitates a commercial service's logo, brand color exactly, or visual identity. Final check in Sprint 10 brand/license tasks. See [`../sprint-10-polish-oss-release/02-docs-tasks.md`](../sprint-10-polish-oss-release/02-docs-tasks.md).
 
-## Kapsam Dışı
-- Mobil/TV özel tasarımları — bu plan kapsamı dışında.
-- Kullanıcının tamamen özel tema oluşturması (custom theme builder) — gelecekte.
+## Out of Scope
+- Mobile/TV-specific designs — out of scope for this plan.
+- Fully custom theme creation by the user (custom theme builder) — future.

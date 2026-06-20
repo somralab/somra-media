@@ -1,35 +1,35 @@
-# Sprint 02 — Frontend Görevleri (Kütüphane Yönetimi)
+# Sprint 02 — Frontend Tasks (Library Management)
 
-> **Sprint hedefi:** Kütüphane tanımlama, tarama tetikleme ve tarama/metadata durumunu
-> gösteren yönetim arayüzü (henüz oynatma yok).
+> **Sprint goal:** Library definition, scan triggering, and management UI showing scan/metadata status
+> (no playback yet).
 >
-> **İlgili:** Sprint 01 [`../sprint-01-foundation/04-frontend-tasks.md`](../sprint-01-foundation/04-frontend-tasks.md) · [`01-backend-tasks.md`](./01-backend-tasks.md)
+> **Related:** Sprint 01 [`../sprint-01-foundation/04-frontend-tasks.md`](../sprint-01-foundation/04-frontend-tasks.md) · [`01-backend-tasks.md`](./01-backend-tasks.md)
 
-## Sorumlu Rol(ler)
-- Frontend (birincil)
+## Responsible Role(s)
+- Frontend (primary)
 
-## Bağımlılıklar
-- Sprint 01 SPA iskeleti + API istemci; bu sprint backend kütüphane/tarama API'leri.
+## Dependencies
+- Sprint 01 SPA skeleton + API client; this sprint backend library/scan APIs.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Kütüphane yönetimi
-- [x] A1 — Kütüphane oluştur/düzenle/sil ekranları | Kabul: CRUD API'ye bağlı, doğrulamalı.
-- [x] A2 — Klasör/yol seçimi UI'si | Kabul: çoklu yol eklenebilir.
+### Epic A: Library management
+- [x] A1 — Create/edit/delete library screens | Acceptance: connected to CRUD API, with validation.
+- [x] A2 — Folder/path selection UI | Acceptance: multiple paths can be added.
 
-### Epik B: Tarama izleme
-- [x] B1 — Tarama tetikleme + gerçek zamanlı ilerleme (WS/SSE) | Kabul: ilerleme canlı güncellenir.
-- [x] B2 — Tarama geçmişi / iş durumu görünümü | Kabul: başarılı/hatalı işler listelenir.
+### Epic B: Scan monitoring
+- [x] B1 — Scan trigger + real-time progress (WS/SSE) | Acceptance: progress updates live.
+- [x] B2 — Scan history / job status view | Acceptance: successful/failed jobs listed.
 
-### Epik C: Metadata önizleme
-- [x] C1 — Eşleşen öğelerin temel listesi + metadata önizleme | Kabul: poster + başlık + yıl gösterilir.
-- [x] C2 — Manuel yeniden eşleştirme arayüzü | Kabul: backend düzeltme API'sini kullanır.
+### Epic C: Metadata preview
+- [x] C1 — Basic list of matched items + metadata preview | Acceptance: poster + title + year displayed.
+- [x] C2 — Manual re-match UI | Acceptance: uses backend correction API.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kullanıcı arayüzden kütüphane tanımlar, tarar ve sonuçları görür.
+## Acceptance Criteria (Sprint Output)
+- User defines library, scans, and views results from the UI.
 
-## Riskler
-- Gerçek zamanlı ilerleme UX'i → WS/SSE entegrasyonu sağlam olmalı.
+## Risks
+- Real-time progress UX → WS/SSE integration must be solid.
 
-## Kapsam Dışı
-- Zengin gezinme/oynatıcı ekranları — Sprint 05.
+## Out of Scope
+- Rich browsing/player screens — Sprint 05.

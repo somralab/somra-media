@@ -1,57 +1,55 @@
-# Somra — Mimari (Architecture)
+# Somra — Architecture
 
-> Sistem mimarisi, modül sınırları ve veri akışı. Tüm backend görevleri bu modül sınırlarına
-> uymak zorundadır. Sınır değişikliği önce burada güncellenir.
+> System architecture, module boundaries, and data flow. All backend tasks must respect these
+> module boundaries. Boundary changes are updated here first.
 
-İlgili: [`project-brief.md`](./project-brief.md) · [`tech-stack.md`](./tech-stack.md) · [`roadmap.md`](./roadmap.md)
+Related: [`project-brief.md`](./project-brief.md) · [`tech-stack.md`](./tech-stack.md) · [`roadmap.md`](./roadmap.md)
 
 ---
 
-## 1. Mimari İlkeler
+## 1. Architectural Principles
 
-1. **Tek binary, modüler içyapı (modular monolith).** Go ile tek çalıştırılabilir; içeride
-   net sınırlı modüller. Mikroservis yok (ev sunucusu için gereksiz operasyon yükü).
-2. **Sıfır harici bağımlılık zorunluluğu.** SQLite gömülü; ek servis (Postgres, Redis vb.)
-   gerekmez. ffmpeg imaja paketlenir.
-3. **Eklenti mimarisi (plugin).** İçerik edinme (indexer/torrent/usenet) gibi yasal açıdan
-   hassas veya opsiyonel yetenekler çekirdekten **izole** eklentiler olarak tasarlanır.
-   Bkz. Sprint 09.
-4. **API-first.** Arayüz ve gelecekteki istemciler aynı genel API'yi kullanır.
-5. **Akıllı varsayılanlar.** Konfigürasyon opsiyoneldir; sistem donanım/medya tespitiyle
-   kendini ayarlar.
+1. **Single binary, modular internals (modular monolith).** One Go executable with clearly
+   bounded internal modules. No microservices (unnecessary ops burden for a home server).
+2. **Zero mandatory external dependencies.** SQLite is embedded; no extra services (Postgres,
+   Redis, etc.) required. ffmpeg is packaged in the image.
+3. **Plugin architecture.** Legally sensitive or optional capabilities such as content acquisition
+   (indexer/torrent/usenet) are **isolated** plugins separate from the core. See Sprint 09.
+4. **API-first.** The UI and future clients use the same public API.
+5. **Smart defaults.** Configuration is optional; the system self-tunes based on hardware/media detection.
 
-## 2. Yüksek Seviye Bileşen Diyagramı
+## 2. High-Level Component Diagram
 
 ```mermaid
 flowchart TB
-  subgraph Client[İstemci]
+  subgraph Client[Client]
     WEB[React SPA - Web]
   end
 
-  subgraph Core[Somra Çekirdek - Go tek binary]
+  subgraph Core[Somra Core - Go single binary]
     API[API Gateway / HTTP + WS]
-    AUTH[Kimlik & RBAC]
-    LIB[Kütüphane & Tarama]
+    AUTH[Identity & RBAC]
+    LIB[Library & Scanning]
     META[Metadata Pipeline]
     STREAM[Streaming & Transcode]
-    REQ[İstek Yönetimi]
-    AUTO[Otomasyon - arr işlevi]
+    REQ[Request Management]
+    AUTO[Automation - *arr-like]
     JOBS[Job Scheduler]
-    SETTINGS[Ayarlar & Onboarding]
+    SETTINGS[Settings & Onboarding]
   end
 
-  subgraph Data[Veri & Dosya]
+  subgraph Data[Data & Files]
     DB[(SQLite)]
-    FS[(Medya Dosya Sistemi)]
-    CACHE[(Transcode/Önbellek Dizini)]
+    FS[(Media File System)]
+    CACHE[(Transcode/Cache Directory)]
   end
 
-  subgraph Plugins[Eklentiler - izole]
-    IDX[Indexer Eklentileri]
-    DLC[İndirme İstemcisi Adaptörleri]
+  subgraph Plugins[Plugins - isolated]
+    IDX[Indexer Plugins]
+    DLC[Download Client Adapters]
   end
 
-  subgraph External[Harici Sağlayıcılar]
+  subgraph External[External Providers]
     TMDB[TMDB / TVDB / MusicBrainz / fanart]
     FFMPEG[ffmpeg / ffprobe]
   end
@@ -67,59 +65,61 @@ flowchart TB
   JOBS --> LIB & META & AUTO
 ```
 
-## 3. Modüller (Sahiplik ve Sınırlar)
+## 3. Modules (Ownership and Boundaries)
 
-| Modül | Sorumluluk | İlk geldiği sprint |
+| Module | Responsibility | First introduced |
 |---|---|---|
-| **API Gateway** | HTTP REST + WebSocket/SSE, yönlendirme, doğrulama, rate limit | Sprint 01 |
-| **Kimlik & RBAC** | Kullanıcı, oturum, roller, ebeveyn kontrolü | Sprint 03 |
-| **Kütüphane & Tarama** | Dosya tarama, izleme (watch), eşleştirme, organizasyon | Sprint 02 |
-| **Metadata Pipeline** | Harici sağlayıcılar, eşleştirme, görsel/altyazı varlıkları | Sprint 02 |
+| **API Gateway** | HTTP REST + WebSocket/SSE, routing, validation, rate limit | Sprint 01 |
+| **Identity & RBAC** | Users, sessions, roles, parental controls | Sprint 03 |
+| **Library & Scanning** | File scanning, watching, matching, organization | Sprint 02 |
+| **Metadata Pipeline** | External providers, matching, artwork/subtitle assets | Sprint 02 |
 | **Streaming & Transcode** | Direct play, ffmpeg transcode, HLS/DASH, ABR | Sprint 04 |
-| **Ayarlar & Onboarding** | Kurulum sihirbazı, akıllı varsayılanlar, sistem ayarları | Sprint 06 |
-| **İstek Yönetimi** | İstek/onay akışı, bildirimler | Sprint 08 |
-| **Otomasyon** | Kalite profilleri, kapma (grab), import, izleme listeleri | Sprint 09 |
-| **Eklenti Çerçevesi** | Indexer + indirme istemcisi adaptörleri | Sprint 09 |
-| **Job Scheduler** | Periyodik/asenkron işler (tarama, yenileme, otomasyon) | Sprint 01 (iskelet), 02 (kullanım) |
+| **Settings & Onboarding** | Setup wizard, smart defaults, system settings | Sprint 06 |
+| **Request Management** | Request/approval flow, notifications | Sprint 08 |
+| **Automation** | Quality profiles, grab, import, watchlists | Sprint 09 |
+| **Plugin Framework** | Indexer + download client adapters | Sprint 09 |
+| **Job Scheduler** | Periodic/async jobs (scan, refresh, automation) | Sprint 01 (skeleton), 02 (usage) |
 
-## 4. Veri Katmanı
+## 4. Data Layer
 
-- **Birincil veri:** SQLite (WAL modu). Şema migrasyonları sürümlenir. Bkz. Sprint 01/02 database görevleri.
-- **Medya dosyaları:** Kullanıcının bağladığı volume'lar (salt-okuma tercih edilir; organizasyon için yazma opsiyonel).
-- **Önbellek/transcode dizini:** Geçici HLS segmentleri, küçük resimler, indirilen görseller.
+- **Primary data:** SQLite (WAL mode). Schema migrations are versioned. See Sprint 01/02 database tasks.
+- **Media files:** User-mounted volumes (read-only preferred; write optional for organization).
+- **Cache/transcode directory:** Temporary HLS segments, thumbnails, downloaded artwork.
 
-## 5. API Yaklaşımı
+## 5. API Approach
 
-- **Stil:** REST (kaynak odaklı) + gerçek zamanlı olaylar için WebSocket/SSE.
-- **Sürümleme:** `/api/v1`. Kırıcı değişiklik yeni sürüm gerektirir.
-- **Kimlik:** JWT erişim token'ı (kısa ömürlü) + iptal edilebilir sunucu tarafı refresh token (DB), RBAC ile yetki.
-- **Sözleşme:** OpenAPI 3.1 (design-first, elle yazılan spec) tek doğruluk kaynağı; frontend TypeScript tipleri buradan üretilir.
+- **Style:** REST (resource-oriented) + WebSocket/SSE for real-time events.
+- **Versioning:** `/api/v1`. Breaking changes require a new version.
+- **Identity:** Short-lived JWT access token + revocable server-side refresh token (DB), RBAC authorization.
+- **Contract:** OpenAPI 3.1 (design-first, hand-authored spec) is the source of truth; frontend TypeScript types are generated from it.
 
-## 6. Eklenti Mimarisi (Özet)
+## 6. Plugin Architecture (Summary)
 
-- Çekirdek **tarafsız** kalır; indexer/torrent/usenet yetenekleri opsiyonel eklentilerdir.
-- Net arayüz (interface) sözleşmesi: `Search`, `Capabilities`, `Download` vb.
-- Yasal risk izolasyonu: eklentiler ayrı paketlenebilir/dağıtılabilir. Bkz. [`project-brief.md`](./project-brief.md) §7 ve Sprint 09.
+- The core stays **neutral**; indexer/torrent/usenet capabilities are optional plugins.
+- Clear interface contract: `Search`, `Capabilities`, `Download`, etc.
+- Legal risk isolation: plugins can be packaged/distributed separately. See [`project-brief.md`](./project-brief.md) §7 and Sprint 09.
 
-## 7. Çapraz Kesen Konular (Cross-Cutting)
+## 7. Cross-Cutting Concerns
 
-- **Loglama/gözlemlenebilirlik:** Yapılandırılmış log, opsiyonel metrik endpoint'i.
-- **Konfigürasyon:** Ortam değişkenleri + arayüz ayarları; "convention over configuration".
-- **Güvenlik:** En az yetki, girdi doğrulama, güvenli varsayılanlar (bkz. Sprint 10 güvenlik denetimi).
-- **i18n/l10n:** Çapraz kesen zorunluluk. Kaynak dil en-US, çeviri tr-TR. Dil pazarlığı (kullanıcı tercihi → sistem varsayılanı → `Accept-Language` → en-US yedeği) hem frontend hem backend mesaj üretimini kapsar. Detay: [`i18n-localization.md`](./i18n-localization.md).
+- **Logging/observability:** Structured logs, optional metrics endpoint.
+- **Configuration:** Environment variables + UI settings; convention over configuration.
+- **Security:** Least privilege, input validation, secure defaults (see Sprint 10 security audit).
+- **i18n/l10n:** Cross-cutting requirement. Source locale en-US, translation tr-TR. Locale negotiation
+  (user preference → system default → `Accept-Language` → en-US fallback) applies to both frontend
+  and backend message generation. See [`i18n-localization.md`](./i18n-localization.md).
 
-## 8. Mimari Kararlar (Kapatıldı)
+## 8. Architectural Decisions (Closed)
 
-> Plan başlangıcındaki açık mimari kararları kapatılmıştır. Sprint 01 görevleri bu kararları
-> **uygular ve doğrular** (yeniden tartışmaz). Değişiklik Tech Lead onayı + doküman güncellemesi gerektirir.
+> Open architectural decisions at plan start are now closed. Sprint 01 tasks **implement and
+> validate** these decisions (not re-debate). Changes require Tech Lead approval + document update.
 
-| Karar | Sonuç |
+| Decision | Outcome |
 |---|---|
-| Oturum | JWT erişim token'ı (kısa ömürlü) + iptal edilebilir refresh token (DB'de saklanır) |
-| API sözleşme aracı | OpenAPI 3.1, design-first (elle yazılan spec) → FE tip üretimi |
-| Job scheduler | Kendi hafif zamanlayıcımız + `robfig/cron/v3` (cron ifadeleri) |
-| Migrasyon aracı | `pressly/goose` (gömülü `embed.FS` migrasyonları) |
-| SQLite sürücüsü | `modernc.org/sqlite` (saf Go, CGO'suz) |
+| Session | Short-lived JWT access token + revocable refresh token (stored in DB) |
+| API contract tooling | OpenAPI 3.1, design-first (hand-authored spec) → FE type generation |
+| Job scheduler | Our lightweight scheduler + `robfig/cron/v3` (cron expressions) |
+| Migration tool | `pressly/goose` (embedded `embed.FS` migrations) |
+| SQLite driver | `modernc.org/sqlite` (pure Go, no CGO) |
 | HTTP router | `go-chi/chi` |
 
-Tüm teknoloji kararları için bkz. [`tech-stack.md`](./tech-stack.md) §7.
+For all technology decisions see [`tech-stack.md`](./tech-stack.md) §7.

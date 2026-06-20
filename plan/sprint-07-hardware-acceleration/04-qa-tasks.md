@@ -1,34 +1,34 @@
-# Sprint 07 — QA Görevleri
+# Sprint 07 — QA Tasks
 
-> **Sprint hedefi:** Donanım hızlandırmanın doğruluğunu, performans kazancını ve fallback
-> dayanıklılığını doğrulamak. M4 beta adayı kontrolü.
+> **Sprint goal:** Validate hardware acceleration correctness, performance gains, and fallback
+> resilience. M4 beta candidate check.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) · [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md) · [`../roadmap.md`](../roadmap.md) (M4)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) · [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md) · [`../roadmap.md`](../roadmap.md) (M4)
 
-## Sorumlu Rol(ler)
-- QA (birincil), Medya Uzmanı (donanım ortamı)
+## Responsible Role(s)
+- QA (primary), Media Specialist (hardware environment)
 
-## Bağımlılıklar
-- Bu sprint medya/devops/backend çıktıları.
+## Dependencies
+- This sprint's media/devops/backend outputs.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: İşlevsel
-- [x] A1 — HW transcode doğruluğu (görüntü/ses kalitesi) | Kabul: çıktı kabul edilebilir.
-- [x] A2 — Otomatik seçim ve HW→SW fallback testi | Kabul: kesintisiz geçiş.
+### Epic A: Functional
+- [x] A1 — HW transcode correctness (video/audio quality) | Acceptance: output is acceptable.
+- [x] A2 — Automatic selection and HW→SW fallback test | Acceptance: seamless transition.
 
-### Epik B: Performans
-- [x] B1 — CPU vs HW karşılaştırma (kaynak/eşzamanlı oturum) | Kabul: belirgin kazanç raporlanır.
-- [x] B2 — Donanım oturum limiti stres testi | Kabul: limit korunur.
+### Epic B: Performance
+- [x] B1 — CPU vs HW comparison (resources/concurrent sessions) | Acceptance: significant gain reported.
+- [x] B2 — Hardware session limit stress test | Acceptance: limit is maintained.
 
-### Epik C: Beta kabul
-- [x] C1 — M4 beta adayı kontrol listesi | Kabul: beta kriterleri karşılanır.
+### Epic C: Beta acceptance
+- [x] C1 — M4 beta candidate checklist | Acceptance: beta criteria met.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- HW yolu test kapsamında; performans kazancı ölçülü; fallback güvenli; M4 kriterleri sağlanır.
+## Acceptance Criteria (Sprint Output)
+- HW path covered by tests; performance gain measured; fallback safe; M4 criteria satisfied.
 
-## Riskler
-- Donanım çeşitliliği test ortamını sınırlar → öncelikli donanımda derin test.
+## Risks
+- Hardware diversity limits test environment → deep testing on priority hardware.
 
-## Kapsam Dışı
-- Tüm GPU modellerinde sertifikasyon — best-effort.
+## Out of Scope
+- Certification on all GPU models — best-effort.

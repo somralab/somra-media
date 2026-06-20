@@ -1,34 +1,34 @@
-# Sprint 09 — Indexer Entegrasyon Görevleri (Prowlarr İşlevi)
+# Sprint 09 — Indexer Integration Tasks (Prowlarr Functionality)
 
-> **Sprint hedefi:** Torrent + Usenet indexer entegrasyonu (Prowlarr işlevi): arama, yetenek
-> sorgulama ve sonuç normalizasyonu — eklenti çerçevesi üzerinden.
+> **Sprint goal:** Torrent + Usenet indexer integration (Prowlarr functionality): search, capability
+> query, and result normalization — via the plugin framework.
 >
-> **İlgili:** [`01-plugin-architecture-tasks.md`](./01-plugin-architecture-tasks.md) · [`../project-brief.md`](../project-brief.md) §4 (içerik edinme: ileri sprint)
+> **Related:** [`01-plugin-architecture-tasks.md`](./01-plugin-architecture-tasks.md) · [`../project-brief.md`](../project-brief.md) §4 (content acquisition: later sprint)
 
-## Sorumlu Rol(ler)
-- Backend (birincil)
+## Responsible Role(s)
+- Backend (primary)
 
-## Bağımlılıklar
-- [`01-plugin-architecture-tasks.md`](./01-plugin-architecture-tasks.md) (eklenti sözleşmesi).
+## Dependencies
+- [`01-plugin-architecture-tasks.md`](./01-plugin-architecture-tasks.md) (plugin contract).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Indexer soyutlaması
-- [ ] A1 — Torrent + Usenet için ortak arama/yetenek arayüzü | Kabul: tür-bağımsız sonuç modeli.
-- [ ] A2 — Indexer tanımı/şema (Torznab/Newznab benzeri uyumluluk) | Kabul: yaygın protokoller desteklenir.
+### Epic A: Indexer abstraction
+- [ ] A1 — Common search/capability interface for Torrent + Usenet | Acceptance: type-agnostic result model.
+- [ ] A2 — Indexer definition/schema (Torznab/Newznab-like compatibility) | Acceptance: common protocols supported.
 
-### Epik B: Arama & normalizasyon
-- [ ] B1 — Çoklu indexer'da paralel arama + sonuç birleştirme | Kabul: tekilleştirilmiş sonuç.
-- [ ] B2 — Sonuç ayrıştırma (kalite, çözünürlük, boyut, seeder) | Kabul: skorlamaya hazır alanlar.
+### Epic B: Search & normalization
+- [ ] B1 — Parallel search across multiple indexers + result merging | Acceptance: deduplicated results.
+- [ ] B2 — Result parsing (quality, resolution, size, seeders) | Acceptance: fields ready for scoring.
 
-### Epik C: Yönetim
-- [ ] C1 — Indexer ekleme/test/devre dışı API'si | Kabul: bağlantı testi çalışır.
+### Epic C: Management
+- [ ] C1 — Indexer add/test/disable API | Acceptance: connection test works.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Birden fazla indexer eklenip aranabilir; sonuçlar normalize ve test edilir.
+## Acceptance Criteria (Sprint Output)
+- Multiple indexers can be added and searched; results normalized and tested.
 
-## Riskler
-- Protokol/indexer çeşitliliği + yasal hassasiyet → uyumluluk + izolasyon.
+## Risks
+- Protocol/indexer diversity + legal sensitivity → compatibility + isolation.
 
-## Kapsam Dışı
-- Kapma/indirme yürütme — [`03-download-client-tasks.md`](./03-download-client-tasks.md).
+## Out of Scope
+- Grab/download execution — [`03-download-client-tasks.md`](./03-download-client-tasks.md).

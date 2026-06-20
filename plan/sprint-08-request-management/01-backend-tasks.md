@@ -1,35 +1,35 @@
-# Sprint 08 — Backend Görevleri (İstek Yönetimi — Overseerr İşlevi)
+# Sprint 08 — Backend Tasks (Request Management — Overseerr Functionality)
 
-> **Sprint hedefi:** Kullanıcıların olmayan içerik için istek oluşturması, onay akışı ve
-> istek durumu takibi (Overseerr/Jellyseerr işlevi).
+> **Sprint goal:** Users create requests for missing content, approval workflow, and
+> request status tracking (Overseerr/Jellyseerr functionality).
 >
-> **İlgili:** [`../architecture.md`](../architecture.md) (İstek Yönetimi) · Sprint 02 (metadata arama) · Sprint 03 (kullanıcı/RBAC)
+> **Related:** [`../architecture.md`](../architecture.md) (Request Management) · Sprint 02 (metadata search) · Sprint 03 (user/RBAC)
 
-## Sorumlu Rol(ler)
-- Backend (birincil)
+## Responsible Role(s)
+- Backend (primary)
 
-## Bağımlılıklar
-- Sprint 02 (metadata sağlayıcı arama), Sprint 03 (kullanıcı/yetki).
+## Dependencies
+- Sprint 02 (metadata provider search), Sprint 03 (user/permissions).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: İstek modeli
-- [x] A1 — `request` şeması (film/dizi, istek sahibi, durum, çözünürlük/kalite tercihi) | Kabul: migrasyon + CRUD.
-- [x] A2 — Mevcut kütüphaneyle çakışma kontrolü (zaten var mı) | Kabul: tekrar istek engellenir/işaretlenir.
+### Epic A: Request model
+- [x] A1 — `request` schema (movie/series, requester, status, resolution/quality preference) | Acceptance: migration + CRUD.
+- [x] A2 — Conflict check with existing library (already exists) | Acceptance: duplicate request blocked/flagged.
 
-### Epik B: Onay akışı
-- [x] B1 — İstek durum makinesi (beklemede → onaylandı/reddedildi → tamamlandı) | Kabul: durum geçişleri kontrollü.
-- [x] B2 — Rol bazlı otomatik onay/kota (admin politikası) | Kabul: kullanıcı kotası uygulanır.
+### Epic B: Approval workflow
+- [x] B1 — Request state machine (pending → approved/rejected → completed) | Acceptance: state transitions controlled.
+- [x] B2 — Role-based auto-approval/quota (admin policy) | Acceptance: user quota enforced.
 
-### Epik C: Keşif & arama
-- [x] C1 — Sağlayıcı üzerinden "eklenebilir içerik" arama (kütüphanede olmayan) | Kabul: arama sonuç döner.
-- [x] C2 — Otomasyon köprüsü iskeleti (Sprint 09 ile bağlanacak handoff noktası) | Kabul: onaylı istek otomasyona devredilebilir arayüz.
+### Epic C: Discovery & search
+- [x] C1 — Search for "addable content" via provider (not in library) | Acceptance: search returns results.
+- [x] C2 — Automation bridge skeleton (handoff point to connect with Sprint 09) | Acceptance: approved request can be handed off to automation via interface.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kullanıcı içerik isteyebilir; admin onaylar; istek durumu izlenir; bildirim tetiklenir.
+## Acceptance Criteria (Sprint Output)
+- User can request content; admin approves; request status tracked; notification triggered.
 
-## Riskler
-- Sprint 09 otomasyonuyla entegrasyon → handoff arayüzü net tanımlanmalı.
+## Risks
+- Integration with Sprint 09 automation → handoff interface must be clearly defined.
 
-## Kapsam Dışı
-- Gerçek indirme/kapma — Sprint 09.
+## Out of Scope
+- Actual download/grab — Sprint 09.

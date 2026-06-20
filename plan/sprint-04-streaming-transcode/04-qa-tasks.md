@@ -1,34 +1,34 @@
-# Sprint 04 — QA Görevleri
+# Sprint 04 — QA Tasks
 
-> **Sprint hedefi:** Oynatma ve transcode doğruluğunu, uyumluluğunu ve dayanıklılığını doğrulamak.
+> **Sprint goal:** Verify playback and transcode correctness, compatibility, and resilience.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) §4 · [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) §4 · [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md)
 
-## Sorumlu Rol(ler)
-- QA (birincil), Medya Uzmanı (test medyası)
+## Responsible Role(s)
+- QA (primary), Media Specialist (test media)
 
-## Bağımlılıklar
-- Bu sprint streaming + oynatıcı çıktıları.
+## Dependencies
+- This sprint's streaming + player deliverables.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Uyumluluk matrisi
-- [x] A1 — Kodek/konteyner test seti (H.264/H.265/AAC/AC3/MKV/MP4 vb.) | Kabul: matris sonucu raporlanır.
-- [x] A2 — Tarayıcı uyumluluk testi (Chrome/Firefox/Safari) | Kabul: kritik formatlar oynar.
+### Epic A: Compatibility matrix
+- [x] A1 — Codec/container test set (H.264/H.265/AAC/AC3/MKV/MP4, etc.) | Acceptance: matrix results are reported.
+- [x] A2 — Browser compatibility test (Chrome/Firefox/Safari) | Acceptance: critical formats play.
 
-### Epik B: İşlevsel testler
-- [x] B1 — Direct play vs transcode karar doğruluğu | Kabul: gereksiz transcode olmaz.
-- [x] B2 — Seek/altyazı/ses seçimi/resume e2e | Kabul: akışlar geçer.
+### Epic B: Functional tests
+- [x] B1 — Direct play vs transcode decision accuracy | Acceptance: no unnecessary transcode.
+- [x] B2 — Seek/subtitle/audio selection/resume e2e | Acceptance: flows pass.
 
-### Epik C: Dayanıklılık & performans
-- [x] C1 — Eşzamanlı oturum/limit stres testi | Kabul: limit korunur, çökmez.
-- [x] C2 — Transcode kaynak/temizlik testi | Kabul: süreç/disk sızıntısı yok.
+### Epic C: Resilience & performance
+- [x] C1 — Concurrent session/limit stress test | Acceptance: limit is enforced, no crash.
+- [x] C2 — Transcode resource/cleanup test | Acceptance: no process/disk leaks.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Oynatma akışları test kapsamında; uyumluluk matrisi belgeli; kritik hata yok.
+## Acceptance Criteria (Sprint Output)
+- Playback flows are under test coverage; compatibility matrix is documented; no critical bugs.
 
-## Riskler
-- Geniş format çeşitliliği → otomasyon + örnek medya havuzu gerekir.
+## Risks
+- Wide format variety → automation + sample media pool required.
 
-## Kapsam Dışı
-- Donanım hızlandırma testleri — Sprint 07.
+## Out of Scope
+- Hardware acceleration tests — Sprint 07.

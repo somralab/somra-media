@@ -1,33 +1,33 @@
-# Sprint 04 — Backend Görevleri (Oynatma Entegrasyonu)
+# Sprint 04 — Backend Tasks (Playback Integration)
 
-> **Sprint hedefi:** Streaming pipeline'ını kullanıcı/izleme durumu ve API ile bütünleştirmek.
+> **Sprint goal:** Integrate the streaming pipeline with user/watch state and the API.
 >
-> **İlgili:** [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md) · Sprint 03 izleme durumu
+> **Related:** [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md) · Sprint 03 watch state
 
-## Sorumlu Rol(ler)
-- Backend (birincil), Medya Uzmanı (pipeline arayüzü)
+## Responsible Role(s)
+- Backend (primary), Media Specialist (pipeline interface)
 
-## Bağımlılıklar
-- [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md), Sprint 03 (`watch_state`, yetki).
+## Dependencies
+- [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md), Sprint 03 (`watch_state`, authorization).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Oynatma API'si
-- [x] A1 — "Oynat" endpoint'i: yetki + oynatma kararı + oturum başlatma | Kabul: uçtan uca akış başlar.
-- [x] A2 — İzleme ilerleme güncelleme (periyodik ping) | Kabul: resume verisi güncellenir.
+### Epic A: Playback API
+- [x] A1 — "Play" endpoint: authorization + playback decision + session start | Acceptance: end-to-end stream starts.
+- [x] A2 — Watch progress update (periodic ping) | Acceptance: resume data is updated.
 
-### Epik B: Oturum & kaynak yönetimi
-- [x] B1 — Eşzamanlı transcode oturum limiti + kuyruğa alma | Kabul: aşırı yük engellenir.
-- [x] B2 — Boşta kalan oturum sonlandırma | Kabul: kaynak sızıntısı yok.
+### Epic B: Session & resource management
+- [x] B1 — Concurrent transcode session limit + queuing | Acceptance: overload is prevented.
+- [x] B2 — Idle session termination | Acceptance: no resource leaks.
 
-### Epik C: Telemetri
-- [x] C1 — Oynatma/transcode metrikleri (oturum sayısı, hata oranı) | Kabul: temel metrik toplanır.
+### Epic C: Telemetry
+- [x] C1 — Playback/transcode metrics (session count, error rate) | Acceptance: basic metrics are collected.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Oynatma API'si yetki + izleme durumu + oturum yönetimiyle çalışır.
+## Acceptance Criteria (Sprint Output)
+- Playback API works with authorization + watch state + session management.
 
-## Riskler
-- Eşzamanlı oturum yönetimi ev donanımında kritik → limit/kuyruk şart.
+## Risks
+- Concurrent session management is critical on home hardware → limits/queue are required.
 
-## Kapsam Dışı
-- Donanım hızlandırma seçimi — Sprint 07.
+## Out of Scope
+- Hardware acceleration selection — Sprint 07.

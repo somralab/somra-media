@@ -1,35 +1,35 @@
-# Sprint 09 — Eklenti Mimarisi Görevleri
+# Sprint 09 — Plugin Architecture Tasks
 
-> **Sprint hedefi:** İçerik edinme yeteneklerini (indexer + indirme istemcisi) **çekirdekten
-> izole** eden eklenti çerçevesi. Yasal risk izolasyonu için kritik.
+> **Sprint goal:** Plugin framework that **isolates content acquisition capabilities** (indexer +
+> download client) from the core. Critical for legal risk isolation.
 >
-> **İlgili:** [`../architecture.md`](../architecture.md) §6 (eklenti) · [`../project-brief.md`](../project-brief.md) §7 (kapsam/legal) · [`02-indexer-integration-tasks.md`](./02-indexer-integration-tasks.md)
+> **Related:** [`../architecture.md`](../architecture.md) §6 (plugin) · [`../project-brief.md`](../project-brief.md) §7 (scope/legal) · [`02-indexer-integration-tasks.md`](./02-indexer-integration-tasks.md)
 
-## Sorumlu Rol(ler)
-- Tech Lead (birincil — mimari), Backend (uygulama)
+## Responsible Role(s)
+- Tech Lead (primary — architecture), Backend (implementation)
 
-## Bağımlılıklar
-- Sprint 01 (mimari/modül sınırları), Sprint 08 (otomasyon handoff arayüzü).
+## Dependencies
+- Sprint 01 (architecture/module boundaries), Sprint 08 (automation handoff interface).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Eklenti sözleşmesi
-- [ ] A1 — `Indexer` ve `DownloadClient` arayüz sözleşmeleri (Search, Capabilities, Add, Status) | Kabul: net, sürümlü arayüz.
-- [ ] A2 — Eklenti yaşam döngüsü (kayıt, etkinleştir, yapılandır, devre dışı) | Kabul: çalışma zamanında yönetilir.
+### Epic A: Plugin contract
+- [ ] A1 — `Indexer` and `DownloadClient` interface contracts (Search, Capabilities, Add, Status) | Acceptance: clear, versioned interface.
+- [ ] A2 — Plugin lifecycle (register, enable, configure, disable) | Acceptance: managed at runtime.
 
-### Epik B: İzolasyon & güvenlik
-- [ ] B1 — Çekirdeğin eklentilerden bağımsız çalışması (eklenti yokken sistem tam fonksiyonel) | Kabul: eklentisiz mod test edilir.
-- [ ] B2 — Eklenti yapılandırma/sır yönetimi (güvenli saklama) | Kabul: sırlar korunur.
-- [ ] B3 — Eklenti dağıtım/paketleme stratejisi (ayrı paketlenebilir) | Kabul: legal izolasyon dokümante.
+### Epic B: Isolation & security
+- [ ] B1 — Core runs independently of plugins (system fully functional without plugins) | Acceptance: plugin-less mode tested.
+- [ ] B2 — Plugin configuration/secret management (secure storage) | Acceptance: secrets protected.
+- [ ] B3 — Plugin distribution/packaging strategy (separately packageable) | Acceptance: legal isolation documented.
 
-### Epik C: Yönetim API'si
-- [ ] C1 — Eklenti listeleme/yapılandırma/test bağlantısı API'si | Kabul: frontend ile koordine.
+### Epic C: Management API
+- [ ] C1 — Plugin list/configure/test connection API | Acceptance: coordinated with frontend.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Çekirdek tarafsız; indexer/indirme yetenekleri takılabilir eklentiler olarak çalışır ve izoledir.
+## Acceptance Criteria (Sprint Output)
+- Core is neutral; indexer/download capabilities run as pluggable, isolated plugins.
 
-## Riskler
-- **Yasal risk** → izolasyon ve net lisans şart (bkz. [`../project-brief.md`](../project-brief.md) §5/§7).
+## Risks
+- **Legal risk** → isolation and clear license terms (see [`../project-brief.md`](../project-brief.md) §5/§7).
 
-## Kapsam Dışı
-- Üçüncü taraf eklenti pazar yeri — gelecekteki yol haritası.
+## Out of Scope
+- Third-party plugin marketplace — future roadmap.

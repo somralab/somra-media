@@ -1,112 +1,112 @@
-# Somra — Definition of Done & Çalışma Kuralları
+# Somra — Definition of Done & Working Rules
 
-> Bu doküman **bağlayıcı kurallar** içerir. Bir görev/PR/sprint, buradaki ölçütleri
-> karşılamadan "tamamlandı" sayılamaz. Tüm görev dosyaları bu dokümana referans verir.
+> This document contains **binding rules**. A task/PR/sprint cannot be marked "complete" until
+> it meets the criteria here. All task files reference this document.
 
-İlgili: [`project-brief.md`](./project-brief.md) · [`tech-stack.md`](./tech-stack.md) · [`architecture.md`](./architecture.md) · [`i18n-localization.md`](./i18n-localization.md)
+Related: [`project-brief.md`](./project-brief.md) · [`tech-stack.md`](./tech-stack.md) · [`architecture.md`](./architecture.md) · [`i18n-localization.md`](./i18n-localization.md)
 
 ---
 
-## 1. Görev Seviyesi DoD
+## 1. Task-Level DoD
 
-Bir görev "Done" sayılması için:
+A task is "Done" when:
 
-1. Kabul kriterleri (görev dosyasındaki) karşılanmış ve doğrulanmıştır.
-2. Kod, [`architecture.md`](./architecture.md) modül sınırlarına uyar.
-3. Birim testleri yazılmış ve geçiyor; ilgili yerde entegrasyon testi var; coverage eşikleri (§4.1) karşılanır.
-4. Lint/format temiz (Go: `golangci-lint`; FE: ESLint + Prettier).
-5. Gerekli dokümantasyon/README güncellemesi yapılmış.
-6. En az 1 kod inceleme onayı (mimari etkisi varsa Tech Lead onayı).
-7. CI tüm aşamalarda yeşil.
-8. **i18n uyumu:** Kullanıcıya görünen tüm metinler anahtar üzerinden çözülür (hardcoded yok); en-US **ve** tr-TR anahtarları eklenmiştir. Bkz. [`i18n-localization.md`](./i18n-localization.md) §5.
+1. Acceptance criteria (in the task file) are met and verified.
+2. Code conforms to [`architecture.md`](./architecture.md) module boundaries.
+3. Unit tests written and passing; integration tests where relevant; coverage thresholds (§4.1) met.
+4. Lint/format clean (Go: `golangci-lint`; FE: ESLint + Prettier).
+5. Required documentation/README updates done.
+6. At least 1 code review approval (Tech Lead approval if architectural impact).
+7. CI green on all stages.
+8. **i18n compliance:** All user-facing text resolved via keys (no hardcoded strings); en-US **and** tr-TR keys added. See [`i18n-localization.md`](./i18n-localization.md) §5.
 
-## 2. Sprint Seviyesi DoD
+## 2. Sprint-Level DoD
 
-1. Sprint hedefindeki tüm "must" görevler Done.
-2. Çalışan **artımlı sürüm** demo edilebilir.
-3. Regresyon paketi geçiyor (QA).
-4. Bilinen kritik/yüksek hata kalmamış.
-5. Bağımlı sonraki sprintin başlayabilmesi için gereken çıktılar yayınlanmış.
+1. All "must" tasks in the sprint goal are Done.
+2. Working **incremental release** can be demoed.
+3. Regression suite passes (QA).
+4. No known critical/high bugs remain.
+5. Outputs required for the dependent next sprint are published.
 
-## 3. Kod Standartları (Özet)
+## 3. Code Standards (Summary)
 
-- **Go:** `gofmt`/`goimports`, anlamlı paket sınırları, hata sarmalama (`%w`), context kullanımı,
-  global durumdan kaçınma. Genel API'ler dökümante edilir.
-- **TypeScript/React:** strict mode, tipli API katmanı, bileşen/hook ayrımı, erişilebilirlik.
-- **Yorumlar:** "ne yaptığını" anlatan gereksiz yorum yok; yalnızca niyet/kısıt/ödünleşim açıklanır.
-- **Commit/PR:** küçük, odaklı; PR açıklamasında ilgili görev ve kabul kriteri referansı.
+- **Go:** `gofmt`/`goimports`, meaningful package boundaries, error wrapping (`%w`), context usage,
+  avoid global state. Exported APIs documented.
+- **TypeScript/React:** strict mode, typed API layer, component/hook separation, accessibility.
+- **Comments:** No unnecessary "what it does" comments; only intent/constraint/trade-off.
+- **Commit/PR:** small, focused; PR description references related task and acceptance criteria.
 
-## 4. Test Politikası
+## 4. Test Policy
 
-| Katman | Beklenti |
+| Layer | Expectation |
 |---|---|
-| Birim | İş kuralları ve saf fonksiyonlar için zorunlu. |
-| Entegrasyon | DB, dosya tarama, transcode pipeline gibi sınırlar için. |
-| E2E | Kritik kullanıcı akışları (giriş, gezinme, oynatma, kurulum sihirbazı). |
-| Performans | Streaming/transcode ve tarama için temel ölçümler (Sprint 04+). |
+| Unit | Mandatory for business rules and pure functions. |
+| Integration | For boundaries: DB, file scanning, transcode pipeline. |
+| E2E | Critical user flows (login, browsing, playback, setup wizard). |
+| Performance | Basic measurements for streaming/transcode and scanning (Sprint 04+). |
 
-### 4.1 Coverage (Kapsam) Standardı — Bağlayıcı
+### 4.1 Coverage Standard — Binding
 
-| Alan | Minimum satır kapsamı |
+| Area | Minimum line coverage |
 |---|---|
-| Çekirdek iş mantığı (Go) | **≥ %80** |
-| Kritik modüller (Go): kimlik/RBAC, tarama, transcode karar motoru, otomasyon import | **≥ %90** |
-| Frontend bileşen testleri | **≥ %70** |
-| Frontend kritik akışlar (giriş, gezinme, oynatma, kurulum sihirbazı) | **e2e zorunlu** (yüzde değil, akış kapsamı) |
+| Core business logic (Go) | **≥ 80%** |
+| Critical modules (Go): auth/RBAC, scanning, transcode decision engine, automation import | **≥ 90%** |
+| Frontend component tests | **≥ 70%** |
+| Frontend critical flows (login, browsing, playback, setup wizard) | **e2e required** (flow coverage, not percentage) |
 
-- Eşikler **CI'da ölçülür ve zorunludur**; eşik altındaki PR merge **edilemez** (bkz. §5).
-- Kritik modül listesi mimari değiştikçe Tech Lead onayıyla güncellenir.
-- Coverage bir hedeftir, anlamsız test yazımıyla şişirilmez; inceleme bunu denetler.
+- Thresholds are **measured and enforced in CI**; PRs below threshold **cannot merge** (see §5).
+- Critical module list updated with Tech Lead approval when architecture changes.
+- Coverage is a goal, not inflated with meaningless tests; review enforces this.
 
-## 5. CI Kapıları (Gate)
+## 5. CI Gates
 
-PR merge için zorunlu yeşil aşamalar: `lint` → `i18n-check` → `unit-test` → `integration-test` → `coverage-gate` → `build` → `image-build`.
-Bu kapılardan biri kırmızıysa merge **yapılmaz**.
+Required green stages for PR merge: `lint` → `i18n-check` → `unit-test` → `integration-test` → `coverage-gate` → `build` → `image-build`.
+If any gate is red, merge **must not** happen.
 
-> `i18n-check`: eksik/kullanılmayan çeviri anahtarı ve en-US/tr-TR tamlık kontrolü. Bkz. [`i18n-localization.md`](./i18n-localization.md) §6.
+> `i18n-check`: missing/unused translation keys and en-US/tr-TR completeness. See [`i18n-localization.md`](./i18n-localization.md) §6.
 >
-> `coverage-gate`: §4.1 eşiklerini ölçer (çekirdek ≥%80, kritik modüller ≥%90, frontend bileşen ≥%70) ve coverage raporu üretir; eşik altında merge engellenir.
+> `coverage-gate`: measures §4.1 thresholds (core ≥80%, critical modules ≥90%, frontend components ≥70%) and produces coverage report; merge blocked below threshold.
 
-## 6. Güvenli Varsayılanlar
+## 6. Secure Defaults
 
-- En az yetki ilkesi; her girdi doğrulanır.
-- Sırlar koda gömülmez; ortam değişkeni/secret yönetimi.
-- Harici sağlayıcı anahtarları kullanıcı tarafından girilir, güvenli saklanır.
+- Least privilege; all input validated.
+- No secrets in code; environment variable/secret management.
+- External provider keys entered by user, stored securely.
 
-## 7. Anti-Drift (Kapsam Koruma) Kuralları
+## 7. Anti-Drift (Scope Protection) Rules
 
-> [`project-brief.md`](./project-brief.md) §9 yönetişim kurallarının operasyonel karşılığı.
+> Operational counterpart to [`project-brief.md`](./project-brief.md) §9 governance rules.
 
-1. Görev, ait olduğu sprintin hedefi dışına çıkamaz; çıkıyorsa yeni görev/sprint açılır.
-2. [`project-brief.md`](./project-brief.md) §7 kapsam-dışı maddelere dokunan iş, brief güncellenmeden başlamaz.
-3. "Yapılması iyi olur" türü ek işler backlog'a yazılır, sprint içinde sessizce eklenmez.
-4. Her görev dosyası: **Hedef, Sorumlu rol(ler), Görevler, Bağımlılıklar, Kabul kriterleri, Riskler, Kapsam dışı** bölümlerini içerir.
+1. A task cannot exceed its sprint goal; if it does, open a new task/sprint.
+2. Work touching [`project-brief.md`](./project-brief.md) §7 out-of-scope items cannot start without brief update.
+3. "Nice to have" extras go to backlog, not silently added mid-sprint.
+4. Every task file includes: **Goal, Owner role(s), Tasks, Dependencies, Acceptance criteria, Risks, Out of scope** sections.
 
-## 8. Görev Dosyası Şablonu (Tüm sprintlerde kullanılır)
+## 8. Task File Template (Used in all sprints)
 
 ```md
-# Sprint NN — <Disiplin> Görevleri
+# Sprint NN — <Discipline> Tasks
 
-> Sprint hedefi: ...
-> İlgili: project-brief.md, architecture.md, definition-of-done.md, (önceki sprintler)
+> Sprint goal: ...
+> Related: project-brief.md, architecture.md, definition-of-done.md, (prior sprints)
 
-## Sorumlu Rol(ler)
+## Owner Role(s)
 ...
 
-## Bağımlılıklar
+## Dependencies
 ...
 
-## Epikler ve Görevler
-### Epik A: ...
-- [ ] Görev A1 — <açıklama> | Kabul: <ölçüt>
+## Epics and Tasks
+### Epic A: ...
+- [ ] Task A1 — <description> | Acceptance: <criterion>
 ...
 
-## Kabul Kriterleri (Sprint Çıktısı)
+## Acceptance Criteria (Sprint Output)
 ...
 
-## Riskler
+## Risks
 ...
 
-## Kapsam Dışı
+## Out of Scope
 ...
 ```

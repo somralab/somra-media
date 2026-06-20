@@ -1,36 +1,36 @@
-# Sprint 07 — Medya & Streaming Görevleri (Donanım Hızlandırma)
+# Sprint 07 — Media & Streaming Tasks (Hardware Acceleration)
 
-> **Sprint hedefi:** Donanım hızlandırmalı transcode (QSV/NVENC/VAAPI/AMF) ve otomatik
-> hızlandırıcı seçimi. M4 (beta adayı) çekirdeği.
+> **Sprint goal:** Hardware-accelerated transcode (QSV/NVENC/VAAPI/AMF) and automatic
+> accelerator selection. M4 (beta candidate) core.
 >
-> **İlgili:** [`../project-brief.md`](../project-brief.md) (HW: önce yazılım, sonra HW) · Sprint 04 (CPU transcode pipeline) · [`02-devops-tasks.md`](./02-devops-tasks.md)
+> **Related:** [`../project-brief.md`](../project-brief.md) (HW: software first, then HW) · Sprint 04 (CPU transcode pipeline) · [`02-devops-tasks.md`](./02-devops-tasks.md)
 
-## Sorumlu Rol(ler)
-- Medya/Streaming Uzmanı (birincil), DevOps (cihaz erişimi)
+## Responsible Role(s)
+- Media/Streaming Specialist (primary), DevOps (device access)
 
-## Bağımlılıklar
-- Sprint 04 (transcode pipeline soyutlaması), Sprint 06 (donanım tespiti).
+## Dependencies
+- Sprint 04 (transcode pipeline abstraction), Sprint 06 (hardware detection).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Hızlandırıcı tespiti
-- [x] A1 — Mevcut GPU/encoder tespiti (Intel QSV, NVIDIA NVENC/NVDEC, AMD/VAAPI/AMF) | Kabul: kullanılabilir hızlandırıcılar listelenir.
-- [x] A2 — Yetenek/desteklenen kodek matrisi (HW decode/encode) | Kabul: doğru yetenek raporu.
+### Epic A: Accelerator detection
+- [x] A1 — Existing GPU/encoder detection (Intel QSV, NVIDIA NVENC/NVDEC, AMD/VAAPI/AMF) | Acceptance: available accelerators are listed.
+- [x] A2 — Capability/supported codec matrix (HW decode/encode) | Acceptance: accurate capability report.
 
-### Epik B: HW transcode pipeline
-- [x] B1 — ffmpeg HW hızlandırma parametre üretimi (her platform için) | Kabul: HW transcode çalışır.
-- [x] B2 — HW decode + (gerekiyorsa) HW encode tam zincir | Kabul: CPU yükü belirgin düşer.
-- [x] B3 — HW→SW geri düşüş (fallback) | Kabul: HW başarısızsa CPU'ya düşer, oynatma kesilmez.
+### Epic B: HW transcode pipeline
+- [x] B1 — ffmpeg HW acceleration parameter generation (per platform) | Acceptance: HW transcode works.
+- [x] B2 — HW decode + (if needed) HW encode full chain | Acceptance: CPU load drops significantly.
+- [x] B3 — HW→SW fallback | Acceptance: falls back to CPU if HW fails; playback is not interrupted.
 
-### Epik C: Otomatik seçim
-- [x] C1 — Donanım + medyaya göre en uygun yol seçim motoru | Kabul: en verimli yol otomatik seçilir.
-- [x] C2 — Eşzamanlı HW oturum limiti (donanım sınırına göre) | Kabul: limit aşılmaz.
+### Epic C: Automatic selection
+- [x] C1 — Optimal path selection engine based on hardware + media | Acceptance: most efficient path is selected automatically.
+- [x] C2 — Concurrent HW session limit (based on hardware constraints) | Acceptance: limit is not exceeded.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- En az bir hızlandırıcı (öncelik: Intel QSV) ile HW transcode çalışır; otomatik seçim + fallback aktif.
+## Acceptance Criteria (Sprint Output)
+- HW transcode works with at least one accelerator (priority: Intel QSV); automatic selection + fallback active.
 
-## Riskler
-- **Yüksek teknik risk.** Donanım/sürücü/konteyner kombinasyonları kırılgan → güçlü fallback ve test şart.
+## Risks
+- **High technical risk.** Hardware/driver/container combinations are fragile → strong fallback and testing required.
 
-## Kapsam Dışı
-- Tüm GPU modellerinin garantisi — öncelikli platformlar hedeflenir, kalanı best-effort.
+## Out of Scope
+- Guarantee for all GPU models — priority platforms are targeted; remainder is best-effort.

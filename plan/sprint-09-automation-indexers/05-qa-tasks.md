@@ -1,35 +1,35 @@
-# Sprint 09 — QA Görevleri
+# Sprint 09 — QA Tasks
 
-> **Sprint hedefi:** Eklenti mimarisi, indexer entegrasyonu ve uçtan uca otomasyonu doğrulamak.
-> M5 (tam parite fazına giriş) kontrolü.
+> **Sprint goal:** Validate plugin architecture, indexer integration, and end-to-end automation.
+> M5 (entry to full parity phase) check.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) · [`../roadmap.md`](../roadmap.md) (M5) · [`03-download-client-tasks.md`](./03-download-client-tasks.md)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) · [`../roadmap.md`](../roadmap.md) (M5) · [`03-download-client-tasks.md`](./03-download-client-tasks.md)
 
-## Sorumlu Rol(ler)
-- QA (birincil)
+## Responsible Role(s)
+- QA (primary)
 
-## Bağımlılıklar
-- Bu sprint tüm çıktıları.
+## Dependencies
+- This sprint's full outputs.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Eklenti & izolasyon
-- [ ] A1 — Eklentisiz çekirdek tam fonksiyon testi | Kabul: eklenti yokken sistem çalışır.
-- [ ] A2 — Eklenti ekle/yapılandır/devre dışı testi | Kabul: yaşam döngüsü doğru.
+### Epic A: Plugin & isolation
+- [ ] A1 — Core full functionality test without plugins | Acceptance: system works without plugins.
+- [ ] A2 — Plugin add/configure/disable test | Acceptance: lifecycle correct.
 
-### Epik B: Uçtan uca otomasyon
-- [ ] B1 — İstek → kapma → indirme → import → kütüphane e2e | Kabul: akış tamamlanır.
-- [ ] B2 — Kalite profili seçim doğruluğu | Kabul: doğru sürüm seçilir.
-- [ ] B3 — Hata/yarıda kalma kurtarma testi | Kabul: sistem tutarlı kalır.
+### Epic B: End-to-end automation
+- [ ] B1 — Request → grab → download → import → library e2e | Acceptance: flow completes.
+- [ ] B2 — Quality profile selection accuracy | Acceptance: correct release selected.
+- [ ] B3 — Error/interruption recovery test | Acceptance: system remains consistent.
 
-### Epik C: M5 kabul
-- [ ] C1 — M5 kontrol listesi | Kabul: tam parite fazı kriterleri sağlanır.
+### Epic C: M5 acceptance
+- [ ] C1 — M5 checklist | Acceptance: full parity phase criteria met.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Otomasyon ve izolasyon test kapsamında; uçtan uca akış güvenilir; M5 kriterleri karşılanır.
+## Acceptance Criteria (Sprint Output)
+- Automation and isolation covered by tests; end-to-end flow reliable; M5 criteria met.
 
-## Riskler
-- Harici istemci/indexer bağımlılığı → mock + kontrollü gerçek test ortamı.
+## Risks
+- External client/indexer dependency → mock + controlled real test environment.
 
-## Kapsam Dışı
-- Üretim güvenlik denetimi — Sprint 10.
+## Out of Scope
+- Production security audit — Sprint 10.

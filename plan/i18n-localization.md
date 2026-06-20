@@ -1,95 +1,95 @@
-# Somra — Çoklu Dil & Yerelleştirme (i18n / l10n)
+# Somra — Internationalization & Localization (i18n / l10n)
 
-> Çoklu dil, projenin **çapraz kesen (cross-cutting) ve bağlayıcı** bir gereksinimidir.
-> Geliştirme sürecinin **ilk günden** i18n-uyumlu yürütülmesi zorunludur: hiçbir kullanıcıya
-> görünen metin koda gömülü (hardcoded) yazılamaz. Bu kural [`definition-of-done.md`](./definition-of-done.md)
-> ile denetlenir.
+> Multi-language support is a **cross-cutting and binding** requirement for the project.
+> Development must be i18n-compliant **from day one**: no user-facing text may be hardcoded in
+> source. This rule is enforced via [`definition-of-done.md`](./definition-of-done.md).
 
-İlgili: [`project-brief.md`](./project-brief.md) · [`architecture.md`](./architecture.md) · [`tech-stack.md`](./tech-stack.md) · [`definition-of-done.md`](./definition-of-done.md) · [`roadmap.md`](./roadmap.md)
+Related: [`project-brief.md`](./project-brief.md) · [`architecture.md`](./architecture.md) · [`tech-stack.md`](./tech-stack.md) · [`definition-of-done.md`](./definition-of-done.md) · [`roadmap.md`](./roadmap.md)
 
 ---
 
-## 1. Hedef Diller
+## 1. Target Languages
 
-| Dil | Kod | Rol |
+| Language | Code | Role |
 |---|---|---|
-| İngilizce (ABD) | **en-US** | **Kaynak dil + yedek (fallback).** Tüm anahtarların referansı. |
-| Türkçe (Türkiye) | **tr-TR** | Birinci ek çeviri; ürün önceliği. |
+| English (US) | **en-US** | **Source locale + fallback.** Reference for all keys. |
+| Turkish (Turkey) | **tr-TR** | First additional translation; product priority. |
 
-- **Kaynak dil en-US'tir:** Tüm metin anahtarları önce en-US'te tanımlanır; çeviri eksikse en-US'e düşülür.
-- Yeni dil eklemek **yalnızca çeviri dosyası eklemekle** mümkün olacak şekilde tasarlanır (kod değişikliği gerektirmez).
+- **Source locale is en-US:** All text keys are defined in en-US first; missing translations fall back to en-US.
+- New languages must be addable by **translation files only** (no code changes).
 
-## 2. Kapsam
+## 2. Scope
 
-i18n/l10n aşağıdaki tüm katmanları kapsar:
+i18n/l10n covers all of the following layers:
 
-1. **Frontend arayüz metinleri** (zorunlu) — tüm etiket, buton, mesaj, boş/hata durumları.
-2. **Backend mesajları** — API hata/doğrulama mesajları (anahtar + dil pazarlığı ile).
-3. **Bildirim şablonları** — e-posta / Discord / webhook (TR + EN şablon). Bkz. Sprint 08.
-4. **Medya metadata dili** — film/dizi açıklama/başlık, kullanıcı diline göre sağlayıcıdan çekilir. Bkz. Sprint 02.
-5. **Tarih / sayı / format yerelleştirme (l10n)** — yerel ayara uygun gösterim.
-6. **Dokümantasyon** — kullanıcı ve geliştirici dokümanı TR + EN. Bkz. Sprint 10.
+1. **Frontend UI text** (required) — all labels, buttons, messages, empty/error states.
+2. **Backend messages** — API error/validation messages (via keys + locale negotiation).
+3. **Notification templates** — email / Discord / webhook (TR + EN templates). See Sprint 08.
+4. **Media metadata language** — movie/series title/description fetched from providers per user locale. See Sprint 02.
+5. **Date / number / format localization (l10n)** — display per locale conventions.
+6. **Documentation** — user and developer docs in TR + EN. See Sprint 10.
 
-## 3. Dil Seçimi (Negotiation)
+## 3. Language Selection (Negotiation)
 
-Öncelik sırası (yüksekten düşüğe):
+Priority order (high to low):
 
-1. **Kullanıcı profili tercihi** (oturum açmış kullanıcı) — kalıcı.
-2. **Sistem varsayılanı** (admin tarafından kurulum/ayarda belirlenir).
-3. **Tarayıcı otomatik tespiti** (`Accept-Language`) — oturumsuz/ilk ziyaret.
-4. **Yedek:** en-US.
+1. **User profile preference** (logged-in user) — persistent.
+2. **System default** (set by admin during setup/settings).
+3. **Browser auto-detection** (`Accept-Language`) — anonymous/first visit.
+4. **Fallback:** en-US.
 
-- Kullanıcı her zaman sistem varsayılanını **override** edebilir (per-user).
-- Backend, isteklerde dil bağlamını (locale) tüm mesaj üretimine taşır.
+- User can always **override** system default (per-user).
+- Backend carries locale context through all message generation.
 
-## 4. Teknik Yaklaşım
+## 4. Technical Approach
 
-### 4.1 Çeviri dosyaları (repo içi)
-- Çeviriler **repoda** tutulur (JSON), PR ile katkı alınır.
-- Namespace/anahtar yapısı modüllere göre düzenlenir (`common`, `library`, `player`, `auth`, `errors`).
-- Anahtar adlandırma standardı: `domain.context.key`.
-- Topluluk çevirisi için **Weblate** (self-host, git entegre) kullanılır. Kurulum Sprint 10'da.
+### 4.1 Translation files (in-repo)
+- Translations live **in the repo** (JSON), contributions via PR.
+- Namespace/key structure organized by module (`common`, `library`, `player`, `auth`, `errors`).
+- Key naming standard: `domain.context.key`.
+- **Weblate** (self-host, git-integrated) for community translation. Setup in Sprint 10.
 
 ### 4.2 Frontend
-- i18n kütüphanesi: **`i18next` + `react-i18next`** (bkz. [`tech-stack.md`](./tech-stack.md) §2).
-- Çoğul (pluralization), enterpolasyon, tarih/sayı formatlama (`Intl`) desteği.
-- Eksik anahtar tespiti için geliştirme zamanı uyarısı + CI kontrolü.
+- i18n library: **`i18next` + `react-i18next`** (see [`tech-stack.md`](./tech-stack.md) §2).
+- Pluralization, interpolation, date/number formatting (`Intl`) support.
+- Dev-time missing key warnings + CI checks.
 
 ### 4.3 Backend
-- Mesaj kataloğu: **`nicksnyder/go-i18n/v2` + `golang.org/x/text`** (locale eşleştirme).
-- API hatalarında hem makine-okur kod hem yerelleştirilmiş mesaj döner.
+- Message catalog: **`nicksnyder/go-i18n/v2` + `golang.org/x/text`** (locale matching).
+- API errors return both machine-readable code and localized message.
 
-## 5. Bağlayıcı Geliştirme Kuralları (Anti-Drift)
+## 5. Binding Development Rules (Anti-Drift)
 
-> Bu kurallar tüm sprint/görev dosyaları için zorunludur ve [`definition-of-done.md`](./definition-of-done.md)'de denetlenir.
+> These rules are mandatory for all sprint/task files and enforced in [`definition-of-done.md`](./definition-of-done.md).
 
-1. **Hardcoded metin yasağı:** Kullanıcıya görünen hiçbir metin doğrudan koda yazılamaz; daima anahtar üzerinden çözülür.
-2. **Kaynak dil bütünlüğü:** Her yeni özellik en-US anahtarlarıyla **birlikte** gelir; eksik anahtar CI'da hata verir.
-3. **tr-TR eşzamanlı:** Özellik tamamlandığında tr-TR çevirisi de eklenir (eksikse görev "Done" sayılmaz).
-4. **Format güvenliği:** Tarih/sayı/para gösterimi yerel ayar API'leriyle yapılır; elle string birleştirme yok.
-5. **Yön/uzunluk:** UI, metin uzunluğu değişimlerine (TR↔EN) dayanıklı tasarlanır.
+1. **No hardcoded text:** No user-facing text directly in code; always resolve via keys.
+2. **Source locale integrity:** Every new feature ships with en-US keys; missing keys fail CI.
+3. **tr-TR in sync:** tr-TR translation added when feature completes (missing = not Done).
+4. **Format safety:** Date/number/currency display via locale APIs; no manual string concatenation.
+5. **Direction/length:** UI resilient to text length changes (TR↔EN).
 
-## 6. Test & Kalite
+## 6. Test & Quality
 
-- **CI kontrolü:** Eksik/fazla anahtar, kullanılmayan anahtar tespiti.
-- **QA:** Her sprintte yeni metinlerin iki dilde de doğruluğu; pseudo-locale ile taşma/uzunluk testi.
-- **Yayın kapısı (Sprint 10):** en-US ve tr-TR için **%100 anahtar tamlığı** kabul kriteridir.
+- **CI check:** Missing/extra keys, unused key detection.
+- **QA:** New strings verified in both languages each sprint; pseudo-locale for overflow/length tests.
+- **Release gate (Sprint 10):** **100% key completeness** for en-US and tr-TR is acceptance criteria.
 
-## 7. Sprint Dağılımı (Çapraz Kesen)
+## 7. Sprint Distribution (Cross-Cutting)
 
-| Sprint | i18n katkısı |
+| Sprint | i18n contribution |
 |---|---|
-| 01 | Frontend + backend i18n altyapısı, anahtar standardı, CI kontrolü, dil pazarlığı iskeleti |
-| 02 | Metadata dilinin kullanıcı locale'ine göre çekilmesi |
-| 03 | Kullanıcı profili dil tercihi + tarayıcı otomatik tespiti |
-| 06 | Onboarding'de dil seçimi + sistem varsayılan dil ayarı |
-| 08 | Bildirim şablonlarının TR/EN yerelleştirmesi |
-| 10 | Doküman TR+EN, çeviri tamlık QA'i, (opsiyonel) çeviri platformu kararı |
+| 01 | Frontend + backend i18n infrastructure, key standard, CI check, locale negotiation skeleton |
+| 02 | Metadata language fetched per user locale |
+| 03 | User profile language preference + browser auto-detection |
+| 06 | Language selection in onboarding + system default language setting |
+| 08 | TR/EN localization of notification templates |
+| 10 | TR+EN docs, translation completeness QA, (optional) translation platform setup |
 
-## 8. Kararlar (Kapatıldı)
-| Karar | Sonuç |
+## 8. Decisions (Closed)
+
+| Decision | Outcome |
 |---|---|
-| Frontend i18n kütüphanesi | `i18next` + `react-i18next` |
-| Backend i18n kütüphanesi | `nicksnyder/go-i18n/v2` + `golang.org/x/text` |
-| Çeviri dosya formatı | JSON, repo içi |
-| Harici çeviri platformu | **Weblate** (self-host, OSS, git entegre) — kurulum Sprint 10 |
+| Frontend i18n library | `i18next` + `react-i18next` |
+| Backend i18n library | `nicksnyder/go-i18n/v2` + `golang.org/x/text` |
+| Translation file format | JSON, in-repo |
+| External translation platform | **Weblate** (self-host, OSS, git-integrated) — setup Sprint 10 |
