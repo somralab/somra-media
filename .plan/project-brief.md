@@ -4,7 +4,7 @@
 > this document for scope, goals, and decisions. If a task conflicts with the scope here,
 > the task is wrong — update this document instead (with a change log entry).
 
-Related documents: [`ideal-team.md`](./ideal-team.md) · [`architecture.md`](./architecture.md) · [`tech-stack.md`](./tech-stack.md) · [`roadmap.md`](./roadmap.md) · [`definition-of-done.md`](./definition-of-done.md) · [`i18n-localization.md`](./i18n-localization.md)
+Related documents: [`00-index.md`](./00-index.md) · [`ideal-team.md`](./ideal-team.md) · [`architecture.md`](./architecture.md) · [`tech-stack.md`](./tech-stack.md) · [`roadmap.md`](./roadmap.md) · [`definition-of-done.md`](./definition-of-done.md) · [`i18n-localization.md`](./i18n-localization.md)
 
 ---
 

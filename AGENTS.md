@@ -20,19 +20,40 @@ single Docker install, built from scratch.
 - **Goal:** Replace the fragmented stack (Jellyfin/Plex + Sonarr/Radarr + Prowlarr + Bazarr +
   Overseerr + download clients) with one unified product. Philosophy: **minimum
   configuration, maximum optimization**.
-- **Status:** Greenfield. The runnable codebase is bootstrapped in Sprint 01; until then,
-  treat the layout/commands below as the agreed target and follow them when scaffolding.
+- **Status:** Sprint 01 (M1) complete. **Active sprint:** 02 — Library & Metadata.
+  See [`.plan/00-index.md`](./.plan/00-index.md) for the current dashboard.
 - **License:** **AGPL-3.0** with **DCO** sign-off (no CLA). Any dependency must be
   AGPL-3.0-compatible.
 
 Key references in [`.plan/`](./.plan/):
 
+- [`.plan/00-index.md`](./.plan/00-index.md) — **start here** — active sprint, doc hierarchy, links.
 - [`.plan/project-brief.md`](./.plan/project-brief.md) — vision, scope (in/out), decisions, governance.
 - [`.plan/architecture.md`](./.plan/architecture.md) — modules, data flow, decided architecture.
 - [`.plan/tech-stack.md`](./.plan/tech-stack.md) — closed technology decisions (§7).
 - [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) — DoD, coding standards, test/coverage, CI gates.
 - [`.plan/i18n-localization.md`](./.plan/i18n-localization.md) — binding i18n rules.
 - [`.plan/roadmap.md`](./.plan/roadmap.md) — sprint/milestone plan.
+
+## Documentation hierarchy
+
+On conflict, higher rows win:
+
+| Priority | Location | Role |
+|---|---|---|
+| 1 | `.plan/project-brief.md` | Scope and governance |
+| 2 | `.plan/architecture.md`, `.plan/tech-stack.md` | Module boundaries, closed tech |
+| 3 | `.plan/definition-of-done.md`, `.plan/i18n-localization.md` | DoD, i18n |
+| 4 | `.plan/sprint-XX-*/` task files | Acceptance criteria |
+| 5 | `docs/` | Operational docs (testing, checklists) |
+| 6 | `api/openapi.yaml` | HTTP API contract |
+| 7 | `notes/` | **Non-binding** — briefings, draft ADRs (context only) |
+
+**Execution status** (todo / in progress / done) lives in **GitHub Issues**, not in `notes/`.
+Open issues with [`.github/ISSUE_TEMPLATE/sprint_task.md`](./.github/ISSUE_TEMPLATE/sprint_task.md);
+every issue must reference a `.plan/` task file.
+
+Do **not** use external knowledge bases (e.g. NotebookLM) as a source of truth — read the repo.
 
 ## Tech stack (decided — do not swap without Tech Lead approval + doc update)
 
@@ -64,7 +85,9 @@ Key references in [`.plan/`](./.plan/):
 ```
 .
 ├── AGENTS.md            # this file
-├── .plan/                # authoritative planning docs (source of truth for scope)
+├── .plan/               # authoritative planning docs (start: 00-index.md)
+├── notes/               # Obsidian vault — non-binding working notes
+├── docs/                # operational docs (testing, checklists, design)
 ├── cmd/                 # Go entrypoint(s)
 ├── internal/            # Go modules (api, auth, library, metadata, streaming, settings, jobs, ...)
 ├── web/                 # React + Vite SPA (frontend)
@@ -170,30 +193,21 @@ See [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) §6 and
 
 ## Good first pointers for an agent
 
-1. Read [`.plan/project-brief.md`](./.plan/project-brief.md) and the current sprint folder under [`.plan/`](./.plan/).
-2. Confirm the task is in scope and identify the owning module ([`.plan/architecture.md`](./.plan/architecture.md) §3).
-3. Implement with tests + i18n keys; run `make lint test i18n-check coverage`.
-4. Open a focused, DCO-signed PR referencing the task and its acceptance criteria.
+1. Read [`.plan/00-index.md`](./.plan/00-index.md) then the active sprint folder under [`.plan/`](./.plan/).
+2. Confirm the task is in scope ([`.plan/project-brief.md`](./.plan/project-brief.md)) and identify the owning module ([`.plan/architecture.md`](./.plan/architecture.md) §3).
+3. If a GitHub Issue exists, use it for status; otherwise reference the `.plan/` task file in the PR.
+4. Implement with tests + i18n keys; run `make lint test i18n-check coverage`.
+5. Open a focused, DCO-signed PR referencing the issue / task and acceptance criteria.
 
 ## Cursor Cloud specific instructions
 
-Notes for future cloud agents (the startup update script and toolchain are already applied;
-do not re-run installs here).
+Notes for cloud agents (toolchain is pre-installed in the VM snapshot):
 
-- **Repository is greenfield.** Only `AGENTS.md` and `.plan/` exist; there is no `go.mod`,
-  `web/package.json`, `Makefile`, or application code yet (the runnable codebase is bootstrapped
-  in Sprint 01 — see `.plan/sprint-01-foundation/`). Until then there is no app/test suite to run;
-  the `make ...` targets above are the agreed *target* and do not exist yet.
-- **Toolchain available in the VM snapshot:** Go (current stable, installed at `/usr/local/go`,
-  on `PATH` via `/usr/local/bin/go`), Node 22 + `pnpm` 10, `ffmpeg`/`ffprobe` 6.x,
-  `golangci-lint` 2.x, GNU `make`. The distro's older Go (`/usr/lib/go-1.22`) was intentionally
-  superseded because current `go-chi/chi` requires Go ≥ 1.23; without a recent default Go, the Go
-  toolchain auto-downloads a per-build toolchain (slow/brittle).
-- **Docker is NOT installed.** It is only needed for `make docker` / image builds (Sprint 01
-  DevOps Epic A) and multi-arch packaging — not for the local dev runtime (`make dev`). Install it
-  on demand if you specifically work on the image/CI.
+- **Sprint 01 is complete** — `go.mod`, `web/package.json`, `Makefile`, CI, and the M1 skeleton exist.
+  Run `make lint test i18n-check coverage build` before finishing substantive changes.
+- **Toolchain:** Go (current stable, `/usr/local/go`), Node 22 + `pnpm` 10, `ffmpeg`/`ffprobe` 6.x,
+  `golangci-lint` 2.x, GNU `make`.
+- **Docker is NOT installed** in the default cloud snapshot. It is only needed for `make docker` /
+  image builds — not for `make dev`. Install on demand for image/CI work.
 - **Keep builds CGO-free** (`CGO_ENABLED=0`); the SQLite driver is `modernc.org/sqlite` (pure Go).
-- **Update script** (runs on startup) is intentionally guarded for the greenfield state: it runs
-  `go mod download` only if `go.mod` exists and `pnpm install` in `web/` only if `web/package.json`
-  exists. Once Sprint 01 lands those manifests, dependency refresh works automatically with no
-  change. The frontend lives under `web/` and uses `pnpm`.
+- The startup update script runs `go mod download` and `pnpm install` when manifests exist.

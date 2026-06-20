@@ -7,17 +7,36 @@
 > [`.plan/project-brief.md`](./.plan/project-brief.md) for the full vision
 > and scope.
 
-**Status:** Sprint 01 (M1 foundation — **complete**). The repository
-ships a runnable skeleton — chi gateway, SQLite (WAL) + goose
-migrations, in-house scheduler, i18n-aware error envelopes, diagnostics
-registry, SSE event stream, typed React SPA — plus the CI gates and
-container image. Domain logic arrives in later sprints (see
-[`.plan/roadmap.md`](./.plan/roadmap.md)).
+**Status:** Sprint 01 (M1 foundation — **complete**). **Active sprint:**
+02 — Library & Metadata. The repository ships a runnable skeleton —
+chi gateway, SQLite (WAL) + goose migrations, in-house scheduler,
+i18n-aware error envelopes, diagnostics registry, SSE event stream,
+typed React SPA — plus CI gates and the container image. See
+[`.plan/00-index.md`](./.plan/00-index.md) for the planning dashboard.
 
 **License:** [AGPL-3.0-or-later](./LICENSE) with
 [Developer Certificate of Origin](https://developercertificate.org)
 sign-off on every commit (no CLA). See
 [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+
+---
+
+## Milestones
+
+Summary only — full sprint plan and dependencies:
+[`.plan/roadmap.md`](./.plan/roadmap.md).
+
+| Milestone | Sprints | Outcome | Status |
+| --------- | ------- | ------- | ------ |
+| **M1** | 01 | Runnable skeleton via `docker run` | Done |
+| **M2** | 02–03 | Login + scanned library with metadata | In progress |
+| **M3** | 04–05 | Browser playback incl. transcode — first alpha | Planned |
+| **M4** | 06–07 | Zero-config setup + HW acceleration — beta | Planned |
+| **M5** | 08–09 | Requests + automation + indexers | Planned |
+| **M6** | 10 | Open source release — 1.0 | Planned |
+
+Track execution via [GitHub Issues](https://github.com/somralab/somra-media/issues)
+(sprint task template). Working notes live in [`notes/`](./notes/) (Obsidian vault).
 
 ---
 
@@ -186,31 +205,39 @@ Locale negotiation order: user profile → system default →
 ```
 .
 ├── AGENTS.md           # agent-facing how-to (companion to .plan/)
-├── .plan/               # authoritative planning docs (scope-of-truth)
-├── cmd/                # Go entrypoint(s)               (Paket 1)
-├── internal/           # Go modules                     (Paket 1 / 4 / 5)
-├── web/                # React + Vite SPA                (Paket 3)
-├── migrations/         # goose migrations (embedded)     (Paket 4)
-├── api/                # OpenAPI 3.1 spec — this packet
-├── deploy/             # Dockerfile, docker compose      (Paket 7)
-├── scripts/            # helper shell scripts — this packet
-└── Makefile            # standard dev tasks — this packet
+├── .plan/              # authoritative planning docs (start: 00-index.md)
+├── notes/              # Obsidian vault — briefings & draft decisions (non-binding)
+├── docs/               # operational docs (testing, DoD checklists, design)
+├── cmd/                # Go entrypoint(s)
+├── internal/           # Go modules
+├── web/                # React + Vite SPA
+├── migrations/         # goose migrations (embedded)
+├── api/                # OpenAPI 3.1 spec (source of truth for HTTP API)
+├── deploy/             # Dockerfile, docker compose
+├── scripts/            # helper shell scripts
+└── Makefile            # standard dev tasks
 ```
 
 ---
 
 ## Planning & governance
 
-The authoritative documents live under [`.plan/`](./.plan/):
+**Start:** [`.plan/00-index.md`](./.plan/00-index.md) — active sprint, doc hierarchy,
+links to all sprint folders.
 
-- [`.plan/project-brief.md`](./.plan/project-brief.md) — vision, scope (in / out), decisions.
-- [`.plan/architecture.md`](./.plan/architecture.md) — modules, data flow, decisions.
-- [`.plan/tech-stack.md`](./.plan/tech-stack.md) — closed technology decisions.
-- [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) — DoD, coding standards, CI gates.
-- [`.plan/i18n-localization.md`](./.plan/i18n-localization.md) — binding i18n rules.
-- [`.plan/roadmap.md`](./.plan/roadmap.md) — sprint / milestone plan.
+| Layer | Location | Binding? |
+| ----- | -------- | -------- |
+| Spec & scope | [`.plan/`](./.plan/) | Yes |
+| Execution | GitHub Issues ([templates](./.github/ISSUE_TEMPLATE/)) | Yes (status) |
+| Operations | [`docs/`](./docs/) | Yes |
+| Working notes | [`notes/`](./notes/) (Obsidian) | No — context only |
 
-For agent workflow conventions see [`AGENTS.md`](./AGENTS.md).
+Core documents: [`project-brief.md`](./.plan/project-brief.md),
+[`roadmap.md`](./.plan/roadmap.md),
+[`architecture.md`](./.plan/architecture.md),
+[`definition-of-done.md`](./.plan/definition-of-done.md).
+
+Agent workflow: [`AGENTS.md`](./AGENTS.md).
 
 ---
 

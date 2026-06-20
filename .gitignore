@@ -63,3 +63,8 @@ desktop.ini
 *.swp
 *.swo
 *~
+
+# --- Obsidian (notes vault) ---
+notes/.obsidian/
+notes/personal/*
+!notes/personal/.gitkeep

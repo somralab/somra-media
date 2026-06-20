@@ -3,7 +3,7 @@
 > 10-sprint phase plan, dependencies, and milestones. Each sprint ends with a **working
 > incremental release**. Default sprint cadence is 2 weeks; no hard deadline.
 
-Related: [`project-brief.md`](./project-brief.md) · [`architecture.md`](./architecture.md) · [`ideal-team.md`](./ideal-team.md) · [`i18n-localization.md`](./i18n-localization.md)
+Related: [`00-index.md`](./00-index.md) · [`project-brief.md`](./project-brief.md) · [`architecture.md`](./architecture.md) · [`ideal-team.md`](./ideal-team.md) · [`i18n-localization.md`](./i18n-localization.md)
 
 ---
 

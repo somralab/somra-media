@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Planning index (.plan/00-index.md)
+    url: https://github.com/somralab/somra-media/blob/main/.plan/00-index.md
+    about: Active sprint, milestones, and documentation hierarchy
+  - name: Project brief
+    url: https://github.com/somralab/somra-media/blob/main/.plan/project-brief.md
+    about: Scope and governance — read before proposing features

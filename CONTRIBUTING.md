@@ -51,10 +51,20 @@ git commit -s -m "feat(metadata): add tmdb provider"
 `-s` appends a `Signed-off-by:` trailer. Commits without sign-off are
 rejected by CI.
 
+## Issues & task tracking
+
+- **Spec** (what to build): [`.plan/`](./.plan/) sprint task files — binding acceptance criteria.
+- **Execution** (status, assignee): [GitHub Issues](https://github.com/somralab/somra-media/issues)
+  using the templates under [`.github/ISSUE_TEMPLATE/`](./.github/ISSUE_TEMPLATE/).
+- **Working notes** (briefings, draft decisions): [`notes/`](./notes/) — Obsidian vault;
+  **non-binding**. When a decision is final, update `.plan/` or `docs/` and mark the note promoted.
+
+Every sprint-task issue must reference a `.plan/` file path and epic/task ID (e.g. `A1`).
+
 ## Pull requests
 
 - One logical change per PR; split large work.
-- Reference the related task and acceptance criteria under [`.plan/`](./.plan/).
+- Reference the related GitHub Issue and [`.plan/`](./.plan/) task acceptance criteria.
 - Follow the PR template (see the repository PR template / the
   [`pr-and-code-review`](./.cursor/rules/pr-and-code-review.mdc) cursor rule).
 - All CI gates must be green:
