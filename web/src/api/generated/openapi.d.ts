@@ -971,6 +971,81 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/plugins/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List registered plugin factories (admin) */
+        get: operations["listPluginCatalog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plugins/instances": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List plugin instances (admin) */
+        get: operations["listPluginInstances"];
+        put?: never;
+        /** Create a plugin instance (admin) */
+        post: operations["createPluginInstance"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plugins/instances/{instanceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                instanceId: components["parameters"]["instanceId"];
+            };
+            cookie?: never;
+        };
+        /** Get a plugin instance (admin) */
+        get: operations["getPluginInstance"];
+        put?: never;
+        post?: never;
+        /** Delete a plugin instance (admin) */
+        delete: operations["deletePluginInstance"];
+        options?: never;
+        head?: never;
+        /** Update a plugin instance (admin) */
+        patch: operations["patchPluginInstance"];
+        trace?: never;
+    };
+    "/plugins/instances/{instanceId}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                instanceId: components["parameters"]["instanceId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Test plugin instance connectivity (admin) */
+        post: operations["testPluginInstance"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1548,6 +1623,53 @@ export interface components {
             /** @description Optional override body for the test payload. */
             message?: string;
         };
+        /** @enum {string} */
+        PluginType: "indexer" | "download_client";
+        PluginCatalogEntry: {
+            pluginType: components["schemas"]["PluginType"];
+            implementation: string;
+            contractVersion: string;
+        };
+        PluginInstance: {
+            /** Format: int64 */
+            id: number;
+            pluginType: components["schemas"]["PluginType"];
+            implementation: string;
+            name: string;
+            /** @description Public config fields; secret keys appear as *Set booleans. */
+            config: {
+                [key: string]: unknown;
+            };
+            enabled: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        PluginInstanceInput: {
+            pluginType: components["schemas"]["PluginType"];
+            implementation: string;
+            name?: string;
+            config?: {
+                [key: string]: unknown;
+            };
+            /** @default false */
+            enabled: boolean;
+        };
+        PluginInstancePatch: {
+            name?: string;
+            config?: {
+                [key: string]: unknown;
+            };
+            enabled?: boolean;
+        };
+        PluginTestResult: {
+            success: boolean;
+            messageKey: string;
+            details?: {
+                [key: string]: unknown;
+            };
+        };
     };
     responses: never;
     parameters: {
@@ -1556,6 +1678,7 @@ export interface components {
         sessionId: string;
         requestId: number;
         channelId: number;
+        instanceId: number;
     };
     requestBodies: never;
     headers: never;
@@ -3090,6 +3213,164 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    listPluginCatalog: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Plugin factory catalog */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        catalog: components["schemas"]["PluginCatalogEntry"][];
+                    };
+                };
+            };
+        };
+    };
+    listPluginInstances: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Plugin instances */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        instances: components["schemas"]["PluginInstance"][];
+                    };
+                };
+            };
+        };
+    };
+    createPluginInstance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PluginInstanceInput"];
+            };
+        };
+        responses: {
+            /** @description Instance created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginInstance"];
+                };
+            };
+        };
+    };
+    getPluginInstance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                instanceId: components["parameters"]["instanceId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Plugin instance */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginInstance"];
+                };
+            };
+        };
+    };
+    deletePluginInstance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                instanceId: components["parameters"]["instanceId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Instance deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    patchPluginInstance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                instanceId: components["parameters"]["instanceId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PluginInstancePatch"];
+            };
+        };
+        responses: {
+            /** @description Updated instance */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginInstance"];
+                };
+            };
+        };
+    };
+    testPluginInstance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                instanceId: components["parameters"]["instanceId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Test result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginTestResult"];
+                };
             };
         };
     };

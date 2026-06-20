@@ -55,6 +55,8 @@ tags:
     description: Content request workflow and discovery.
   - name: notifications
     description: Notification channels and user preferences.
+  - name: plugins
+    description: Plugin catalog and instance management (indexers, download clients).
 
 paths:
   /health:
@@ -1376,6 +1378,129 @@ paths:
         "204":
           description: Test notification sent
 
+  /plugins/catalog:
+    get:
+      tags: [plugins]
+      summary: List registered plugin factories (admin)
+      operationId: listPluginCatalog
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Plugin factory catalog
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [catalog]
+                properties:
+                  catalog:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PluginCatalogEntry"
+
+  /plugins/instances:
+    get:
+      tags: [plugins]
+      summary: List plugin instances (admin)
+      operationId: listPluginInstances
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Plugin instances
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [instances]
+                properties:
+                  instances:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PluginInstance"
+    post:
+      tags: [plugins]
+      summary: Create a plugin instance (admin)
+      operationId: createPluginInstance
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PluginInstanceInput"
+      responses:
+        "201":
+          description: Instance created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginInstance"
+
+  /plugins/instances/{instanceId}:
+    parameters:
+      - $ref: "#/components/parameters/instanceId"
+    get:
+      tags: [plugins]
+      summary: Get a plugin instance (admin)
+      operationId: getPluginInstance
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Plugin instance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginInstance"
+    patch:
+      tags: [plugins]
+      summary: Update a plugin instance (admin)
+      operationId: patchPluginInstance
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PluginInstancePatch"
+      responses:
+        "200":
+          description: Updated instance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginInstance"
+    delete:
+      tags: [plugins]
+      summary: Delete a plugin instance (admin)
+      operationId: deletePluginInstance
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Instance deleted
+
+  /plugins/instances/{instanceId}/test:
+    parameters:
+      - $ref: "#/components/parameters/instanceId"
+    post:
+      tags: [plugins]
+      summary: Test plugin instance connectivity (admin)
+      operationId: testPluginInstance
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Test result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginTestResult"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -2464,6 +2589,87 @@ components:
           type: string
           description: Optional override body for the test payload.
 
+    PluginType:
+      type: string
+      enum: [indexer, download_client]
+
+    PluginCatalogEntry:
+      type: object
+      required: [pluginType, implementation, contractVersion]
+      properties:
+        pluginType:
+          $ref: "#/components/schemas/PluginType"
+        implementation:
+          type: string
+        contractVersion:
+          type: string
+
+    PluginInstance:
+      type: object
+      required: [id, pluginType, implementation, name, config, enabled, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+          format: int64
+        pluginType:
+          $ref: "#/components/schemas/PluginType"
+        implementation:
+          type: string
+        name:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+          description: Public config fields; secret keys appear as *Set booleans.
+        enabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PluginInstanceInput:
+      type: object
+      required: [pluginType, implementation]
+      properties:
+        pluginType:
+          $ref: "#/components/schemas/PluginType"
+        implementation:
+          type: string
+        name:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+        enabled:
+          type: boolean
+          default: false
+
+    PluginInstancePatch:
+      type: object
+      properties:
+        name:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+        enabled:
+          type: boolean
+
+    PluginTestResult:
+      type: object
+      required: [success, messageKey]
+      properties:
+        success:
+          type: boolean
+        messageKey:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+
   parameters:
     libraryId:
       name: libraryId
@@ -2494,6 +2700,13 @@ components:
         format: int64
     channelId:
       name: channelId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    instanceId:
+      name: instanceId
       in: path
       required: true
       schema:

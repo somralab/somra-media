@@ -23,6 +23,7 @@ const (
 	PermRequestsRead        = "requests:read"
 	PermRequestsManage      = "requests:manage"
 	PermNotificationsManage = "notifications:manage"
+	PermPluginsManage       = "plugins:manage"
 )
 
 // Role names.

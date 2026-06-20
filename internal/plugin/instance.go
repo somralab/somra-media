@@ -12,6 +12,7 @@ type InstanceRecord struct {
 	Implementation string          `json:"implementation"`
 	Name           string          `json:"name"`
 	Config         json.RawMessage `json:"config"`
+	SecretsEnc     string          `json:"-"`
 	Enabled        bool            `json:"enabled"`
 	CreatedAt      time.Time       `json:"createdAt"`
 	UpdatedAt      time.Time       `json:"updatedAt"`

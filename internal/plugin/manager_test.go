@@ -349,6 +349,254 @@ func TestManager_NilStoreGuards(t *testing.T) {
 	require.Error(t, err)
 }
 
+func TestManager_ConfigureWithSecrets(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "test-key"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "secret-indexer",
+		Enabled:        true,
+		Config:         json.RawMessage(`{"prefix":"p","apiKey":"secret-value"}`),
+	})
+	require.NoError(t, err)
+
+	rec, err := mgr.Get(ctx, id)
+	require.NoError(t, err)
+	assert.NotContains(t, string(rec.Config), "secret-value")
+	assert.NotEmpty(t, rec.SecretsEnc)
+
+	idx, err := mgr.Indexer(ctx, id)
+	require.NoError(t, err)
+	results, err := idx.Search(ctx, SearchQuery{Title: "X", MediaKind: MediaKindMovie})
+	require.NoError(t, err)
+	assert.Equal(t, "p:X", results[0].Title)
+
+	pub, err := mgr.PublicConfig(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, true, pub["apiKeySet"])
+	assert.NotContains(t, pub, "apiKey")
+
+	require.NoError(t, mgr.PatchConfig(ctx, id, json.RawMessage(`{"apiKey":"rotated-key"}`)))
+	pub, err = mgr.PublicConfig(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, true, pub["apiKeySet"])
+}
+
+func TestManager_Delete(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "to-delete",
+		Enabled:        true,
+	})
+	require.NoError(t, err)
+	require.Len(t, mgr.EnabledIndexers(), 1)
+
+	require.NoError(t, mgr.Delete(ctx, id))
+	assert.Len(t, mgr.EnabledIndexers(), 0)
+	_, err = mgr.Get(ctx, id)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrPluginNotFound)
+}
+
+func TestManager_CatalogAndTest(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+	require.NoError(t, mgr.RegisterFactory(testDownloadClientFactory{}))
+
+	catalog := mgr.Catalog()
+	require.Len(t, catalog, 2)
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "testable",
+	})
+	require.NoError(t, err)
+
+	result, err := mgr.Test(ctx, id)
+	require.NoError(t, err)
+	assert.True(t, result.Success)
+	assert.Equal(t, "plugins.instances.test.success", result.MessageKey)
+}
+
+func TestManager_UpdateName(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "old-name",
+		Enabled:        true,
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, mgr.UpdateName(ctx, id, "new-name"))
+	rec, err := mgr.Get(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, "new-name", rec.Name)
+}
+
+func TestManager_TestDownloadClient(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testDownloadClientFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeDownloadClient,
+		Implementation: "test-client",
+		Name:           "dl-test",
+	})
+	require.NoError(t, err)
+
+	result, err := mgr.Test(ctx, id)
+	require.NoError(t, err)
+	assert.True(t, result.Success)
+}
+
+func TestManager_ConfigureReplacesConfig(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "cfg-replace",
+		Enabled:        true,
+		Config:         json.RawMessage(`{"prefix":"v1","apiKey":"key1"}`),
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, mgr.Configure(ctx, id, json.RawMessage(`{"prefix":"v2","apiKey":"key2"}`)))
+	pub, err := mgr.PublicConfig(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, true, pub["apiKeySet"])
+}
+
+type secretFieldsFactory struct {
+	testIndexerFactory
+}
+
+func (secretFieldsFactory) SecretFields() []string { return []string{"customSecret"} }
+
+func TestManager_SecretFieldsProvider(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(secretFieldsFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "custom-secret",
+		Config:         json.RawMessage(`{"customSecret":"hidden","prefix":"x"}`),
+	})
+	require.NoError(t, err)
+	pub, err := mgr.PublicConfig(ctx, id)
+	require.NoError(t, err)
+	assert.Equal(t, true, pub["customSecretSet"])
+}
+
+func TestManager_PatchConfigWhileEnabled(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "patch-enabled",
+		Enabled:        true,
+		Config:         json.RawMessage(`{"prefix":"before"}`),
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, mgr.PatchConfig(ctx, id, json.RawMessage(`{"prefix":"after"}`)))
+	idx, err := mgr.Indexer(ctx, id)
+	require.NoError(t, err)
+	results, err := idx.Search(ctx, SearchQuery{Title: "Z", MediaKind: MediaKindMovie})
+	require.NoError(t, err)
+	assert.Equal(t, "after:Z", results[0].Title)
+}
+
+func TestManager_ConfigureDisabledInstance(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(testIndexerFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "test-indexer",
+		Name:           "disabled-cfg",
+		Config:         json.RawMessage(`{"prefix":"v1"}`),
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, mgr.Configure(ctx, id, json.RawMessage(`{"prefix":"v2"}`)))
+	_, err = mgr.Indexer(ctx, id)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrPluginDisabled)
+}
+
+func TestManager_TestBadContract(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	require.NoError(t, mgr.RegisterFactory(badFactory{}))
+
+	id, err := mgr.Create(ctx, InstanceRecord{
+		PluginType:     PluginTypeIndexer,
+		Implementation: "bad",
+		Name:           "bad-test",
+	})
+	require.NoError(t, err)
+
+	result, err := mgr.Test(ctx, id)
+	require.NoError(t, err)
+	assert.False(t, result.Success)
+	assert.Equal(t, "plugins.instances.test.failed", result.MessageKey)
+}
+
+func TestManager_NilStoreExtendedGuards(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mgr := NewManager(nil, ManagerOptions{})
+	require.Error(t, mgr.PatchConfig(ctx, 1, json.RawMessage(`{}`)))
+	require.Error(t, mgr.UpdateName(ctx, 1, "x"))
+	require.Error(t, mgr.Delete(ctx, 1))
+	_, err := mgr.PublicConfig(ctx, 1)
+	require.Error(t, err)
+	_, err = mgr.Test(ctx, 1)
+	require.Error(t, err)
+}
+
+func TestManager_TestNotFound(t *testing.T) {
+	t.Parallel()
+	mgr := NewManager(newMemoryStore(), ManagerOptions{EncryptionKey: "k"})
+	_, err := mgr.Test(context.Background(), 404)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrPluginNotFound)
+}
+
 func TestManager_CreateActivateFailureLeavesPersisted(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()

@@ -100,6 +100,9 @@ type Options struct {
 	// NotificationHandlers mounts notification preference/channel endpoints.
 	NotificationHandlers *NotificationHandlers
 
+	// PluginHandlers mounts plugin catalog/instance management endpoints.
+	PluginHandlers *PluginHandlers
+
 	// Onboarding, when set, is notified after first admin creation.
 	Onboarding *settings.Onboarding
 }
@@ -205,6 +208,9 @@ func mountProtectedRoutes(r chi.Router, opts Options) {
 	}
 	if opts.NotificationHandlers != nil {
 		opts.NotificationHandlers.Mount(r)
+	}
+	if opts.PluginHandlers != nil {
+		opts.PluginHandlers.Mount(r)
 	}
 }
 

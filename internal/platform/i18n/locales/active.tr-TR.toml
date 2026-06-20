@@ -189,3 +189,39 @@ other = "Geçersiz bildirim kanalı kimliği."
 
 ["notifications.channel.test.failed"]
 other = "Test bildirimi gönderilemedi."
+
+["plugins.catalog.unavailable"]
+other = "Eklenti kataloğu kullanılamıyor."
+
+["plugins.instances.list.failed"]
+other = "Eklenti örnekleri listelenemedi."
+
+["plugins.instances.get.failed"]
+other = "Eklenti örneği yüklenemedi."
+
+["plugins.instances.create.failed"]
+other = "Eklenti örneği oluşturulamadı."
+
+["plugins.instances.create.invalid"]
+other = "Eklenti örneği verisi geçersiz."
+
+["plugins.instances.patch.failed"]
+other = "Eklenti örneği güncellenemedi."
+
+["plugins.instances.patch.invalid"]
+other = "Eklenti örneği güncelleme verisi geçersiz."
+
+["plugins.instances.delete.failed"]
+other = "Eklenti örneği silinemedi."
+
+["plugins.instances.not_found"]
+other = "Eklenti örneği bulunamadı."
+
+["plugins.instances.id.invalid"]
+other = "Geçersiz eklenti örneği kimliği."
+
+["plugins.instances.test.failed"]
+other = "Eklenti bağlantı testi başarısız."
+
+["plugins.instances.test.success"]
+other = "Eklenti bağlantı testi başarılı."

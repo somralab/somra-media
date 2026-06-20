@@ -190,3 +190,39 @@ other = "Invalid notification channel id."
 
 ["notifications.channel.test.failed"]
 other = "Could not send the test notification."
+
+["plugins.catalog.unavailable"]
+other = "Plugin catalog is unavailable."
+
+["plugins.instances.list.failed"]
+other = "Could not list plugin instances."
+
+["plugins.instances.get.failed"]
+other = "Could not load the plugin instance."
+
+["plugins.instances.create.failed"]
+other = "Could not create the plugin instance."
+
+["plugins.instances.create.invalid"]
+other = "The plugin instance payload is invalid."
+
+["plugins.instances.patch.failed"]
+other = "Could not update the plugin instance."
+
+["plugins.instances.patch.invalid"]
+other = "The plugin instance update payload is invalid."
+
+["plugins.instances.delete.failed"]
+other = "Could not delete the plugin instance."
+
+["plugins.instances.not_found"]
+other = "Plugin instance not found."
+
+["plugins.instances.id.invalid"]
+other = "Invalid plugin instance id."
+
+["plugins.instances.test.failed"]
+other = "Plugin connection test failed."
+
+["plugins.instances.test.success"]
+other = "Plugin connection test succeeded."
