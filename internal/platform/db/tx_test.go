@@ -51,6 +51,9 @@ func TestWithTx_NilHandles(t *testing.T) {
 
 	require.Error(t, WithTx(ctx, nil, func(Querier) error { return nil }))
 
+	var empty DB
+	require.Error(t, WithTx(ctx, &empty, func(Querier) error { return nil }))
+
 	d := newMigratedDB(t)
 	require.Error(t, WithTx(ctx, d, nil))
 }

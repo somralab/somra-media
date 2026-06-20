@@ -87,3 +87,22 @@ func TestPinnedClient_BlocksLoopbackIP(t *testing.T) {
 	_, err = c.Get(context.Background(), "http://127.0.0.1/", nil)
 	require.Error(t, err)
 }
+
+func TestPinnedClient_BlocksLocalhostHostname(t *testing.T) {
+	c, err := NewPinnedClient("http://example.com", 0)
+	require.NoError(t, err)
+	_, err = c.Get(context.Background(), "http://localhost/", nil)
+	require.Error(t, err)
+}
+
+func TestPinnedClient_RedirectSchemeMismatch(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "https://"+r.Host+r.URL.Path, http.StatusFound)
+	}))
+	t.Cleanup(srv.Close)
+
+	c, err := NewPinnedClient(srv.URL, 0, AllowPrivateHosts())
+	require.NoError(t, err)
+	_, err = c.Get(context.Background(), "/redirect", nil)
+	require.Error(t, err)
+}
