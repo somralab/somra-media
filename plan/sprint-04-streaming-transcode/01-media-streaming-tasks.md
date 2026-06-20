@@ -1,43 +1,43 @@
-# Sprint 04 — Medya & Streaming Görevleri
+# Sprint 04 — Media & Streaming Tasks
 
-> **Sprint hedefi:** Direct play + yazılım (CPU) transcode, HLS/DASH paketleme, adaptif
-> bitrate (ABR) ve altyazı/ses kanalı işleme. M3 (ilk uçtan uca oynatma) çekirdeği.
+> **Sprint goal:** Direct play + software (CPU) transcode, HLS/DASH packaging, adaptive
+> bitrate (ABR), and subtitle/audio track handling. Core of M3 (first end-to-end playback).
 >
-> **İlgili:** [`../architecture.md`](../architecture.md) §3 (Streaming) · [`../project-brief.md`](../project-brief.md) (transcode kararı: önce yazılım) · [`../tech-stack.md`](../tech-stack.md)
+> **Related:** [`../architecture.md`](../architecture.md) §3 (Streaming) · [`../project-brief.md`](../project-brief.md) (transcode decision: software first) · [`../tech-stack.md`](../tech-stack.md)
 
-## Sorumlu Rol(ler)
-- Medya/Streaming Uzmanı (birincil), Backend (destek)
+## Responsible Role(s)
+- Media/Streaming Specialist (primary), Backend (support)
 
-## Bağımlılıklar
-- Sprint 02 (medya/teknik metadata), Sprint 03 (yetki — kim neyi oynatabilir).
+## Dependencies
+- Sprint 02 (media/technical metadata), Sprint 03 (authorization — who can play what).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Oynatma kararı
-- [x] A1 — İstemci yetenek (capability) profili alımı (desteklenen kodek/konteyner) | Kabul: istemci profili ile eşleştirme.
-- [x] A2 — Direct play / direct stream / transcode karar motoru | Kabul: gereksiz transcode yapılmaz.
+### Epic A: Playback decision
+- [x] A1 — Client capability profile intake (supported codec/container) | Acceptance: matching against client profile.
+- [x] A2 — Direct play / direct stream / transcode decision engine | Acceptance: unnecessary transcode is avoided.
 
-### Epik B: Transcode pipeline (yazılım)
-- [x] B1 — ffmpeg süreç yönetimi (başlat/izle/sonlandır, kaynak sınırı) | Kabul: artık (zombie) süreç kalmaz.
-- [x] B2 — CMAF (fMP4) segment üretimi + HLS manifesti (birincil); DASH manifesti aynı segmentlerden opsiyonel | Kabul: tarayıcıda hls.js ile oynatılabilir çıktı. Bkz. [`../tech-stack.md`](../tech-stack.md) §2.
-- [x] B3 — Adaptif bitrate (çoklu kalite kademesi) | Kabul: kademeler üretilir, geçiş çalışır.
-- [x] B4 — Transcode oturum yönetimi + segment önbelleği/temizliği | Kabul: disk şişmez, oturum kapanınca temizlenir.
+### Epic B: Transcode pipeline (software)
+- [x] B1 — ffmpeg process management (start/monitor/terminate, resource limits) | Acceptance: no leftover (zombie) processes.
+- [x] B2 — CMAF (fMP4) segment generation + HLS manifest (primary); DASH manifest optional from the same segments | Acceptance: output playable in browser with hls.js. See [`../tech-stack.md`](../tech-stack.md) §2.
+- [x] B3 — Adaptive bitrate (multiple quality tiers) | Acceptance: tiers are produced, switching works.
+- [x] B4 — Transcode session management + segment cache/cleanup | Acceptance: disk does not bloat; cleaned up when session closes.
 
-### Epik C: Ses & altyazı
-- [x] C1 — Ses kanalı/dil seçimi + gerekirse downmix | Kabul: çoklu ses akışı seçilebilir.
-- [x] C2 — Altyazı işleme (gömülü çıkarma, harici dosya, gerekirse burn-in) | Kabul: altyazı görüntülenir.
+### Epic C: Audio & subtitles
+- [x] C1 — Audio track/language selection + downmix when needed | Acceptance: multiple audio streams can be selected.
+- [x] C2 — Subtitle handling (embedded extraction, external file, burn-in when needed) | Acceptance: subtitles are displayed.
 
-### Epik D: Streaming uçları
-- [x] D1 — Streaming API uçları (manifest, segment, oturum) + yetki kontrolü | Kabul: yetkisiz akış engellenir.
-- [x] D2 — Seek/arama ve devam (resume) desteği | Kabul: ileri/geri sarma çalışır.
+### Epic D: Streaming endpoints
+- [x] D1 — Streaming API endpoints (manifest, segment, session) + authorization control | Acceptance: unauthorized streams are blocked.
+- [x] D2 — Seek and resume support | Acceptance: forward/rewind works.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Bir medya dosyası tarayıcıda (direct play veya CPU transcode ile) baştan sona oynatılır.
-- Ses/altyazı seçimi ve seek çalışır; transcode oturumları temiz yönetilir.
+## Acceptance Criteria (Sprint Output)
+- A media file plays end-to-end in the browser (via direct play or CPU transcode).
+- Audio/subtitle selection and seek work; transcode sessions are managed cleanly.
 
-## Riskler
-- **En yüksek teknik risk.** Kodek/konteyner çeşitliliği geniş → uyumluluk matrisi ve testler kritik.
-- ffmpeg süreç/kaynak yönetimi hatası sistemi etkiler → sıkı sınırlar.
+## Risks
+- **Highest technical risk.** Wide codec/container variety → compatibility: compatibility matrix and tests are critical.
+- ffmpeg process/resource management errors affect the system → strict limits required.
 
-## Kapsam Dışı
-- Donanım hızlandırma — Sprint 07 (bu sprint yalnızca CPU).
+## Out of Scope
+- Hardware acceleration — Sprint 07 (this sprint is CPU only).

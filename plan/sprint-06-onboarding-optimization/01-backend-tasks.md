@@ -1,36 +1,36 @@
-# Sprint 06 — Backend Görevleri (Akıllı Varsayılanlar & Ayarlar)
+# Sprint 06 — Backend Tasks (Smart Defaults & Settings)
 
-> **Sprint hedefi:** "Minimum konfig / maksimum optimizasyon" felsefesini hayata geçiren
-> sistem tespiti, akıllı varsayılan üretimi ve merkezi ayar yönetimi.
+> **Sprint goal:** Implement the "minimum configuration / maximum optimization" philosophy via
+> system detection, smart default generation, and centralized settings management.
 >
-> **İlgili:** [`../project-brief.md`](../project-brief.md) (başarı kriterleri) · [`../architecture.md`](../architecture.md) (Ayarlar & Onboarding) · [`02-frontend-wizard-tasks.md`](./02-frontend-wizard-tasks.md)
+> **Related:** [`../project-brief.md`](../project-brief.md) (success criteria) · [`../architecture.md`](../architecture.md) (Settings & Onboarding) · [`02-frontend-wizard-tasks.md`](./02-frontend-wizard-tasks.md)
 
-## Sorumlu Rol(ler)
-- Backend (birincil), Medya Uzmanı (transcode profili önerileri)
+## Responsible Role(s)
+- Backend (primary), Media Specialist (transcode profile recommendations)
 
-## Bağımlılıklar
-- Sprint 01 (ayar katmanı), Sprint 02 (kütüphane), Sprint 04 (transcode profilleri).
+## Dependencies
+- Sprint 01 (settings layer), Sprint 02 (library), Sprint 04 (transcode profiles).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Sistem tespiti
-- [x] A1 — Donanım tespiti (CPU, bellek, mevcut GPU varlığı) | Kabul: sistem profili çıkarılır.
-- [x] A2 — Depolama/dizin tespiti ve doğrulama (medya/cache yolları) | Kabul: yazma/okuma izni doğrulanır.
+### Epic A: System detection
+- [x] A1 — Hardware detection (CPU, memory, available GPU presence) | Acceptance: system profile is derived.
+- [x] A2 — Storage/directory detection and validation (media/cache paths) | Acceptance: read/write permissions are verified.
 
-### Epik B: Akıllı varsayılanlar
-- [x] B1 — Donanıma göre transcode profili/eşzamanlılık önerisi (CPU bazlı; GPU Sprint 07'de genişler) | Kabul: makul varsayılan üretilir.
-- [x] B2 — Önerilen kütüphane tarama/ yenileme zamanlaması | Kabul: varsayılan job programı.
+### Epic B: Smart defaults
+- [x] B1 — Transcode profile/concurrency recommendation based on hardware (CPU-based; GPU expands in Sprint 07) | Acceptance: reasonable defaults are produced.
+- [x] B2 — Recommended library scan/refresh schedule | Acceptance: default job schedule.
 
-### Epik C: Merkezi ayar yönetimi
-- [x] C1 — Ayar şeması + API (kategori bazlı, doğrulamalı) | Kabul: ayarlar tek yerden yönetilir.
-- [x] C2 — Kurulum durumu (onboarding tamamlandı mı) state machine | Kabul: ilk kurulum akışını yönetir.
-- [x] C3 — Sistem varsayılan dili ayarı (tr-TR/en-US) | Kabul: kullanıcı tercihi yoksa bu kullanılır; dil pazarlığı önceliklerine uyar. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §3.
+### Epic C: Centralized settings management
+- [x] C1 — Settings schema + API (category-based, validated) | Acceptance: settings managed from a single place.
+- [x] C2 — Setup state (onboarding completed or not) state machine | Acceptance: manages first-time setup flow.
+- [x] C3 — System default language setting (tr-TR/en-US) | Acceptance: used when no user preference exists; follows language negotiation priorities. See [`../i18n-localization.md`](../i18n-localization.md) §3.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Sistem kendini tespit eder, akıllı varsayılan üretir; ayarlar merkezi API ile yönetilir.
+## Acceptance Criteria (Sprint Output)
+- System detects itself, produces smart defaults; settings managed via centralized API.
 
-## Riskler
-- Yanlış varsayılan kötü deneyim → muhafazakâr ama optimize varsayılanlar + override.
+## Risks
+- Wrong defaults cause poor experience → conservative but optimized defaults + override.
 
-## Kapsam Dışı
-- GPU bazlı optimizasyon detayı — Sprint 07.
+## Out of Scope
+- GPU-based optimization details — Sprint 07.

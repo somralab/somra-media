@@ -1,128 +1,127 @@
-# Somra — Proje Brifingi (Project Brief)
+# Somra — Project Brief
 
-> Bu dosya projenin **tek doğruluk kaynağıdır (single source of truth)**. Tüm sprint ve görev
-> dosyaları kapsam, hedef ve karar konularında bu dokümana referans verir. Bir görev bu
-> dokümandaki kapsamla çelişiyorsa görev değil, bu doküman güncellenir (değişiklik kaydı ile).
+> This file is the project's **single source of truth**. All sprint and task files reference
+> this document for scope, goals, and decisions. If a task conflicts with the scope here,
+> the task is wrong — update this document instead (with a change log entry).
 
-İlgili dokümanlar: [`ideal-team.md`](./ideal-team.md) · [`architecture.md`](./architecture.md) · [`tech-stack.md`](./tech-stack.md) · [`roadmap.md`](./roadmap.md) · [`definition-of-done.md`](./definition-of-done.md) · [`i18n-localization.md`](./i18n-localization.md)
+Related documents: [`ideal-team.md`](./ideal-team.md) · [`architecture.md`](./architecture.md) · [`tech-stack.md`](./tech-stack.md) · [`roadmap.md`](./roadmap.md) · [`definition-of-done.md`](./definition-of-done.md) · [`i18n-localization.md`](./i18n-localization.md)
 
 ---
 
-## 1. Vizyon
+## 1. Vision
 
-**Somra**, bir ev tipi medya sunucusunun ihtiyaç duyduğu tüm yetenekleri **tek bir çatı
-altında**, **tek Docker kurulumuyla**, **minimum konfigürasyon / maksimum optimizasyon**
-felsefesiyle sunan bütünleşik bir platformdur.
+**Somra** is an integrated platform that delivers everything a home media server needs under
+**one roof**, with **a single Docker install**, following a **minimum configuration / maximum
+optimization** philosophy.
 
-Bugün bir kullanıcı; Jellyfin/Emby/Plex (medya sunucu + transcode), Sonarr/Radarr/Lidarr
-(içerik yönetimi), Prowlarr (indexer), Bazarr (altyazı), Overseerr/Jellyseerr (istek
-yönetimi) ve indirme istemcileri gibi onlarca ayrı yazılımı kurmak, birbirine entegre etmek
-ve tek tek ayarlamak zorundadır. Somra bu parçalı deneyimi **tek üründe** birleştirir.
+Today, a user must install, integrate, and configure dozens of separate tools — Jellyfin/Emby/Plex
+(media server + transcode), Sonarr/Radarr/Lidarr (content management), Prowlarr (indexers),
+Bazarr (subtitles), Overseerr/Jellyseerr (request management), and download clients. Somra
+unifies this fragmented experience into **one product**.
 
 ## 2. Problem
 
-- Çok sayıda ayrı yazılımın kurulumu, güncellenmesi ve entegrasyonu uzmanlık gerektirir.
-- Her aracın kendi ayar/kimlik/veritabanı katmanı vardır; tutarsızlık ve bakım yükü oluşur.
-- Optimizasyon (transcode profilleri, donanım hızlandırma, kalite profilleri) deneyim ister.
-- Yeni kullanıcı için giriş bariyeri yüksektir.
+- Installing, updating, and integrating many separate tools requires expertise.
+- Each tool has its own settings, identity, and database layer — causing inconsistency and maintenance burden.
+- Optimization (transcode profiles, hardware acceleration, quality profiles) requires experience.
+- The barrier to entry for new users is high.
 
-## 3. Çözüm
+## 3. Solution
 
-Tek binary/servis odaklı, Go ile yazılmış bir çekirdek + React tabanlı tek arayüz. Kullanıcı
-Docker ile kurar, bir kurulum sihirbazından geçer ve sistem **akıllı varsayılanlarla**
-çalışmaya başlar. İleri kullanıcı her şeyi arayüzden ince ayar yapabilir.
+A single-binary/service core written in Go plus a unified React interface. The user installs via
+Docker, goes through a setup wizard, and the system starts with **smart defaults**. Power users
+can fine-tune everything from the UI.
 
-## 4. Konsolide Kararlar
+## 4. Consolidated Decisions
 
-| Konu | Karar | Detay |
+| Topic | Decision | Detail |
 |---|---|---|
-| Çekirdek strateji | **Sıfırdan kendi motorumuz** | Tarama, metadata, transcode, streaming bizim kodumuz. Bkz. [`architecture.md`](./architecture.md). |
-| Backend | **Go** | Tek binary, düşük kaynak, yüksek eşzamanlılık. |
-| Frontend | **React SPA (Vite)** | Web öncelikli arayüz. |
-| Veritabanı | **Gömülü SQLite** | Sıfır konfig, tek dosya. |
-| Transcode | **Önce yazılım (ffmpeg CPU)** | Donanım hızlandırma Sprint 07. |
-| Platform | **Web öncelikli** | Mobil/TV gelecekteki yol haritasında, bu plan kapsamı dışında. |
-| Kimlik | **Çoklu kullanıcı + RBAC + ebeveyn kontrolü** | Bkz. Sprint 03. |
-| Çoklu dil (i18n) | **Çapraz kesen zorunluluk** | Kaynak dil **en-US**, çeviri **tr-TR**. Tam kapsam (UI, backend mesajları, bildirim, metadata dili, l10n, doküman). Bkz. [`i18n-localization.md`](./i18n-localization.md). |
-| İçerik edinme (*arr/indexer/torrent/usenet) | **İlk fazda hariç, ileri sprintte tam** | Sprint 09'da eklenti mimarisiyle tam *arr/Prowlarr otomasyonu. |
-| Ekip | **İdeal ekip varsayımı** | Bkz. [`ideal-team.md`](./ideal-team.md). |
-| Takvim | **Katı deadline yok** | Sprint kadansı varsayılan 2 hafta; sprintler iş paketine göre boyutlandırılmıştır. |
-| Marka | **somra** | Görsel kimlik Sprint 05 tasarım görevlerinde. |
-| Lisans | **AGPL-3.0 + DCO (karar verildi)** | Aşağıya bakınız. |
+| Core strategy | **Build our own engine from scratch** | Scanning, metadata, transcode, and streaming are our code. See [`architecture.md`](./architecture.md). |
+| Backend | **Go** | Single binary, low resource usage, high concurrency. |
+| Frontend | **React SPA (Vite)** | Web-first interface. |
+| Database | **Embedded SQLite** | Zero config, single file. |
+| Transcode | **Software first (ffmpeg CPU)** | Hardware acceleration in Sprint 07. |
+| Platform | **Web-first** | Mobile/TV on future roadmap; out of scope for this plan. |
+| Identity | **Multi-user + RBAC + parental controls** | See Sprint 03. |
+| i18n | **Cross-cutting requirement** | Source locale **en-US**, translation **tr-TR**. Full coverage (UI, backend messages, notifications, metadata language, l10n, docs). See [`i18n-localization.md`](./i18n-localization.md). |
+| Content acquisition (*arr/indexer/torrent/usenet) | **Excluded in first phase; full in later sprint** | Full *arr/Prowlarr automation via plugin architecture in Sprint 09. |
+| Team | **Ideal team assumption** | See [`ideal-team.md`](./ideal-team.md). |
+| Timeline | **No hard deadline** | Default sprint cadence is 2 weeks; sprints sized by work packages. |
+| Brand | **somra** | Visual identity in Sprint 05 design tasks. |
+| License | **AGPL-3.0 + DCO (decided)** | See below. |
 
-## 5. Lisans: AGPL-3.0 + DCO (Karar Verildi)
+## 5. License: AGPL-3.0 + DCO (Decided)
 
-**Karar: GNU Affero General Public License v3.0 (AGPL-3.0)** + katkı uzlaşısı olarak
-**DCO (Developer Certificate of Origin)**. CLA kullanılmaz.
+**Decision: GNU Affero General Public License v3.0 (AGPL-3.0)** with **DCO (Developer Certificate
+of Origin)** as the contribution agreement. No CLA.
 
-Gerekçe:
-- Somra bir **sunucu/ağ servisi** yazılımıdır. MIT/Apache gibi permisif lisanslar, üçüncü
-  tarafların kodu alıp **kapalı bir SaaS** olarak sunmasına ve değişiklikleri geri
-  paylaşmamasına izin verir.
-- AGPL-3.0, ağ üzerinden sunulan değişikliklerde bile **kaynak paylaşımını zorunlu** kılar.
-  Bu, topluluk katkısını ve projenin açık kalmasını korur (Jellyfin'in GPL felsefesinin daha
-  güçlü hâli).
-- **DCO**, CLA'nın bürokrasisi olmadan katkı menşeini güvence altına alır (her commit `Signed-off-by`).
-  Açık kaynak topluluğu için düşük sürtünmelidir.
+Rationale:
+- Somra is **server/network service** software. Permissive licenses like MIT/Apache allow third
+  parties to take the code, run it as a **closed SaaS**, and not share changes back.
+- AGPL-3.0 **requires source sharing** even for network-delivered modifications. This protects
+  community contributions and keeps the project open (a stronger version of Jellyfin's GPL philosophy).
+- **DCO** secures contribution provenance without CLA bureaucracy (every commit has `Signed-off-by`).
+  Low friction for the open source community.
 
-Değerlendirilen ve elenen alternatifler:
-- **Apache-2.0 / MIT**: SaaS sömürüsüne açık olduğu için elendi.
-- **GPL-3.0**: Ağ maddesi (AGPL) tercih edildiği için elendi.
-- **CLA**: Katkı sürtünmesini artırdığı için DCO lehine elendi.
+Alternatives considered and rejected:
+- **Apache-2.0 / MIT**: Rejected because they allow SaaS exploitation.
+- **GPL-3.0**: Rejected in favor of the network clause (AGPL).
+- **CLA**: Rejected in favor of DCO due to contribution friction.
 
-> **Uygulama:** Repoda `LICENSE` (AGPL-3.0) ve `DCO`/`CONTRIBUTING` Sprint 01'de eklenir;
-> resmî onay Sprint 01 mimari görevinde kaydedilir (yeniden tartışma değil, uygulama).
+> **Implementation:** `LICENSE` (AGPL-3.0) and `DCO`/`CONTRIBUTING` added in Sprint 01;
+> formal approval recorded in Sprint 01 architecture tasks (implementation, not re-debate).
 
-## 6. Kapsam (Bu Plan İçi)
+## 6. Scope (In This Plan)
 
-Bu 10 sprintlik plan aşağıdaki yetenekleri kapsar:
+This 10-sprint plan covers the following capabilities:
 
-1. Kütüphane tarama, teknik + zenginleştirilmiş metadata, dosya izleme.
-2. Çoklu kullanıcı, RBAC, profiller, ebeveyn kontrolü, izleme durumu/devam.
-3. Direct play + yazılım transcode, HLS/DASH, adaptif bitrate, altyazı.
-4. Web arayüz: kütüphane gezinme, detay sayfaları, web oynatıcı, arama; **kullanıcı-seçimli dinamik tema** (özgün tema setleri: Cinematic varsayılan, Aurora, Noir, Minimal — kullanıcı bazında hatırlanır, marka taklidi yok).
-5. Kurulum sihirbazı + akıllı varsayılanlar (minimum konfig / maksimum optimizasyon).
-6. Donanım hızlandırma (QSV/NVENC/VAAPI/AMF).
-7. İstek yönetimi (Overseerr işlevi) + bildirimler.
-8. İndirme otomasyonu + indexer (torrent + usenet) + eklenti mimarisi (*arr/Prowlarr işlevi).
-9. Açık kaynak yayın hazırlığı.
-10. **Çoklu dil (i18n/l10n):** en-US (kaynak) + tr-TR; geliştirme süreci ilk günden i18n-uyumlu. Detay: [`i18n-localization.md`](./i18n-localization.md).
+1. Library scanning, technical + enriched metadata, file watching.
+2. Multi-user, RBAC, profiles, parental controls, watch state/continue watching.
+3. Direct play + software transcode, HLS/DASH, adaptive bitrate, subtitles.
+4. Web UI: library browsing, detail pages, web player, search; **user-selectable dynamic themes**
+   (original theme set: Cinematic default, Aurora, Noir, Minimal — remembered per user, no brand mimicry).
+5. Setup wizard + smart defaults (minimum config / maximum optimization).
+6. Hardware acceleration (QSV/NVENC/VAAPI/AMF).
+7. Request management (Overseerr-like) + notifications.
+8. Download automation + indexer (torrent + usenet) + plugin architecture (*arr/Prowlarr-like).
+9. Open source release readiness.
+10. **i18n/l10n:** en-US (source) + tr-TR; development is i18n-compliant from day one. See [`i18n-localization.md`](./i18n-localization.md).
 
-## 7. Kapsam Dışı (Bu Plan Dışı — Drift Önleme)
+## 7. Out of Scope (Outside This Plan — Drift Prevention)
 
-Aşağıdakiler **bilinçli olarak bu planın dışındadır**. Bir görev bunlardan birine girerse,
-önce bu doküman güncellenmeli ve yeni sprint/efor planlanmalıdır:
+The following are **deliberately outside this plan**. If a task touches any of these, this
+document must be updated first and a new sprint/effort planned:
 
-- Native mobil ve TV uygulamaları (iOS/Android/Android TV/tvOS/webOS/Tizen).
-- Canlı TV / DVR / EPG.
-- Çoklu sunucu federasyonu / bulut senkron / harici CDN.
-- Müzik için gelişmiş özellikler (tam Lidarr paritesi) — temel müzik kütüphanesi dışında.
-- DLNA/Chromecast tam uyumluluğu (sadece web öncelikli).
+- Native mobile and TV apps (iOS/Android/Android TV/tvOS/webOS/Tizen).
+- Live TV / DVR / EPG.
+- Multi-server federation / cloud sync / external CDN.
+- Advanced music features (full Lidarr parity) — beyond basic music library.
+- Full DLNA/Chromecast compatibility (web-first only).
 
-## 8. Başarı Kriterleri (Üst Düzey)
+## 8. Success Criteria (High Level)
 
-- **Kurulum:** Sıfır bilgi seviyesinde bir kullanıcı, tek `docker run`/`docker compose up`
-  ile çalışan bir sunucuya 10 dakikadan kısa sürede ulaşır.
-- **Optimizasyon:** Donanım/medya tespitine göre otomatik transcode profili; kullanıcı manuel
-  ayar yapmadan akıcı oynatma alır.
-- **Bütünlük:** Yukarıdaki ayrı yazılımların temel işlevleri tek arayüzden, tek kimlik ve tek
-  veri katmanı üzerinden kullanılabilir.
-- **Performans:** Ev sunucusu donanımında (ör. 4 çekirdek/8GB) makul kaynakla çalışır.
-- **Açık kaynak hazırlığı:** Lisans, katkı rehberi, güvenlik politikası, CI/CD ve dokümantasyon hazır.
+- **Setup:** A user with zero prior knowledge reaches a running server in under 10 minutes with
+  a single `docker run`/`docker compose up`.
+- **Optimization:** Automatic transcode profile based on hardware/media detection; smooth playback
+  without manual tuning.
+- **Integration:** Core functions of the separate tools above are usable from one UI, one identity,
+  and one data layer.
+- **Performance:** Runs reasonably on home server hardware (e.g. 4 cores / 8GB RAM).
+- **Open source readiness:** License, contribution guide, security policy, CI/CD, and documentation ready.
 
-## 9. Yönetişim Kuralları (Anti-Drift / Çerçeveleme)
+## 9. Governance Rules (Anti-Drift / Framing)
 
-> Bu kurallar tüm sprint ve görev dosyaları için **bağlayıcıdır**.
+> These rules are **binding** for all sprint and task files.
 
-1. **Kapsam kilidi:** Hiçbir sprint, [Bölüm 7](#7-kapsam-d%C4%B1%C5%9F%C4%B1-bu-plan-d%C4%B1%C5%9F%C4%B1--drift-%C3%B6nleme)'deki kapsam dışı maddelere bu doküman güncellenmeden giremez.
-2. **DoD zorunlu:** Her görev [`definition-of-done.md`](./definition-of-done.md) ölçütlerini karşılamadan "bitti" sayılmaz.
-3. **Bağımlılık disiplini:** Bir sprint, önceki sprintlerin tamamlanan çıktılarına dayanır; bağımlılıklar görev dosyalarında açıkça belirtilir.
-4. **Tek doğruluk kaynağı:** Kararlar burada toplanır; çelişki halinde bu doküman esas alınır.
-5. **Sürüm etiketleme:** Her sprint sonunda çalışabilir bir artımlı sürüm (milestone) çıkarılır. Bkz. [`roadmap.md`](./roadmap.md).
-6. **i18n zorunluluğu:** Kullanıcıya görünen hiçbir metin koda gömülemez; her özellik en-US + tr-TR ile birlikte gelir. Bkz. [`i18n-localization.md`](./i18n-localization.md) ve [`definition-of-done.md`](./definition-of-done.md).
+1. **Scope lock:** No sprint may enter out-of-scope items from [Section 7](#7-out-of-scope-outside-this-plan--drift-prevention) without updating this document.
+2. **DoD required:** No task is "done" until it meets [`definition-of-done.md`](./definition-of-done.md) criteria.
+3. **Dependency discipline:** Each sprint builds on completed outputs from prior sprints; dependencies are stated explicitly in task files.
+4. **Single source of truth:** Decisions are consolidated here; this document wins on conflict.
+5. **Version tagging:** Each sprint ends with a working incremental release (milestone). See [`roadmap.md`](./roadmap.md).
+6. **i18n requirement:** No user-facing text may be embedded in code; every feature ships with en-US + tr-TR. See [`i18n-localization.md`](./i18n-localization.md) and [`definition-of-done.md`](./definition-of-done.md).
 
-## 10. Değişiklik Kaydı
+## 10. Change Log
 
-| Tarih | Değişiklik | Sorumlu |
+| Date | Change | Owner |
 |---|---|---|
-| (oluşturma) | İlk brifing oluşturuldu | — |
+| (creation) | Initial brief created | — |

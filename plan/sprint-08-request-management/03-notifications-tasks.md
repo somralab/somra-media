@@ -1,35 +1,35 @@
-# Sprint 08 — Bildirim Görevleri
+# Sprint 08 — Notification Tasks
 
-> **Sprint hedefi:** Olay tabanlı bildirim altyapısı (webhook, Discord, e-posta) ve istek/sistem
-> olaylarıyla entegrasyon.
+> **Sprint goal:** Event-driven notification infrastructure (webhook, Discord, email) and
+> integration with request/system events.
 >
-> **İlgili:** [`../tech-stack.md`](../tech-stack.md) §5 · [`01-backend-tasks.md`](./01-backend-tasks.md)
+> **Related:** [`../tech-stack.md`](../tech-stack.md) §5 · [`01-backend-tasks.md`](./01-backend-tasks.md)
 
-## Sorumlu Rol(ler)
-- Backend (birincil)
+## Responsible Role(s)
+- Backend (primary)
 
-## Bağımlılıklar
-- [`01-backend-tasks.md`](./01-backend-tasks.md) (istek olayları), scheduler/olay altyapısı (Sprint 01).
+## Dependencies
+- [`01-backend-tasks.md`](./01-backend-tasks.md) (request events), scheduler/event infrastructure (Sprint 01).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Bildirim altyapısı
-- [x] A1 — Olay → bildirim soyutlaması (kanal eklenebilir) | Kabul: yeni kanal kolayca eklenir.
-- [x] A2 — Şablon ve dil desteği (i18n): alıcının dil tercihine göre tr-TR/en-US şablon seçimi, eksikse en-US yedeği | Kabul: bildirim alıcının dilinde gönderilir. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §2.
+### Epic A: Notification infrastructure
+- [x] A1 — Event → notification abstraction (extensible channels) | Acceptance: new channel easily added.
+- [x] A2 — Templates and language support (i18n): select tr-TR/en-US template per recipient language preference, en-US fallback if missing | Acceptance: notification sent in recipient's language. See [`../i18n-localization.md`](../i18n-localization.md) §2.
 
-### Epik B: Kanal entegrasyonları
-- [x] B1 — Webhook (genel) | Kabul: yapılandırılabilir webhook tetiklenir.
-- [x] B2 — Discord + e-posta (SMTP) | Kabul: test gönderimi başarılı.
+### Epic B: Channel integrations
+- [x] B1 — Webhook (generic) | Acceptance: configurable webhook triggered.
+- [x] B2 — Discord + email (SMTP) | Acceptance: test send successful.
 
-### Epik C: Olay bağlama
-- [x] C1 — İstek olayları (oluştu/onaylandı/tamamlandı) ve sistem olayları (hata) | Kabul: doğru olayda bildirim.
-- [x] C2 — Kullanıcı/admin bildirim tercihleri | Kabul: abonelik yönetimi.
+### Epic C: Event binding
+- [x] C1 — Request events (created/approved/completed) and system events (errors) | Acceptance: notification on correct event.
+- [x] C2 — User/admin notification preferences | Acceptance: subscription management.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Olaylar yapılandırılabilir kanallardan bildirilir; tercihler yönetilir.
+## Acceptance Criteria (Sprint Output)
+- Events notified via configurable channels; preferences managed.
 
-## Riskler
-- Spam/aşırı bildirim → tercih + debounce.
+## Risks
+- Spam/excessive notifications → preferences + debounce.
 
-## Kapsam Dışı
-- Push/native mobil bildirim — bu plan kapsamı dışında.
+## Out of Scope
+- Push/native mobile notifications — out of scope for this plan.

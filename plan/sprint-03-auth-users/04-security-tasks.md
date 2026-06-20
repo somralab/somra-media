@@ -1,34 +1,34 @@
-# Sprint 03 — Güvenlik Görevleri
+# Sprint 03 — Security Tasks
 
-> **Sprint hedefi:** Kimlik ve yetkilendirme katmanının güvenlik temellerini kurmak.
+> **Sprint goal:** Establish security foundations for the identity and authorization layer.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) §6 · [`01-backend-tasks.md`](./01-backend-tasks.md) · Sprint 10 güvenlik denetimi
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) §6 · [`01-backend-tasks.md`](./01-backend-tasks.md) · Sprint 10 security audit
 
-## Sorumlu Rol(ler)
-- Backend (birincil), Tech Lead (gözetim)
+## Responsible Role(s)
+- Backend (primary), Tech Lead (oversight)
 
-## Bağımlılıklar
+## Dependencies
 - [`01-backend-tasks.md`](./01-backend-tasks.md), [`02-database-tasks.md`](./02-database-tasks.md)
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Kimlik güvenliği
-- [x] A1 — Güçlü parola hash + politika | Kabul: zayıf parola reddedilir.
-- [x] A2 — Brute-force koruması (rate limit, kilitleme) | Kabul: tekrarlı başarısız giriş sınırlanır.
-- [x] A3 — Güvenli oturum/token (süre, iptal, yenileme) | Kabul: çalınan token iptal edilebilir.
+### Epic A: Identity security
+- [x] A1 — Strong password hash + policy | Acceptance: weak password rejected.
+- [x] A2 — Brute-force protection (rate limit, lockout) | Acceptance: repeated failed logins limited.
+- [x] A3 — Secure session/token (expiry, revocation, refresh) | Acceptance: stolen token can be revoked.
 
-### Epik B: Yetki güvenliği
-- [x] B1 — Tüm korumalı uçlarda yetki kontrolü zorunluluğu | Kabul: yetkisiz erişim engellenir, test edilir.
-- [x] B2 — Girdi doğrulama ve enjeksiyon koruması | Kabul: parametreli sorgular, doğrulama.
+### Epic B: Authorization security
+- [x] B1 — Mandatory authorization check on all protected endpoints | Acceptance: unauthorized access blocked, tested.
+- [x] B2 — Input validation and injection protection | Acceptance: parameterized queries, validation.
 
-### Epik C: Sır yönetimi
-- [x] C1 — Sağlayıcı anahtarları ve sırların güvenli saklanması | Kabul: koda gömülü sır yok.
+### Epic C: Secret management
+- [x] C1 — Secure storage of provider keys and secrets | Acceptance: no secrets embedded in code.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kimlik/yetki katmanı güvenli varsayılanlarla çalışır; temel saldırı senaryolarına dayanıklı.
+## Acceptance Criteria (Sprint Output)
+- Identity/authorization layer runs with secure defaults; resilient to basic attack scenarios.
 
-## Riskler
-- Eksik yetki kontrolü kritik açık → kapsamlı test ve Sprint 10 denetimi.
+## Risks
+- Missing authorization check is critical vulnerability → comprehensive testing and Sprint 10 audit.
 
-## Kapsam Dışı
-- Tam güvenlik denetimi/penetrasyon — Sprint 10.
+## Out of Scope
+- Full security audit/penetration testing — Sprint 10.

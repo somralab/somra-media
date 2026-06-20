@@ -1,34 +1,34 @@
-# Sprint 09 — Frontend Görevleri (Otomasyon & Indexer UI)
+# Sprint 09 — Frontend Tasks (Automation & Indexer UI)
 
-> **Sprint hedefi:** Indexer/indirme istemcisi yönetimi, kalite profilleri ve otomasyon
-> izleme arayüzleri.
+> **Sprint goal:** Indexer/download client management, quality profiles, and automation
+> monitoring interfaces.
 >
-> **İlgili:** [`01-plugin-architecture-tasks.md`](./01-plugin-architecture-tasks.md) · [`03-download-client-tasks.md`](./03-download-client-tasks.md)
+> **Related:** [`01-plugin-architecture-tasks.md`](./01-plugin-architecture-tasks.md) · [`03-download-client-tasks.md`](./03-download-client-tasks.md)
 
-## Sorumlu Rol(ler)
-- Frontend (birincil)
+## Responsible Role(s)
+- Frontend (primary)
 
-## Bağımlılıklar
-- Bu sprint backend API'leri (eklenti/indexer/indirme/profil).
+## Dependencies
+- This sprint's backend APIs (plugin/indexer/download/profile).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Eklenti yönetimi
-- [ ] A1 — Indexer ekle/yapılandır/test arayüzü | Kabul: bağlantı testi UI'de.
-- [ ] A2 — İndirme istemcisi ekle/yapılandır arayüzü | Kabul: durum görünür.
+### Epic A: Plugin management
+- [ ] A1 — Indexer add/configure/test interface | Acceptance: connection test in UI.
+- [ ] A2 — Download client add/configure interface | Acceptance: status visible.
 
-### Epik B: Kalite profilleri
-- [ ] B1 — Kalite profili oluştur/düzenle arayüzü | Kabul: backend profiline bağlı.
+### Epic B: Quality profiles
+- [ ] B1 — Quality profile create/edit interface | Acceptance: tied to backend profile.
 
-### Epik C: Otomasyon izleme
-- [ ] C1 — Aktif indirmeler/kuyruk + ilerleme görünümü | Kabul: gerçek zamanlı.
-- [ ] C2 — İzleme listesi/monitör yönetimi | Kabul: dizi takibi yönetilir.
+### Epic C: Automation monitoring
+- [ ] C1 — Active downloads/queue + progress view | Acceptance: real-time.
+- [ ] C2 — Watchlist/monitor management | Acceptance: series tracking managed.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kullanıcı indexer/indirme istemcisi ve profilleri arayüzden yönetir; otomasyonu izler.
+## Acceptance Criteria (Sprint Output)
+- User manages indexer/download client and profiles from UI; monitors automation.
 
-## Riskler
-- Karmaşık ayar yüzeyi → "minimum konfig" felsefesiyle akıllı varsayılanlar.
+## Risks
+- Complex settings surface → smart defaults aligned with "minimum config" philosophy.
 
-## Kapsam Dışı
-- Eklenti pazar yeri UI — gelecekte.
+## Out of Scope
+- Plugin marketplace UI — future.

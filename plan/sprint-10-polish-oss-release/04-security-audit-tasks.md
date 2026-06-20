@@ -1,35 +1,35 @@
-# Sprint 10 — Güvenlik Denetimi Görevleri
+# Sprint 10 — Security Audit Tasks
 
-> **Sprint hedefi:** Açık kaynak yayını öncesi kapsamlı güvenlik denetimi ve güvenli
-> varsayılanların doğrulanması.
+> **Sprint goal:** Comprehensive security audit before open source release and validation of
+> secure defaults.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) §6 · Sprint 03 [`../sprint-03-auth-users/04-security-tasks.md`](../sprint-03-auth-users/04-security-tasks.md)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) §6 · Sprint 03 [`../sprint-03-auth-users/04-security-tasks.md`](../sprint-03-auth-users/04-security-tasks.md)
 
-## Sorumlu Rol(ler)
-- Tech Lead (birincil), Backend, QA
+## Responsible Role(s)
+- Tech Lead (primary), Backend, QA
 
-## Bağımlılıklar
-- Tüm sprintlerin güvenlikle ilgili çıktıları.
+## Dependencies
+- Security-related outputs from all sprints.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Güvenlik denetimi
-- [ ] A1 — Kimlik/yetki/oturum yüzeyi denetimi (RBAC kapsam doğrulaması) | Kabul: yetki ihlali bulunmaz.
-- [ ] A2 — Girdi doğrulama/enjeksiyon/SSRF/path traversal denetimi | Kabul: bilinen sınıflar kapatılır.
-- [ ] A3 — Bağımlılık güvenlik taraması (SCA) + lisans uyumu | Kabul: kritik açık/uyumsuz lisans yok.
+### Epic A: Security audit
+- [ ] A1 — Identity/permission/session surface audit (RBAC scope validation) | Acceptance: no permission violations found.
+- [ ] A2 — Input validation/injection/SSRF/path traversal audit | Acceptance: known classes closed.
+- [ ] A3 — Dependency security scan (SCA) + license compliance | Acceptance: no critical vulnerabilities/incompatible licenses.
 
-### Epik B: Güvenli varsayılanlar
-- [ ] B1 — Varsayılan yapılandırma sertleştirme (sırlar, CORS, rate limit, HTTPS rehberi) | Kabul: güvenli varsayılan.
-- [ ] B2 — Eklenti izolasyonu güvenlik gözden geçirmesi | Kabul: eklenti çekirdeği tehlikeye atamaz.
+### Epic B: Secure defaults
+- [ ] B1 — Default configuration hardening (secrets, CORS, rate limit, HTTPS guide) | Acceptance: secure defaults.
+- [ ] B2 — Plugin isolation security review | Acceptance: plugins cannot compromise core.
 
-### Epik C: Süreç
-- [ ] C1 — Güvenlik politikası (SECURITY.md) + açık bildirim süreci | Kabul: yayında mevcut.
+### Epic C: Process
+- [ ] C1 — Security policy (SECURITY.md) + responsible disclosure process | Acceptance: available at release.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kritik/yüksek güvenlik bulgusu kalmamış; güvenli varsayılanlar ve güvenlik politikası hazır.
+## Acceptance Criteria (Sprint Output)
+- No critical/high security findings remain; secure defaults and security policy ready.
 
-## Riskler
-- Geç bulunan açık yayını geciktirir → denetim sprint başında başlamalı.
+## Risks
+- Late-discovered vulnerabilities delay release → audit should start at sprint beginning.
 
-## Kapsam Dışı
-- Resmi 3. taraf penetrasyon testi sertifikası — opsiyonel/gelecekte.
+## Out of Scope
+- Official third-party penetration test certification — optional/future.

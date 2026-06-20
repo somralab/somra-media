@@ -1,39 +1,39 @@
-# Sprint 01 — Backend Görevleri
+# Sprint 01 — Backend Tasks
 
-> **Sprint hedefi:** Çekirdek servis iskeletinin backend bileşenleri: uygulama yaşam döngüsü,
-> job scheduler iskeleti, ortak yardımcılar.
+> **Sprint goal:** Core service skeleton backend components: application lifecycle,
+> job scheduler skeleton, shared utilities.
 >
-> **İlgili:** [`../architecture.md`](../architecture.md) · [`../tech-stack.md`](../tech-stack.md) · [`../definition-of-done.md`](../definition-of-done.md) · [`01-architecture-tasks.md`](./01-architecture-tasks.md)
+> **Related:** [`../architecture.md`](../architecture.md) · [`../tech-stack.md`](../tech-stack.md) · [`../definition-of-done.md`](../definition-of-done.md) · [`01-architecture-tasks.md`](./01-architecture-tasks.md)
 
-## Sorumlu Rol(ler)
-- Backend (birincil), Tech Lead (gözetim)
+## Responsible Role(s)
+- Backend (primary), Tech Lead (oversight)
 
-## Bağımlılıklar
-- [`01-architecture-tasks.md`](./01-architecture-tasks.md) Epik A/B (modül sınırları, bootstrap).
+## Dependencies
+- [`01-architecture-tasks.md`](./01-architecture-tasks.md) Epic A/B (module boundaries, bootstrap).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Uygulama çekirdeği
-- [x] A1 — Uygulama başlatma/kapatma yaşam döngüsü (graceful shutdown, signal handling) | Kabul: SIGTERM'de temiz kapanır, test edilir.
-- [x] A2 — Konfigürasyon okuma + doğrulama (env + varsayılan) | Kabul: hatalı konfigde anlamlı hata.
-- [x] A3 — Ortak hata tipleri ve sarmalama yardımcıları | Kabul: standart hata yanıtı formatı.
+### Epic A: Application core
+- [x] A1 — Application start/stop lifecycle (graceful shutdown, signal handling) | Acceptance: clean shutdown on SIGTERM, tested.
+- [x] A2 — Configuration loading + validation (env + defaults) | Acceptance: meaningful error on invalid config.
+- [x] A3 — Shared error types and wrapping helpers | Acceptance: standard error response format.
 
-### Epik B: Job Scheduler iskeleti
-- [x] B1 — Periyodik + tek-seferlik iş çalıştırma altyapısı | Kabul: örnek job çalışır, loglanır.
-- [x] B2 — İş durumu izleme (çalışıyor/başarılı/hata) ve eşzamanlılık koruması | Kabul: aynı işin çakışması engellenir.
-- [x] B3 — İş kuyruğu API iskeleti (sonraki sprintlerde tarama/yenileme bağlanacak) | Kabul: arayüz sözleşmesi tanımlı.
+### Epic B: Job Scheduler skeleton
+- [x] B1 — Periodic + one-shot job execution infrastructure | Acceptance: sample job runs and is logged.
+- [x] B2 — Job status tracking (running/success/error) and concurrency protection | Acceptance: overlapping runs of the same job are prevented.
+- [x] B3 — Job queue API skeleton (scanning/refresh will connect in later sprints) | Acceptance: interface contract defined.
 
-### Epik C: Ortak altyapı
-- [x] C1 — Yapılandırılmış logger entegrasyonu | Kabul: tüm modüllerde tutarlı.
-- [x] C2 — Sağlık/teşhis (diagnostics) bilgisi toplama iskeleti | Kabul: `/api/v1/health` zenginleştirilir.
-- [x] C3 — Backend i18n iskeleti: locale-aware mesaj kataloğu + dil pazarlığı (kullanıcı/sistem/`Accept-Language`/en-US) + API hata yanıtında anahtar+yerelleştirilmiş mesaj | Kabul: örnek hata mesajı en-US/tr-TR döner. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §4.3.
+### Epic C: Shared infrastructure
+- [x] C1 — Structured logger integration | Acceptance: consistent across all modules.
+- [x] C2 — Health/diagnostics information collection skeleton | Acceptance: `/api/v1/health` enriched.
+- [x] C3 — Backend i18n skeleton: locale-aware message catalog + locale negotiation (user/system/`Accept-Language`/en-US) + API error response with key + localized message | Acceptance: sample error message returns en-US/tr-TR. See [`../i18n-localization.md`](../i18n-localization.md) §4.3.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Scheduler örnek bir periyodik işi güvenle çalıştırır.
-- Tüm backend kodu DoD §3 standartlarına uyar; testler yeşil.
+## Acceptance Criteria (Sprint Output)
+- Scheduler safely runs a sample periodic job.
+- All backend code complies with DoD §3 standards; tests are green.
 
-## Riskler
-- Scheduler tasarımı sonraki sprintlerin tüm asenkron işlerini taşıyacak → arayüz erken sağlam tanımlanmalı.
+## Risks
+- Scheduler design will carry all async work in later sprints → interface must be defined early and solidly.
 
-## Kapsam Dışı
-- Gerçek iş mantığı (tarama, metadata) — Sprint 02.
+## Out of Scope
+- Real business logic (scanning, metadata) — Sprint 02.

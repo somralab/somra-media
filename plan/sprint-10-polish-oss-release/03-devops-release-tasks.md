@@ -1,35 +1,35 @@
-# Sprint 10 — DevOps & Yayın Görevleri
+# Sprint 10 — DevOps & Release Tasks
 
-> **Sprint hedefi:** Üretim kalitesinde sürüm yayını: imaj yayını, sürümleme, güncelleme yolu
-> ve açık kaynak dağıtımı (1.0).
+> **Sprint goal:** Production-quality release: image publishing, versioning, upgrade path,
+> and open source distribution (1.0).
 >
-> **İlgili:** Sprint 01 [`../sprint-01-foundation/05-devops-tasks.md`](../sprint-01-foundation/05-devops-tasks.md) · [`../roadmap.md`](../roadmap.md) (M6)
+> **Related:** Sprint 01 [`../sprint-01-foundation/05-devops-tasks.md`](../sprint-01-foundation/05-devops-tasks.md) · [`../roadmap.md`](../roadmap.md) (M6)
 
-## Sorumlu Rol(ler)
-- DevOps/Platform (birincil), Tech Lead
+## Responsible Role(s)
+- DevOps/Platform (primary), Tech Lead
 
-## Bağımlılıklar
-- Tüm sprintler; CI/CD (Sprint 01).
+## Dependencies
+- All sprints; CI/CD (Sprint 01).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Sürüm yayını
-- [ ] A1 — Otomatik sürümleme (SemVer) + changelog üretimi | Kabul: etiketli sürüm yayınlanır.
-- [ ] A2 — Çok mimarili imaj yayını (registry) + `latest`/sürüm etiketleri | Kabul: kullanıcılar çekebilir.
+### Epic A: Release publishing
+- [ ] A1 — Automatic versioning (SemVer) + changelog generation | Acceptance: tagged release published.
+- [ ] A2 — Multi-arch image publishing (registry) + `latest`/version tags | Acceptance: users can pull.
 
-### Epik B: Güncelleme & kalıcılık
-- [ ] B1 — Güncelleme/migrasyon yolu (eski sürümden yeniye) doğrulaması | Kabul: veri kaybı olmadan yükseltme.
-- [ ] B2 — Yedekleme/geri yükleme dokümante akışı | Kabul: kullanıcı veriyi koruyabilir.
+### Epic B: Upgrade & persistence
+- [ ] B1 — Upgrade/migration path validation (old version to new) | Acceptance: upgrade without data loss.
+- [ ] B2 — Documented backup/restore flow | Acceptance: user can preserve data.
 
-### Epik C: Dağıtım kolaylığı
-- [ ] C1 — Tek satır kurulum (`docker run`) + `docker compose` üretim örneği | Kabul: <10 dk kurulum (brief başarı kriteri).
-- [ ] C2 — Sürüm sağlık/teşhis çıktısı | Kabul: destek için teşhis kolay.
+### Epic C: Deployment ease
+- [ ] C1 — One-line install (`docker run`) + production `docker compose` example | Acceptance: <10 min install (brief success criterion).
+- [ ] C2 — Version health/diagnostic output | Acceptance: easy diagnostics for support.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- 1.0 imajı yayında; kurulum/güncelleme/yedekleme akışları doğrulanmış ve belgeli.
+## Acceptance Criteria (Sprint Output)
+- 1.0 image published; install/upgrade/backup flows validated and documented.
 
-## Riskler
-- Güncelleme/migrasyon hataları veri kaybı riski → sıkı test.
+## Risks
+- Upgrade/migration errors risk data loss → strict testing.
 
-## Kapsam Dışı
-- Bulut tek-tık dağıtım (managed) — gelecekte.
+## Out of Scope
+- Cloud one-click deployment (managed) — future.

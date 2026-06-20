@@ -1,33 +1,33 @@
-# Sprint 03 — QA Görevleri
+# Sprint 03 — QA Tasks
 
-> **Sprint hedefi:** Kimlik, RBAC, ebeveyn kontrolü ve izleme durumu akışlarını doğrulamak.
+> **Sprint goal:** Verify identity, RBAC, parental controls, and watch state flows.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) §4 · [`04-security-tasks.md`](./04-security-tasks.md)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) §4 · [`04-security-tasks.md`](./04-security-tasks.md)
 
-## Sorumlu Rol(ler)
-- QA (birincil)
+## Responsible Role(s)
+- QA (primary)
 
-## Bağımlılıklar
-- Bu sprint backend + frontend çıktıları.
+## Dependencies
+- This sprint backend + frontend outputs.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: İşlevsel testler
-- [x] A1 — Giriş/çıkış/yenileme e2e akışı | Kabul: kritik yollar geçer.
-- [x] A2 — RBAC matris testi (her rol için erişim doğrulama) | Kabul: yetki ihlali yok.
-- [x] A3 — Ebeveyn kontrolü testi (çocuk profili kısıtları) | Kabul: kısıtlı içerik görünmez.
+### Epic A: Functional tests
+- [x] A1 — Login/logout/refresh e2e flow | Acceptance: critical paths pass.
+- [x] A2 — RBAC matrix test (access verification per role) | Acceptance: no permission violations.
+- [x] A3 — Parental control test (child profile restrictions) | Acceptance: restricted content not visible.
 
-### Epik B: İzleme durumu
-- [x] B1 — Devam etme (resume) ve izlendi durumu testi | Kabul: doğru pozisyon korunur.
+### Epic B: Watch state
+- [x] B1 — Resume and watched state test | Acceptance: correct position preserved.
 
-### Epik C: Güvenlik kabul testleri
-- [x] C1 — Brute-force/rate-limit ve yetkisiz erişim testleri | Kabul: korumalar tetiklenir.
+### Epic C: Security acceptance tests
+- [x] C1 — Brute-force/rate-limit and unauthorized access tests | Acceptance: protections trigger.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kimlik/RBAC/ebeveyn akışları test kapsamında; kritik/güvenlik hatası yok.
+## Acceptance Criteria (Sprint Output)
+- Identity/RBAC/parental flows under test coverage; no critical/security bugs.
 
-## Riskler
-- Yetki edge-case'leri → matris testi kapsamlı olmalı.
+## Risks
+- Permission edge cases → matrix test must be comprehensive.
 
-## Kapsam Dışı
-- Oynatma performansı — Sprint 04.
+## Out of Scope
+- Playback performance — Sprint 04.

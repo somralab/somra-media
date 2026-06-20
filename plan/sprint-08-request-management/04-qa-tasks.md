@@ -1,33 +1,33 @@
-# Sprint 08 — QA Görevleri
+# Sprint 08 — QA Tasks
 
-> **Sprint hedefi:** İstek akışı, onay ve bildirimleri doğrulamak.
+> **Sprint goal:** Validate request flow, approval, and notifications.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) · [`01-backend-tasks.md`](./01-backend-tasks.md)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) · [`01-backend-tasks.md`](./01-backend-tasks.md)
 
-## Sorumlu Rol(ler)
-- QA (birincil)
+## Responsible Role(s)
+- QA (primary)
 
-## Bağımlılıklar
-- Bu sprint backend/frontend/bildirim çıktıları.
+## Dependencies
+- This sprint's backend/frontend/notification outputs.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: İstek akışı
-- [x] A1 — İstek oluştur → onay/ret → durum e2e | Kabul: tüm geçişler doğru.
-- [x] A2 — Çakışma/kota/yetki testleri | Kabul: politikalar uygulanır.
+### Epic A: Request flow
+- [x] A1 — Create request → approve/reject → status e2e | Acceptance: all transitions correct.
+- [x] A2 — Conflict/quota/permission tests | Acceptance: policies enforced.
 
-### Epik B: Bildirim
-- [x] B1 — Her kanal için tetikleme testi | Kabul: doğru olayda iletilir.
-- [x] B2 — Tercih/abonelik testi | Kabul: istenmeyen bildirim gitmez.
+### Epic B: Notifications
+- [x] B1 — Trigger test for each channel | Acceptance: delivered on correct event.
+- [x] B2 — Preference/subscription test | Acceptance: unwanted notifications not sent.
 
-### Epik C: Regresyon
-- [x] C1 — Sprint 08 regresyon paketi | Kabul: CI'da koşar.
+### Epic C: Regression
+- [x] C1 — Sprint 08 regression package | Acceptance: runs in CI.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- İstek ve bildirim akışları test kapsamında; kritik hata yok.
+## Acceptance Criteria (Sprint Output)
+- Request and notification flows covered by tests; no critical bugs.
 
-## Riskler
-- Harici kanal bağımlılığı → mock + sınırlı gerçek test.
+## Risks
+- External channel dependency → mock + limited real testing.
 
-## Kapsam Dışı
-- Otomasyon/indexer testleri — Sprint 09.
+## Out of Scope
+- Automation/indexer tests — Sprint 09.

@@ -1,39 +1,39 @@
-# Sprint 01 — DevOps Görevleri
+# Sprint 01 — DevOps Tasks
 
-> **Sprint hedefi:** Tek Docker imajı iskeleti, CI/CD hattı ve geliştirme ortamı standardı.
+> **Sprint goal:** Single Docker image skeleton, CI/CD pipeline, and development environment standard.
 >
-> **İlgili:** [`../tech-stack.md`](../tech-stack.md) §3–§4 · [`../definition-of-done.md`](../definition-of-done.md) §5
+> **Related:** [`../tech-stack.md`](../tech-stack.md) §3–§4 · [`../definition-of-done.md`](../definition-of-done.md) §5
 
-## Sorumlu Rol(ler)
-- DevOps/Platform (birincil), Tech Lead (gözetim)
+## Responsible Role(s)
+- DevOps/Platform (primary), Tech Lead (oversight)
 
-## Bağımlılıklar
-- [`01-architecture-tasks.md`](./01-architecture-tasks.md) ve [`02-backend-tasks.md`](./02-backend-tasks.md) (derlenebilir servis).
+## Dependencies
+- [`01-architecture-tasks.md`](./01-architecture-tasks.md) and [`02-backend-tasks.md`](./02-backend-tasks.md) (compilable service).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Docker imajı
-- [x] A1 — Çok aşamalı (multi-stage) Dockerfile: Go binary + frontend statik + ffmpeg | Kabul: imaj boyutu makul, servis ayağa kalkar.
-- [x] A2 — `docker-compose.yml` örneği (volume'lar: config, medya, transcode/cache) | Kabul: tek komutla çalışır.
-- [x] A3 — Çoklu mimari build (amd64 + arm64) | Kabul: her iki mimaride imaj üretilir.
+### Epic A: Docker image
+- [x] A1 — Multi-stage Dockerfile: Go binary + frontend static + ffmpeg | Acceptance: reasonable image size, service starts.
+- [x] A2 — `docker-compose.yml` example (volumes: config, media, transcode/cache) | Acceptance: runs with a single command.
+- [x] A3 — Multi-architecture build (amd64 + arm64) | Acceptance: image produced for both architectures.
 
-### Epik B: CI/CD hattı
-- [x] B1 — CI pipeline: lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build | Kabul: DoD §5 kapıları uygulanır.
-- [x] B1b — `i18n-check` adımı: eksik/kullanılmayan anahtar + en-US/tr-TR tamlık kontrolü | Kabul: eksik çeviri PR'ı kırar. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §6.
-- [x] B1c — `coverage-gate` adımı: Go + frontend coverage ölçümü, rapor üretimi ve eşik kapısı (çekirdek ≥%80, kritik modüller ≥%90, frontend bileşen ≥%70) | Kabul: eşik altında merge engellenir; rapor PR'a eklenir. Bkz. [`../definition-of-done.md`](../definition-of-done.md) §4.1.
-- [x] B2 — Frontend lint/test/build entegrasyonu | Kabul: FE adımları yeşil.
-- [x] B3 — Sürüm etiketleme + imaj yayını iskeleti (registry kararı) | Kabul: etiketli imaj yayınlanır.
+### Epic B: CI/CD pipeline
+- [x] B1 — CI pipeline: lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build | Acceptance: DoD §5 gates applied.
+- [x] B1b — `i18n-check` step: missing/unused keys + en-US/tr-TR completeness check | Acceptance: missing translation breaks PR. See [`../i18n-localization.md`](../i18n-localization.md) §6.
+- [x] B1c — `coverage-gate` step: Go + frontend coverage measurement, report generation, and threshold gate (core ≥80%, critical modules ≥90%, frontend components ≥70%) | Acceptance: merge blocked below threshold; report attached to PR. See [`../definition-of-done.md`](../definition-of-done.md) §4.1.
+- [x] B2 — Frontend lint/test/build integration | Acceptance: FE steps green.
+- [x] B3 — Version tagging + image publish skeleton (registry decision) | Acceptance: tagged image published.
 
-### Epik C: Geliştirme ortamı
-- [x] C1 — Yerel geliştirme akışı (hot reload backend + frontend dev server) | Kabul: README ile dokümante.
-- [x] C2 — `Makefile`/görev koşucusu (build, test, lint, run) | Kabul: standart komutlar çalışır.
+### Epic C: Development environment
+- [x] C1 — Local development flow (hot reload backend + frontend dev server) | Acceptance: documented in README.
+- [x] C2 — `Makefile`/task runner (build, test, lint, run) | Acceptance: standard commands work.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- `docker compose up` ile servis ayağa kalkar; health ucu yanıt verir.
-- CI tüm aşamalarıyla yeşil; her PR bu kapılardan geçer.
+## Acceptance Criteria (Sprint Output)
+- `docker compose up` starts the service; health endpoint responds.
+- CI green through all stages; every PR passes these gates.
 
-## Riskler
-- ffmpeg paketleme + multi-arch build karmaşıklığı → erken doğrulama.
+## Risks
+- ffmpeg packaging + multi-arch build complexity → early validation.
 
-## Kapsam Dışı
-- GPU passthrough (donanım hızlandırma) — Sprint 07.
+## Out of Scope
+- GPU passthrough (hardware acceleration) — Sprint 07.

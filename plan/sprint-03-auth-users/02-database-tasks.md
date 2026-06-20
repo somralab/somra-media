@@ -1,32 +1,32 @@
-# Sprint 03 — Veritabanı Görevleri (Kullanıcı Şeması)
+# Sprint 03 — Database Tasks (User Schema)
 
-> **Sprint hedefi:** Kullanıcı, rol, oturum, profil, ebeveyn kontrolü ve izleme durumu şeması.
+> **Sprint goal:** User, role, session, profile, parental control, and watch state schema.
 >
-> **İlgili:** [`../architecture.md`](../architecture.md) §4 · [`01-backend-tasks.md`](./01-backend-tasks.md)
+> **Related:** [`../architecture.md`](../architecture.md) §4 · [`01-backend-tasks.md`](./01-backend-tasks.md)
 
-## Sorumlu Rol(ler)
-- Backend (birincil), Tech Lead (gözden geçirme)
+## Responsible Role(s)
+- Backend (primary), Tech Lead (review)
 
-## Bağımlılıklar
-- Sprint 01 migrasyon altyapısı, Sprint 02 medya şeması.
+## Dependencies
+- Sprint 01 migration infrastructure, Sprint 02 media schema.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Kimlik şeması
-- [x] A1 — `user`, `role`, `permission`, `user_role` tabloları | Kabul: migrasyon + bütünlük.
-- [x] A2 — `session`/token tablosu (çoklu cihaz) | Kabul: süre/iptal alanları.
+### Epic A: Identity schema
+- [x] A1 — `user`, `role`, `permission`, `user_role` tables | Acceptance: migration + integrity.
+- [x] A2 — `session`/token table (multi-device) | Acceptance: expiry/revocation fields.
 
-### Epik B: Profil ve kontrol
-- [x] B1 — `user_profile` (tercih, **dil/locale**, **arayüz teması**, avatar), ebeveyn kontrolü alanları (rating sınırı) | Kabul: çocuk profili kısıtları sorgulanabilir; dil ve tema tercihi saklanır (tema varsayılanı `cinematic`). Bkz. [`../i18n-localization.md`](../i18n-localization.md).
+### Epic B: Profile and controls
+- [x] B1 — `user_profile` (preferences, **language/locale**, **UI theme**, avatar), parental control fields (rating limit) | Acceptance: child profile restrictions queryable; language and theme preferences stored (theme default `cinematic`). See [`../i18n-localization.md`](../i18n-localization.md).
 
-### Epik C: İzleme durumu
-- [x] C1 — `watch_state` (ilerleme, izlendi), `favorite`, `watchlist` tabloları | Kabul: kullanıcı+öğe bazlı indeksler.
+### Epic C: Watch state
+- [x] C1 — `watch_state` (progress, watched), `favorite`, `watchlist` tables | Acceptance: user+item indexes.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Şema migrasyonlarla kurulur; backend akışları tutarlı çalışır.
+## Acceptance Criteria (Sprint Output)
+- Schema set up via migrations; backend flows work consistently.
 
-## Riskler
-- Yetki modeli sonraki sprintlerde genişler → esnek tasarım.
+## Risks
+- Permission model expands in later sprints → flexible design.
 
-## Kapsam Dışı
-- İstek yönetimi tabloları — Sprint 08.
+## Out of Scope
+- Request management tables — Sprint 08.

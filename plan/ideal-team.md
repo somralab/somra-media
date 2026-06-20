@@ -1,109 +1,109 @@
-# Somra — İdeal Ekip Yapısı (Ideal Team)
+# Somra — Ideal Team Structure
 
-> Bu doküman, "sıfırdan kendi motorumuz + tam özellik paritesi" hedefi için **gerçekçi ideal
-> ekibi** tanımlar. [`project-brief.md`](./project-brief.md) kararına göre plan ideal ekip
-> varsayımıyla hazırlanmıştır; ekip buna göre büyütülecektir.
+> This document defines the **realistic ideal team** for the "build our own engine from scratch +
+> full feature parity" goal. Per [`project-brief.md`](./project-brief.md), the plan assumes an
+> ideal team; the team will be scaled accordingly.
 
-İlgili: [`roadmap.md`](./roadmap.md) (kişi/iş dağılımı) · [`definition-of-done.md`](./definition-of-done.md)
+Related: [`roadmap.md`](./roadmap.md) (people/work distribution) · [`definition-of-done.md`](./definition-of-done.md)
 
 ---
 
-## 1. Özet
+## 1. Summary
 
-| Ölçek | Toplam | Not |
+| Scale | Total | Note |
 |---|---|---|
-| **İdeal ekip** | **~8–9 kişi** | Tam hızda paralel geliştirme. Bu planın varsayımı. |
-| **Minimum çekirdek** | **3–4 kişi** | Mümkün ama takvim ~2–3x uzar; paralel iş azalır. |
+| **Ideal team** | **~8–9 people** | Full-speed parallel development. This plan's assumption. |
+| **Minimum core** | **3–4 people** | Possible but timeline ~2–3x longer; less parallel work. |
 
-Disiplinler her iki ölçekte de aynıdır; fark, paralel kapasite ve takvimdir.
+Disciplines are the same at both scales; the difference is parallel capacity and timeline.
 
-## 2. Roller ve Sorumluluklar
+## 2. Roles and Responsibilities
 
-### 2.1 Tech Lead / Yazılım Mimarı (Go) — 1 kişi
-- Sistem mimarisi ve modül sınırları (bkz. [`architecture.md`](./architecture.md)).
-- API sözleşmeleri, kod standardı ve [`definition-of-done.md`](./definition-of-done.md)'in sahibi.
-- Teknik risk yönetimi, kütüphane/teknoloji kararları, kod inceleme son merci.
-- Sprint planlama ve teknik backlog önceliklendirme (PM ile birlikte).
-- **Çıktı sahibi:** Sprint 01 mimari görevleri.
+### 2.1 Tech Lead / Software Architect (Go) — 1 person
+- System architecture and module boundaries (see [`architecture.md`](./architecture.md)).
+- API contracts, code standards, owner of [`definition-of-done.md`](./definition-of-done.md).
+- Technical risk management, library/technology decisions, final code review authority.
+- Sprint planning and technical backlog prioritization (with PM).
+- **Output owner:** Sprint 01 architecture tasks.
 
-### 2.2 Backend Mühendisi (Go) — 3 kişi
-- Kütüphane tarama, metadata pipeline, kullanıcı/RBAC, istek yönetimi, otomasyon, indexer.
-- Veri erişim katmanı, iş kuralları, arka plan işleri (job scheduler).
-- Birim ve entegrasyon testleri.
-- **Çıktı sahibi:** Sprint 02, 03, 06, 08, 09 backend görevlerinin çoğu.
+### 2.2 Backend Engineer (Go) — 3 people
+- Library scanning, metadata pipeline, user/RBAC, request management, automation, indexer.
+- Data access layer, business rules, background jobs (job scheduler).
+- Unit and integration tests.
+- **Output owner:** Most of Sprint 02, 03, 06, 08, 09 backend tasks.
 
-### 2.3 Medya / Streaming Uzmanı (ffmpeg, kodek) — 1 kişi
-- Transcode pipeline, HLS/DASH paketleme, adaptif bitrate, altyazı/ses kanalı işleme.
-- Donanım hızlandırma (QSV/NVENC/VAAPI/AMF) tespiti ve seçimi.
-- Oynatma uyumluluk matrisi ve kalite profilleri.
-- **Çıktı sahibi:** Sprint 04, 07 medya görevleri.
+### 2.3 Media / Streaming Specialist (ffmpeg, codecs) — 1 person
+- Transcode pipeline, HLS/DASH packaging, adaptive bitrate, subtitle/audio track handling.
+- Hardware acceleration (QSV/NVENC/VAAPI/AMF) detection and selection.
+- Playback compatibility matrix and quality profiles.
+- **Output owner:** Sprint 04, 07 media tasks.
 
-### 2.4 Frontend Mühendisi (React) — 2 kişi
-- React SPA (Vite), tasarım sistemi uygulaması, durum yönetimi, API entegrasyonu.
-- Web video oynatıcı (hls.js/dash.js), kütüphane gezinme, arama, kurulum sihirbazı.
-- Erişilebilirlik ve performans (lazy load, sanal liste).
-- **Çıktı sahibi:** Sprint 05 ve diğer sprintlerin frontend görevleri.
+### 2.4 Frontend Engineer (React) — 2 people
+- React SPA (Vite), design system implementation, state management, API integration.
+- Web video player (hls.js/dash.js), library browsing, search, setup wizard.
+- Accessibility and performance (lazy load, virtual lists).
+- **Output owner:** Sprint 05 and frontend tasks in other sprints.
 
-### 2.5 DevOps / Platform Mühendisi — 1 kişi
-- Tek Docker imajı + `docker compose` dağıtımı, çoklu mimari (amd64/arm64) build.
-- CI/CD hattı, sürüm otomasyonu, imaj yayını (registry).
-- Donanım cihaz erişimi (GPU passthrough), gözlemlenebilirlik (log/metrik).
-- **Çıktı sahibi:** Sprint 01, 07, 10 devops görevleri.
+### 2.5 DevOps / Platform Engineer — 1 person
+- Single Docker image + `docker compose` deployment, multi-arch (amd64/arm64) build.
+- CI/CD pipeline, release automation, image publishing (registry).
+- Hardware device access (GPU passthrough), observability (log/metrics).
+- **Output owner:** Sprint 01, 07, 10 devops tasks.
 
-### 2.6 QA / Test Otomasyon Mühendisi — 1 kişi
-- Test stratejisi, e2e otomasyon, regresyon paketi, kabul testleri.
-- Her sprintte DoD doğrulaması ve hata takibi.
-- **Çıktı sahibi:** Her sprintteki QA görevleri.
+### 2.6 QA / Test Automation Engineer — 1 person
+- Test strategy, e2e automation, regression suite, acceptance testing.
+- DoD verification and bug tracking each sprint.
+- **Output owner:** QA tasks in every sprint.
 
-### 2.7 UX/UI Tasarımcı — 0.5 kişi (yarı zamanlı)
-- Tasarım sistemi, akışlar, kurulum sihirbazı UX'i, görsel kimlik (somra markası).
-- **Çıktı sahibi:** Sprint 05 tasarım görevleri.
+### 2.7 UX/UI Designer — 0.5 person (part-time)
+- Design system, flows, setup wizard UX, visual identity (somra brand).
+- **Output owner:** Sprint 05 design tasks.
 
-### 2.8 Ürün Yöneticisi / PM — 0.5 kişi (yarı zamanlı)
-- Backlog, sprint yönetimi, kapsam koruma (anti-drift), sürüm planı.
-- [`project-brief.md`](./project-brief.md) yönetişim kurallarının uygulanması.
+### 2.8 Product Manager / PM — 0.5 person (part-time)
+- Backlog, sprint management, scope protection (anti-drift), release planning.
+- Enforcement of [`project-brief.md`](./project-brief.md) governance rules.
 
-## 3. Toplam Kadro Tablosu
+## 3. Headcount Table
 
-| Rol | İdeal | Minimum çekirdek |
+| Role | Ideal | Minimum core |
 |---|---|---|
-| Tech Lead / Mimar (Go) | 1 | 1 |
+| Tech Lead / Architect (Go) | 1 | 1 |
 | Backend (Go) | 3 | 1 |
-| Medya/Streaming | 1 | (Tech Lead/Backend paylaşır) |
+| Media/Streaming | 1 | (shared with Tech Lead/Backend) |
 | Frontend (React) | 2 | 1 |
-| DevOps/Platform | 1 | (Tech Lead paylaşır) |
-| QA | 1 | (geliştiriciler paylaşır) |
-| UX/UI | 0.5 | (dış kaynak) |
-| PM | 0.5 | (Tech Lead paylaşır) |
-| **Toplam** | **~9 kişi** | **3–4 kişi** |
+| DevOps/Platform | 1 | (shared with Tech Lead) |
+| QA | 1 | (shared among developers) |
+| UX/UI | 0.5 | (external) |
+| PM | 0.5 | (shared with Tech Lead) |
+| **Total** | **~9 people** | **3–4 people** |
 
-## 4. Beceri Matrisi (Skill Matrix)
+## 4. Skill Matrix
 
-| Beceri | Birincil rol | İkincil |
+| Skill | Primary role | Secondary |
 |---|---|---|
-| Go servis mimarisi | Tech Lead | Backend |
-| SQLite / veri modelleme | Backend | Tech Lead |
-| ffmpeg / kodek / transcode | Medya Uzmanı | Tech Lead |
-| Donanım hızlandırma (GPU) | Medya Uzmanı | DevOps |
+| Go service architecture | Tech Lead | Backend |
+| SQLite / data modeling | Backend | Tech Lead |
+| ffmpeg / codec / transcode | Media Specialist | Tech Lead |
+| Hardware acceleration (GPU) | Media Specialist | DevOps |
 | React / TypeScript | Frontend | — |
-| Video oynatıcı (HLS/DASH) | Frontend | Medya Uzmanı |
+| Video player (HLS/DASH) | Frontend | Media Specialist |
 | Docker / CI-CD | DevOps | Tech Lead |
-| Test otomasyon | QA | tüm geliştiriciler |
-| Güvenlik / RBAC | Backend | Tech Lead |
-| UX / tasarım | UX/UI | Frontend |
+| Test automation | QA | all developers |
+| Security / RBAC | Backend | Tech Lead |
+| UX / design | UX/UI | Frontend |
 
-## 5. Önerilen İşe Alım/Devreye Alma Sırası
+## 5. Recommended Hiring/Onboarding Order
 
-1. **Tech Lead (Go)** — mimari ve standartların temeli (Sprint 01 öncesi).
-2. **Backend #1 + DevOps** — iskelet, CI/CD, veri katmanı.
-3. **Frontend #1** — tasarım sistemi ve API entegrasyon temeli.
-4. **Medya/Streaming Uzmanı** — Sprint 04'ten önce.
-5. **Backend #2–#3, Frontend #2, QA** — paralel kapasite arttıkça.
-6. **UX/UI ve PM** — Sprint 01'den itibaren yarı zamanlı.
+1. **Tech Lead (Go)** — architecture and standards foundation (before Sprint 01).
+2. **Backend #1 + DevOps** — skeleton, CI/CD, data layer.
+3. **Frontend #1** — design system and API integration foundation.
+4. **Media/Streaming Specialist** — before Sprint 04.
+5. **Backend #2–#3, Frontend #2, QA** — as parallel capacity grows.
+6. **UX/UI and PM** — part-time from Sprint 01.
 
-## 6. Çalışma Düzeni
+## 6. Working Cadence
 
-- **Sprint kadansı:** 2 hafta (varsayılan). Katı deadline yok; kapsam koruma esastır.
-- **Tören:** Sprint planlama, günlük kısa senkron, sprint demo (çalışan artımlı sürüm), retrospektif.
-- **Kod inceleme:** Her PR en az 1 onay; mimariyi etkileyen değişiklikte Tech Lead onayı zorunlu.
-- **Tek doğruluk kaynağı:** Kapsam ve karar tartışmalarında [`project-brief.md`](./project-brief.md) esastır.
+- **Sprint cadence:** 2 weeks (default). No hard deadline; scope protection is essential.
+- **Ceremonies:** Sprint planning, daily standup, sprint demo (working incremental release), retrospective.
+- **Code review:** Every PR needs at least 1 approval; Tech Lead approval required for architectural changes.
+- **Single source of truth:** [`project-brief.md`](./project-brief.md) governs scope and decision disputes.

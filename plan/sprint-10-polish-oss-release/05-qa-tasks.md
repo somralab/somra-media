@@ -1,35 +1,35 @@
-# Sprint 10 — QA Görevleri (Yayın Kabulü)
+# Sprint 10 — QA Tasks (Release Acceptance)
 
-> **Sprint hedefi:** 1.0 yayını için kapsamlı regresyon, kabul ve yayın kalite kapısı.
+> **Sprint goal:** Comprehensive regression, acceptance, and release quality gate for 1.0 release.
 >
-> **İlgili:** [`../definition-of-done.md`](../definition-of-done.md) · [`../roadmap.md`](../roadmap.md) (M6) · [`../project-brief.md`](../project-brief.md) (başarı kriterleri)
+> **Related:** [`../definition-of-done.md`](../definition-of-done.md) · [`../roadmap.md`](../roadmap.md) (M6) · [`../project-brief.md`](../project-brief.md) (success criteria)
 
-## Sorumlu Rol(ler)
-- QA (birincil), tüm ekip
+## Responsible Role(s)
+- QA (primary), entire team
 
-## Bağımlılıklar
-- Tüm önceki sprintler.
+## Dependencies
+- All previous sprints.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Tam regresyon
-- [ ] A1 — Tüm sprint regresyon paketlerinin birleşik koşumu | Kabul: yeşil.
-- [ ] A2 — Uçtan uca senaryo matrisi (kurulum → kullanım → otomasyon) | Kabul: kritik akışlar geçer.
+### Epic A: Full regression
+- [ ] A1 — Combined run of all sprint regression packages | Acceptance: green.
+- [ ] A2 — End-to-end scenario matrix (install → usage → automation) | Acceptance: critical flows pass.
 
-### Epik B: Yayın kabul kriterleri
-- [ ] B1 — Brief başarı kriterleri doğrulaması (kurulum süresi, optimizasyon, bütünlük, performans) | Kabul: tüm kriterler karşılanır.
-- [ ] B2 — Çok platform/tarayıcı son kontrol | Kabul: hedef ortamlar çalışır.
-- [ ] B3 — Yükseltme/geri yükleme kabul testi | Kabul: veri korunur.
-- [ ] B4 — i18n yayın kapısı: en-US + tr-TR %100 anahtar tamlığı, hardcoded metin taraması, pseudo-locale taşma/uzunluk testi | Kabul: iki dil eksiksiz, taşma yok. Bkz. [`../i18n-localization.md`](../i18n-localization.md) §6.
+### Epic B: Release acceptance criteria
+- [ ] B1 — Brief success criteria validation (install time, optimization, integrity, performance) | Acceptance: all criteria met.
+- [ ] B2 — Multi-platform/browser final check | Acceptance: target environments work.
+- [ ] B3 — Upgrade/restore acceptance test | Acceptance: data preserved.
+- [ ] B4 — i18n release gate: en-US + tr-TR 100% key completeness, hardcoded text scan, pseudo-locale overflow/length test | Acceptance: both languages complete, no overflow. See [`../i18n-localization.md`](../i18n-localization.md) §6.
 
-### Epik C: Yayın kapısı
-- [ ] C1 — 1.0 yayın kontrol listesi (kod, doküman, güvenlik, imaj) | Kabul: tüm maddeler tamam.
+### Epic C: Release gate
+- [ ] C1 — 1.0 release checklist (code, docs, security, image) | Acceptance: all items complete.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- M6 (1.0) yayın kalite kapısı geçilir; bilinen kritik/yüksek hata yok; ürün yayına hazır.
+## Acceptance Criteria (Sprint Output)
+- M6 (1.0) release quality gate passed; no known critical/high bugs; product ready for release.
 
-## Riskler
-- Son aşama hata yığılması → sprint boyunca sürekli regresyon.
+## Risks
+- Bug pile-up in final phase → continuous regression throughout sprint.
 
-## Kapsam Dışı
-- Yayın sonrası bakım/2.0 planlaması — ayrı planlanır.
+## Out of Scope
+- Post-release maintenance/2.0 planning — planned separately.

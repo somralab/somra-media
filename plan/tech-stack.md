@@ -1,95 +1,94 @@
-# Somra — Teknoloji Yığını (Tech Stack)
+# Somra — Tech Stack
 
-> Onaylı teknoloji kararları ve gerekçeleri. Yeni bağımlılık eklenmesi Tech Lead onayına ve
-> bu dokümanın güncellenmesine tabidir (anti-drift).
+> Approved technology decisions and rationale. Adding new dependencies requires Tech Lead approval
+> and updating this document (anti-drift).
 
-İlgili: [`architecture.md`](./architecture.md) · [`project-brief.md`](./project-brief.md) · [`definition-of-done.md`](./definition-of-done.md)
+Related: [`architecture.md`](./architecture.md) · [`project-brief.md`](./project-brief.md) · [`definition-of-done.md`](./definition-of-done.md)
 
 ---
 
 ## 1. Backend
 
-| Konu | Seçim | Gerekçe |
+| Topic | Choice | Rationale |
 |---|---|---|
-| Dil | **Go (1.x güncel)** | Tek binary, düşük bellek, yüksek eşzamanlılık, kolay dağıtım. |
-| HTTP router | **`go-chi/chi`** | `net/http` uyumlu, hafif, idiomatic middleware; minimum bağımlılık. |
-| Veritabanı | **SQLite (WAL)** | Gömülü, sıfır konfig, tek dosya. |
-| SQLite sürücüsü | **`modernc.org/sqlite` (saf Go, CGO'suz)** | CGO gerektirmez → kolay çapraz derleme ve amd64/arm64 multi-arch build. |
-| Migrasyon | **`pressly/goose`** (gömülü `embed.FS` migrasyonları) | Sürümlü şema, Go + SQL migrasyon, açılışta otomatik uygulama. |
-| Medya analizi | **ffprobe** | Teknik metadata çıkarımı. |
-| Transcode | **ffmpeg** | Endüstri standardı; imaja paketlenir. |
-| İş zamanlama | **Kendi hafif scheduler'ımız + `robfig/cron/v3`** | Cron ifadeleri için cron kütüphanesi, durum/eşzamanlılık kontrolü kendi katmanımızda. |
-| Kimlik/oturum | **JWT erişim token'ı (kısa ömürlü) + iptal edilebilir sunucu tarafı refresh token (DB)** | Stateless API + token iptali dengesi. |
-| API sözleşmesi | **OpenAPI 3.1, design-first (elle yazılan spec)** | Tek doğruluk kaynağı; frontend TypeScript tipleri buradan üretilir. |
-| i18n (backend) | **`nicksnyder/go-i18n/v2` + `golang.org/x/text`** | Locale-aware mesaj kataloğu, çoğul, dil eşleştirme. Bkz. [`i18n-localization.md`](./i18n-localization.md). |
-| Test | Go `testing` + `testify` | Birim + entegrasyon. |
+| Language | **Go (current stable)** | Single binary, low memory, high concurrency, easy deployment. |
+| HTTP router | **`go-chi/chi`** | `net/http` compatible, lightweight, idiomatic middleware; minimal dependencies. |
+| Database | **SQLite (WAL)** | Embedded, zero config, single file. |
+| SQLite driver | **`modernc.org/sqlite` (pure Go, no CGO)** | No CGO → easy cross-compile and amd64/arm64 multi-arch builds. |
+| Migrations | **`pressly/goose`** (embedded `embed.FS` migrations) | Versioned schema, Go + SQL migrations, auto-apply on startup. |
+| Media analysis | **ffprobe** | Technical metadata extraction. |
+| Transcode | **ffmpeg** | Industry standard; packaged in image. |
+| Job scheduling | **Our lightweight scheduler + `robfig/cron/v3`** | Cron library for expressions; state/concurrency control in our layer. |
+| Auth/session | **Short-lived JWT access token + revocable server-side refresh token (DB)** | Stateless API + token revocation balance. |
+| API contract | **OpenAPI 3.1, design-first (hand-authored spec)** | Single source of truth; frontend TypeScript types generated from it. |
+| i18n (backend) | **`nicksnyder/go-i18n/v2` + `golang.org/x/text`** | Locale-aware message catalog, plurals, language matching. See [`i18n-localization.md`](./i18n-localization.md). |
+| Tests | Go `testing` + `testify` | Unit + integration. |
 
 ## 2. Frontend
 
-| Konu | Seçim | Gerekçe |
+| Topic | Choice | Rationale |
 |---|---|---|
-| Çatı | **React + TypeScript** | Yaygın ekosistem, tip güvenliği. |
-| Build | **Vite** | Hızlı dev/HMR, SPA çıktısı. |
-| Durum yönetimi | **TanStack Query (sunucu durumu) + Zustand (UI/global durum)** | Sunucu durumu ve UI durumu net ayrımı, hafif. |
-| Video oynatıcı | **hls.js** (+ Safari'de native HLS) | Tarayıcıda adaptif streaming. |
-| Paketleme formatı | **CMAF (fMP4)** | Tek segment setinden HLS (birincil); DASH manifesti aynı segmentlerden opsiyonel. |
-| Stil/tasarım sistemi | **Tailwind CSS + Radix UI primitifleri** | Kendi tasarım sistemimizi üzerine kurarız; erişilebilir, modern UI. |
-| Tema sistemi | **Dinamik, kullanıcı-seçimli çoklu tema** (token tabanlı) | Özgün tema setleri: **Cinematic (varsayılan)**, Aurora, Noir, Minimal (marka taklidi yapılmaz). Tema kullanıcı bazında hatırlanır. Sprint 01/03/05. |
-| i18n | **`i18next` + `react-i18next`** | Kaynak en-US, çeviri tr-TR; `Intl` ile tarih/sayı l10n. Bkz. [`i18n-localization.md`](./i18n-localization.md). |
+| Framework | **React + TypeScript** | Broad ecosystem, type safety. |
+| Build | **Vite** | Fast dev/HMR, SPA output. |
+| State management | **TanStack Query (server state) + Zustand (UI/global state)** | Clear server vs UI state separation, lightweight. |
+| Video player | **hls.js** (+ native HLS on Safari) | Adaptive streaming in browser. |
+| Packaging format | **CMAF (fMP4)** | HLS from single segment set (primary); DASH manifest from same segments optional. |
+| Styling/design system | **Tailwind CSS + Radix UI primitives** | Build our design system on top; accessible, modern UI. |
+| Theme system | **Dynamic, user-selectable multi-theme** (token-based) | Original theme set: **Cinematic (default)**, Aurora, Noir, Minimal (no brand mimicry). Theme remembered per user. Sprint 01/03/05. |
+| i18n | **`i18next` + `react-i18next`** | Source en-US, translation tr-TR; date/number l10n via `Intl`. See [`i18n-localization.md`](./i18n-localization.md). |
 
-## 3. Veri & Dağıtım
+## 3. Data & Deployment
 
-| Konu | Seçim |
+| Topic | Choice |
 |---|---|
-| Birincil veri | SQLite |
-| Dosya sistemi | Kullanıcı volume'ları (medya), önbellek/transcode dizini |
-| Paketleme | Tek **Docker** imajı + `docker compose` örneği |
-| Mimariler | amd64 + arm64 (multi-arch build) |
-| Donanım erişimi | GPU passthrough (QSV/NVENC/VAAPI/AMF) — Sprint 07 |
+| Primary data | SQLite |
+| File system | User volumes (media), cache/transcode directory |
+| Packaging | Single **Docker** image + `docker compose` example |
+| Architectures | amd64 + arm64 (multi-arch build) |
+| Hardware access | GPU passthrough (QSV/NVENC/VAAPI/AMF) — Sprint 07 |
 
-## 4. CI/CD & Kalite
+## 4. CI/CD & Quality
 
-| Konu | Seçim |
+| Topic | Choice |
 |---|---|
-| CI | Git tabanlı pipeline (lint + test + build + imaj) |
+| CI | Git-based pipeline (lint + test + build + image) |
 | Lint | Go: `golangci-lint`; Frontend: ESLint + Prettier |
-| Sürüm | Anlamlı sürümleme (SemVer) + her sprintte artımlı milestone |
-| İmaj yayını | **GitHub Container Registry (GHCR)** (birincil) + opsiyonel Docker Hub mirror |
-| Katkı uzlaşısı | **DCO (Developer Certificate of Origin)** — CLA yok |
+| Versioning | Semantic versioning (SemVer) + incremental milestone each sprint |
+| Image publishing | **GitHub Container Registry (GHCR)** (primary) + optional Docker Hub mirror |
+| Contribution agreement | **DCO (Developer Certificate of Origin)** — no CLA |
 
-## 5. Harici Servisler / Sağlayıcılar
+## 5. External Services / Providers
 
-- **Metadata:** TMDB, TVDB, MusicBrainz, fanart.tv, OMDB (anahtar/oran sınırı yönetimi Sprint 02).
-- **Altyazı:** Açık altyazı sağlayıcıları (Sprint 06).
-- **Bildirim:** Webhook, Discord, e-posta (Sprint 08).
+- **Metadata:** TMDB, TVDB, MusicBrainz, fanart.tv, OMDB (key/rate limit management Sprint 02).
+- **Subtitles:** Open subtitle providers (Sprint 06).
+- **Notifications:** Webhook, Discord, email (Sprint 08).
 
-## 6. Bağımlılık Politikası
+## 6. Dependency Policy
 
-1. Minimum bağımlılık ilkesi: standart kütüphane öncelikli.
-2. Her yeni bağımlılık: lisans uyumu (AGPL ile uyumlu olmalı), bakım durumu, güvenlik kontrolü.
-3. Lisansı AGPL-3.0 ile uyumsuz bağımlılık **kullanılamaz** (bkz. [`project-brief.md`](./project-brief.md) §5).
+1. Minimum dependency principle: standard library first.
+2. Every new dependency: license compatibility (must be AGPL-compatible), maintenance status, security review.
+3. Dependencies incompatible with AGPL-3.0 **cannot be used** (see [`project-brief.md`](./project-brief.md) §5).
 
-## 7. Kapatılan Kararlar (Karar Verildi)
+## 7. Closed Decisions (Decided)
 
-> Plan başlangıcında açık bırakılan tüm teknoloji kararları kapatılmıştır. Sprint 01 görevleri
-> artık "karar ver" değil, "kararı uygula/doğrula" odaklıdır. Değişiklik yalnızca Tech Lead
-> onayı + bu doküman güncellemesiyle yapılır (anti-drift).
+> All technology decisions left open at plan start are now closed. Sprint 01 tasks are
+> "implement/validate decision" not "decide". Changes only via Tech Lead approval + document update (anti-drift).
 
-| Karar | Sonuç |
+| Decision | Outcome |
 |---|---|
 | HTTP router | `go-chi/chi` |
-| SQLite sürücüsü | `modernc.org/sqlite` (saf Go, CGO'suz) |
-| Migrasyon aracı | `pressly/goose` (gömülü migrasyonlar) |
-| Scheduler | Kendi hafif scheduler + `robfig/cron/v3` |
-| Oturum stratejisi | JWT (kısa ömürlü) + iptal edilebilir refresh token (DB) |
-| API sözleşmesi | OpenAPI 3.1 design-first → FE tip üretimi |
-| Frontend durum yönetimi | TanStack Query + Zustand |
-| Video oynatıcı / paketleme | hls.js + CMAF (HLS birincil, DASH opsiyonel) |
-| Stil/tasarım sistemi | Tailwind CSS + Radix UI |
+| SQLite driver | `modernc.org/sqlite` (pure Go, no CGO) |
+| Migration tool | `pressly/goose` (embedded migrations) |
+| Scheduler | Our lightweight scheduler + `robfig/cron/v3` |
+| Session strategy | JWT (short-lived) + revocable refresh token (DB) |
+| API contract | OpenAPI 3.1 design-first → FE type generation |
+| Frontend state | TanStack Query + Zustand |
+| Video player / packaging | hls.js + CMAF (HLS primary, DASH optional) |
+| Styling/design system | Tailwind CSS + Radix UI |
 | Frontend i18n | `i18next` + `react-i18next` |
 | Backend i18n | `nicksnyder/go-i18n/v2` + `x/text` |
-| Çeviri platformu | **Weblate** (self-host, OSS, git entegre) |
-| İmaj registry | GHCR (birincil) |
-| Lisans / katkı | AGPL-3.0 + DCO |
+| Translation platform | **Weblate** (self-host, OSS, git-integrated) |
+| Image registry | GHCR (primary) |
+| License / contribution | AGPL-3.0 + DCO |
 
-Detaylar: oturum/sözleşme/eklenti için [`architecture.md`](./architecture.md) §8; i18n için [`i18n-localization.md`](./i18n-localization.md); lisans için [`project-brief.md`](./project-brief.md) §5.
+Details: session/contract/plugins in [`architecture.md`](./architecture.md) §8; i18n in [`i18n-localization.md`](./i18n-localization.md); license in [`project-brief.md`](./project-brief.md) §5.

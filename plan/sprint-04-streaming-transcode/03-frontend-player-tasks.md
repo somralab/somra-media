@@ -1,35 +1,35 @@
-# Sprint 04 — Frontend Görevleri (Web Oynatıcı)
+# Sprint 04 — Frontend Tasks (Web Player)
 
-> **Sprint hedefi:** hls.js tabanlı web video oynatıcı: oynatma, seek, kalite/ses/altyazı seçimi,
-> devam etme.
+> **Sprint goal:** hls.js-based web video player: playback, seek, quality/audio/subtitle selection,
+> resume.
 >
-> **İlgili:** [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md) · [`02-backend-tasks.md`](./02-backend-tasks.md) · [`../tech-stack.md`](../tech-stack.md)
+> **Related:** [`01-media-streaming-tasks.md`](./01-media-streaming-tasks.md) · [`02-backend-tasks.md`](./02-backend-tasks.md) · [`../tech-stack.md`](../tech-stack.md)
 
-## Sorumlu Rol(ler)
-- Frontend (birincil), Medya Uzmanı (uyumluluk desteği)
+## Responsible Role(s)
+- Frontend (primary), Media Specialist (compatibility support)
 
-## Bağımlılıklar
-- Backend streaming/oynatma API'leri.
+## Dependencies
+- Backend streaming/playback APIs.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Oynatıcı çekirdeği
-- [x] A1 — hls.js entegrasyonu + manifest yükleme | Kabul: video oynar.
-- [x] A2 — Oynat/duraklat/seek/ses kontrolü + klavye kısayolları | Kabul: temel kontroller çalışır.
-- [x] A3 — Tam ekran + responsive davranış | Kabul: masaüstü/mobil tarayıcıda düzgün.
+### Epic A: Player core
+- [x] A1 — hls.js integration + manifest loading | Acceptance: video plays.
+- [x] A2 — Play/pause/seek/volume controls + keyboard shortcuts | Acceptance: basic controls work.
+- [x] A3 — Fullscreen + responsive behavior | Acceptance: works well on desktop/mobile browsers.
 
-### Epik B: Akış seçenekleri
-- [x] B1 — Kalite (ABR) seçimi (otomatik + manuel) | Kabul: kademe değişimi sorunsuz.
-- [x] B2 — Ses dili ve altyazı seçimi UI'si | Kabul: backend akışlarına bağlı.
+### Epic B: Stream options
+- [x] B1 — Quality (ABR) selection (automatic + manual) | Acceptance: tier switching is smooth.
+- [x] B2 — Audio language and subtitle selection UI | Acceptance: connected to backend streams.
 
-### Epik C: Devam etme
-- [x] C1 — Resume (kaldığı yerden) + periyodik ilerleme bildirimi | Kabul: doğru pozisyon.
+### Epic C: Resume
+- [x] C1 — Resume (continue from last position) + periodic progress reporting | Acceptance: correct position.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Kullanıcı tarayıcıda video izler; kalite/ses/altyazı seçer; kaldığı yerden devam eder.
+## Acceptance Criteria (Sprint Output)
+- User watches video in the browser; selects quality/audio/subtitles; resumes from last position.
 
-## Riskler
-- Tarayıcı/kodek uyumluluğu → test matrisi (Chrome/Firefox/Safari).
+## Risks
+- Browser/codec compatibility → test matrix (Chrome/Firefox/Safari).
 
-## Kapsam Dışı
-- Zengin kütüphane gezinme ekranları — Sprint 05.
+## Out of Scope
+- Rich library browsing screens — Sprint 05.

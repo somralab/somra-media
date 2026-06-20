@@ -1,44 +1,44 @@
-# Sprint 01 — Mimari Görevleri
+# Sprint 01 — Architecture Tasks
 
-> **Sprint hedefi:** Çalışan bir iskelet servis, net modül sınırları, API sözleşmesi ve
-> CI/CD temeli. Bu sprint sonunda `docker run` ile boş ama ayağa kalkan bir Somra çekirdeği olur (M1).
+> **Sprint goal:** A running skeleton service, clear module boundaries, API contract, and
+> CI/CD foundation. By the end of this sprint, `docker run` yields an empty but running Somra core (M1).
 >
-> **İlgili:** [`../project-brief.md`](../project-brief.md) · [`../architecture.md`](../architecture.md) · [`../tech-stack.md`](../tech-stack.md) · [`../definition-of-done.md`](../definition-of-done.md) · [`../i18n-localization.md`](../i18n-localization.md)
+> **Related:** [`../project-brief.md`](../project-brief.md) · [`../architecture.md`](../architecture.md) · [`../tech-stack.md`](../tech-stack.md) · [`../definition-of-done.md`](../definition-of-done.md) · [`../i18n-localization.md`](../i18n-localization.md)
 
-## Sorumlu Rol(ler)
-- Tech Lead / Mimar (birincil), Backend (destek)
+## Responsible Role(s)
+- Tech Lead / Architect (primary), Backend (support)
 
-## Bağımlılıklar
-- Yok (başlangıç sprinti). Çıktıları **tüm** sonraki sprintlerin temelidir.
+## Dependencies
+- None (initial sprint). Outputs are the foundation for **all** subsequent sprints.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Kapatılan kararların uygulanması ve doğrulanması
-> Tüm teknoloji/mimari kararlar verildi (bkz. [`../tech-stack.md`](../tech-stack.md) §7, [`../architecture.md`](../architecture.md) §8). Bu epik kararları **uygular/doğrular**, yeniden tartışmaz.
-- [x] A1 — HTTP router (`go-chi/chi`) entegrasyonu + iskelet | Kabul: yönlendirme + middleware çalışır.
-- [x] A2 — Oturum/kimlik temeli (JWT erişim + iptal edilebilir refresh token) iskeleti | Kabul: Sprint 03 için sözleşme hazır.
-- [x] A3 — Migrasyon (`pressly/goose`) + scheduler (`robfig/cron/v3`) entegrasyonu | Kabul: örnek migrasyon + cron işi çalışır.
-- [x] A4 — OpenAPI 3.1 design-first sözleşme iskeleti + FE tip üretim hattı | Kabul: `/api/v1/health` spec'ten tip üretilir.
-- [x] A5 — i18n mimarisi uygulaması: kütüphaneler (`i18next`/`react-i18next`, `go-i18n/v2`), anahtar standardı (`domain.context.key`), dil pazarlığı | Kabul: çalışan iskelet. Bkz. [`../i18n-localization.md`](../i18n-localization.md).
+### Epic A: Implementation and validation of closed decisions
+> All technology/architecture decisions are made (see [`../tech-stack.md`](../tech-stack.md) §7, [`../architecture.md`](../architecture.md) §8). This epic **implements/validates** decisions; it does not reopen debate.
+- [x] A1 — HTTP router (`go-chi/chi`) integration + skeleton | Acceptance: routing + middleware work.
+- [x] A2 — Session/identity foundation (JWT access + revocable refresh token) skeleton | Acceptance: contract ready for Sprint 03.
+- [x] A3 — Migration (`pressly/goose`) + scheduler (`robfig/cron/v3`) integration | Acceptance: sample migration + cron job run.
+- [x] A4 — OpenAPI 3.1 design-first contract skeleton + FE type generation pipeline | Acceptance: `/api/v1/health` types generated from spec.
+- [x] A5 — i18n architecture implementation: libraries (`i18next`/`react-i18next`, `go-i18n/v2`), key standard (`domain.context.key`), locale negotiation | Acceptance: working skeleton. See [`../i18n-localization.md`](../i18n-localization.md).
 
-### Epik B: Modül iskeleti
-- [x] B1 — Monorepo dizin yapısı ve modül sınırları (API, kimlik, kütüphane, metadata, streaming, ayarlar, jobs) | Kabul: [`../architecture.md`](../architecture.md) §3 ile birebir örtüşür.
-- [x] B2 — Bağımlılık enjeksiyonu / uygulama başlatma (bootstrap) iskeleti | Kabul: servis temiz başlar/kapanır (graceful shutdown).
-- [x] B3 — Konfigürasyon katmanı (ortam değişkenleri + varsayılanlar) | Kabul: "convention over configuration" ilkesi uygulanır.
-- [x] B4 — Yapılandırılmış loglama + hata yönetimi standardı | Kabul: tüm modüller ortak logger kullanır.
+### Epic B: Module skeleton
+- [x] B1 — Monorepo directory structure and module boundaries (API, identity, library, metadata, streaming, settings, jobs) | Acceptance: aligns exactly with [`../architecture.md`](../architecture.md) §3.
+- [x] B2 — Dependency injection / application bootstrap skeleton | Acceptance: service starts/stops cleanly (graceful shutdown).
+- [x] B3 — Configuration layer (environment variables + defaults) | Acceptance: "convention over configuration" principle applied.
+- [x] B4 — Structured logging + error handling standard | Acceptance: all modules use shared logger.
 
-### Epik C: API Gateway temeli
-- [x] C1 — HTTP sunucu + `/api/v1/health` ve `/api/v1/version` uçları | Kabul: 200 döner, testi var.
-- [x] C2 — Middleware zinciri (request log, recover, CORS, rate-limit iskeleti) | Kabul: birim testleriyle doğrulanır.
-- [x] C3 — WebSocket/SSE altyapı iskeleti (gerçek zamanlı olaylar için) | Kabul: örnek olay yayını çalışır.
+### Epic C: API Gateway foundation
+- [x] C1 — HTTP server + `/api/v1/health` and `/api/v1/version` endpoints | Acceptance: returns 200, has tests.
+- [x] C2 — Middleware chain (request log, recover, CORS, rate-limit skeleton) | Acceptance: verified with unit tests.
+- [x] C3 — WebSocket/SSE infrastructure skeleton (for real-time events) | Acceptance: sample event broadcast works.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Servis tek binary olarak derlenir ve ayağa kalkar; health/version uçları yanıt verir.
-- Mimari kararlar dokümanlara işlenmiştir; açık karar listesi kapanmıştır.
-- [`../definition-of-done.md`](../definition-of-done.md) §1–§2 karşılanır.
+## Acceptance Criteria (Sprint Output)
+- Service compiles as a single binary and starts; health/version endpoints respond.
+- Architecture decisions are documented; open decision list is closed.
+- [`../definition-of-done.md`](../definition-of-done.md) §1–§2 are met.
 
-## Riskler
-- Erken yanlış mimari karar maliyeti yüksek → kararlar dokümante edilip gözden geçirilir.
+## Risks
+- Early wrong architecture decisions are costly → decisions are documented and reviewed.
 
-## Kapsam Dışı
-- İş mantığı (tarama, oynatma vb.) — sonraki sprintler. Sadece iskelet.
+## Out of Scope
+- Business logic (scanning, playback, etc.) — later sprints. Skeleton only.

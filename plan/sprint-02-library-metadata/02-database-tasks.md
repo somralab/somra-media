@@ -1,36 +1,36 @@
-# Sprint 02 — Veritabanı Görevleri (Medya Şeması)
+# Sprint 02 — Database Tasks (Media Schema)
 
-> **Sprint hedefi:** Medya domain şeması (kütüphane, öğe, sezon/bölüm, dosya, metadata, kişiler).
+> **Sprint goal:** Media domain schema (library, item, season/episode, file, metadata, people).
 >
-> **İlgili:** [`../architecture.md`](../architecture.md) §4 · Sprint 01 [`../sprint-01-foundation/03-database-tasks.md`](../sprint-01-foundation/03-database-tasks.md)
+> **Related:** [`../architecture.md`](../architecture.md) §4 · Sprint 01 [`../sprint-01-foundation/03-database-tasks.md`](../sprint-01-foundation/03-database-tasks.md)
 
-## Sorumlu Rol(ler)
-- Backend (birincil), Tech Lead (şema gözden geçirme)
+## Responsible Role(s)
+- Backend (primary), Tech Lead (schema review)
 
-## Bağımlılıklar
-- Sprint 01 migrasyon altyapısı.
+## Dependencies
+- Sprint 01 migration infrastructure.
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Çekirdek medya şeması
-- [x] A1 — `library`, `media_item` (film/dizi/albüm), `season`, `episode`, `media_file` tabloları | Kabul: migrasyon + ilişki bütünlüğü.
-- [x] A2 — Teknik metadata tabloları (kodek, akış/stream bilgileri) | Kabul: ffprobe çıktısı saklanır.
-- [x] A3 — Görsel varlık (poster/backdrop) referans tablosu | Kabul: dosya/cache yolu tutulur.
+### Epic A: Core media schema
+- [x] A1 — `library`, `media_item` (movie/series/album), `season`, `episode`, `media_file` tables | Acceptance: migration + referential integrity.
+- [x] A2 — Technical metadata tables (codec, stream information) | Acceptance: ffprobe output stored.
+- [x] A3 — Visual asset (poster/backdrop) reference table | Acceptance: file/cache path stored.
 
-### Epik B: Zenginleştirme şeması
-- [x] B1 — Kişi (oyuncu/yönetmen), tür (genre), etiket tabloları + ilişkiler | Kabul: çoka-çok ilişkiler.
-- [x] B2 — Harici sağlayıcı kimlikleri (TMDB/TVDB id eşleşmeleri) | Kabul: tekrar eşleştirmeyi destekler.
-- [x] B3 — Çok dilli metin saklama (başlık/açıklama için locale bazlı; en-US + tr-TR) | Kabul: aynı öğe için dile göre metin sorgulanır. Bkz. [`../i18n-localization.md`](../i18n-localization.md).
+### Epic B: Enrichment schema
+- [x] B1 — Person (actor/director), genre, tag tables + relationships | Acceptance: many-to-many relationships.
+- [x] B2 — External provider identifiers (TMDB/TVDB id mappings) | Acceptance: supports re-matching.
+- [x] B3 — Multilingual text storage (locale-based for title/description; en-US + tr-TR) | Acceptance: text queryable by language for same item. See [`../i18n-localization.md`](../i18n-localization.md).
 
-### Epik C: İndeksleme ve performans
-- [x] C1 — Arama/filtre için indeksler | Kabul: yaygın sorgular hızlı.
-- [x] C2 — Tam metin arama temeli (SQLite FTS) | Kabul: başlık araması çalışır.
+### Epic C: Indexing and performance
+- [x] C1 — Indexes for search/filter | Acceptance: common queries fast.
+- [x] C2 — Full-text search foundation (SQLite FTS) | Acceptance: title search works.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Şema migrasyonlarla kurulur; tarama ve metadata verisi tutarlı yazılır.
+## Acceptance Criteria (Sprint Output)
+- Schema set up via migrations; scan and metadata data written consistently.
 
-## Riskler
-- Şema sonraki sprintleri etkiler → ilişkiler dikkatli tasarlanmalı.
+## Risks
+- Schema affects later sprints → relationships must be designed carefully.
 
-## Kapsam Dışı
-- Kullanıcı/izleme durumu tabloları — Sprint 03.
+## Out of Scope
+- User/watch state tables — Sprint 03.

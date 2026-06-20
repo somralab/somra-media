@@ -1,37 +1,37 @@
-# Sprint 01 — Veritabanı Görevleri
+# Sprint 01 — Database Tasks
 
-> **Sprint hedefi:** SQLite veri katmanı temeli, migrasyon altyapısı ve şema sürümleme.
+> **Sprint goal:** SQLite data layer foundation, migration infrastructure, and schema versioning.
 >
-> **İlgili:** [`../tech-stack.md`](../tech-stack.md) · [`../architecture.md`](../architecture.md) §4 · [`../definition-of-done.md`](../definition-of-done.md)
+> **Related:** [`../tech-stack.md`](../tech-stack.md) · [`../architecture.md`](../architecture.md) §4 · [`../definition-of-done.md`](../definition-of-done.md)
 
-## Sorumlu Rol(ler)
-- Backend (birincil), Tech Lead (şema gözden geçirme)
+## Responsible Role(s)
+- Backend (primary), Tech Lead (schema review)
 
-## Bağımlılıklar
-- [`01-architecture-tasks.md`](./01-architecture-tasks.md) Epik A3 (migrasyon aracı kararı).
+## Dependencies
+- [`01-architecture-tasks.md`](./01-architecture-tasks.md) Epic A3 (migration tool decision).
 
-## Epikler ve Görevler
+## Epics and Tasks
 
-### Epik A: Veri erişim katmanı
-- [x] A1 — SQLite bağlantı yönetimi (WAL modu, bağlantı havuzu, pragma ayarları) | Kabul: WAL aktif, eşzamanlı okuma testi geçer.
-- [x] A2 — Repository/erişim deseni iskeleti | Kabul: örnek tablo için CRUD testli.
-- [x] A3 — İşlem (transaction) yardımcıları | Kabul: rollback/commit testleri.
+### Epic A: Data access layer
+- [x] A1 — SQLite connection management (WAL mode, connection pool, pragma settings) | Acceptance: WAL active, concurrent read test passes.
+- [x] A2 — Repository/access pattern skeleton | Acceptance: CRUD tested for sample table.
+- [x] A3 — Transaction helpers | Acceptance: rollback/commit tests.
 
-### Epik B: Migrasyon ve şema sürümleme
-- [x] B1 — Migrasyon altyapısı (ileri/geri) kurulumu | Kabul: `up`/`down` çalışır, sürüm tablosu tutulur.
-- [x] B2 — Şema sürümleme ve uygulama açılışında otomatik migrasyon | Kabul: yükseltmede şema otomatik güncellenir.
-- [x] B3 — Tohum (seed) ve test veri altyapısı | Kabul: test DB izole kurulur.
+### Epic B: Migration and schema versioning
+- [x] B1 — Migration infrastructure (up/down) setup | Acceptance: `up`/`down` work, version table maintained.
+- [x] B2 — Schema versioning and automatic migration on application startup | Acceptance: schema auto-updates on upgrade.
+- [x] B3 — Seed and test data infrastructure | Acceptance: isolated test DB setup.
 
-### Epik C: Yedekleme/dayanıklılık temeli
-- [x] C1 — DB dosyası konumu ve volume stratejisi (kalıcılık) | Kabul: [`05-devops-tasks.md`](./05-devops-tasks.md) ile uyumlu volume.
-- [x] C2 — Bütünlük kontrolü ve bozulma kurtarma notları | Kabul: temel `PRAGMA integrity_check` akışı.
+### Epic C: Backup/resilience foundation
+- [x] C1 — DB file location and volume strategy (persistence) | Acceptance: volume compatible with [`05-devops-tasks.md`](./05-devops-tasks.md).
+- [x] C2 — Integrity check and corruption recovery notes | Acceptance: basic `PRAGMA integrity_check` flow.
 
-## Kabul Kriterleri (Sprint Çıktısı)
-- Uygulama açılışta migrasyonları uygular; örnek repository testleri geçer.
-- Veri katmanı [`../architecture.md`](../architecture.md) §4 ile uyumludur.
+## Acceptance Criteria (Sprint Output)
+- Application applies migrations on startup; sample repository tests pass.
+- Data layer is compatible with [`../architecture.md`](../architecture.md) §4.
 
-## Riskler
-- Şema kararları erken; sonraki sprintlerde sık migrasyon olabilir → migrasyon disiplini şart.
+## Risks
+- Schema decisions are early; frequent migrations in later sprints → migration discipline required.
 
-## Kapsam Dışı
-- Domain tabloları (medya, kullanıcı vb.) — ilgili sprintlerde eklenir.
+## Out of Scope
+- Domain tables (media, users, etc.) — added in relevant sprints.
