@@ -12,10 +12,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/somralab/somra-media/internal/automation/download"
+	indexersearch "github.com/somralab/somra-media/internal/automation/indexer"
 	"github.com/somralab/somra-media/internal/automation/worker"
 	"github.com/somralab/somra-media/internal/platform/bootstrap"
 	"github.com/somralab/somra-media/internal/platform/db"
-	indexersearch "github.com/somralab/somra-media/internal/automation/indexer"
 )
 
 func TestIntegration_AutomationHandoffWithStubPlugins(t *testing.T) {

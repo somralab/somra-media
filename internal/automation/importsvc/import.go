@@ -12,9 +12,9 @@ import (
 
 // Service moves completed downloads and triggers library scan.
 type Service struct {
-	Library      *library.Service
-	ImportRoot   string
-	TargetLibID  int64
+	Library     *library.Service
+	ImportRoot  string
+	TargetLibID int64
 }
 
 // ImportCompleted moves savePath content into import root and enqueues scan.

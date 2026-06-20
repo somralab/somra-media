@@ -93,7 +93,7 @@ func (c *client) Add(ctx context.Context, req plugin.AddRequest) (plugin.Downloa
 		return plugin.DownloadItem{}, fmt.Errorf("sabnzbd add: http %d", resp.StatusCode)
 	}
 	var out struct {
-		Status bool   `json:"status"`
+		Status bool     `json:"status"`
 		NZOIDs []string `json:"nzo_ids"`
 	}
 	if err := json.Unmarshal(body, &out); err != nil {
@@ -134,15 +134,15 @@ func (c *client) Status(ctx context.Context, downloadID string) (plugin.Download
 	var queue struct {
 		Queue struct {
 			Slots []struct {
-				NZO_ID      string  `json:"nzo_id"`
-				Filename    string  `json:"filename"`
-				Percentage  string  `json:"percentage"`
-				Status      string  `json:"status"`
-				MB          string  `json:"mb"`
-				MBLeft      string  `json:"mbleft"`
-				Storage     string  `json:"storage"`
-				Completed   bool    `json:"completed"`
-				Progress    float64 `json:"-"`
+				NZO_ID     string  `json:"nzo_id"`
+				Filename   string  `json:"filename"`
+				Percentage string  `json:"percentage"`
+				Status     string  `json:"status"`
+				MB         string  `json:"mb"`
+				MBLeft     string  `json:"mbleft"`
+				Storage    string  `json:"storage"`
+				Completed  bool    `json:"completed"`
+				Progress   float64 `json:"-"`
 			} `json:"slots"`
 		} `json:"queue"`
 	}

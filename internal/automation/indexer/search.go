@@ -24,8 +24,8 @@ type SearchService struct {
 
 // SearchRequest carries query parameters and optional indexer filter.
 type SearchRequest struct {
-	Query       plugin.SearchQuery
-	IndexerIDs  []int64
+	Query      plugin.SearchQuery
+	IndexerIDs []int64
 }
 
 // SearchResponse merges indexer results.

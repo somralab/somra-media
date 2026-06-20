@@ -9,8 +9,8 @@ import (
 
 	"github.com/somralab/somra-media/internal/auth"
 	indexersearch "github.com/somralab/somra-media/internal/automation/indexer"
-	platformerrors "github.com/somralab/somra-media/internal/platform/errors"
 	"github.com/somralab/somra-media/internal/platform/db"
+	platformerrors "github.com/somralab/somra-media/internal/platform/errors"
 	"github.com/somralab/somra-media/internal/plugin"
 )
 
@@ -32,12 +32,12 @@ func (h *AutomationHandlers) Mount(r chi.Router) {
 }
 
 type indexerSearchInput struct {
-	Title      string         `json:"title"`
-	Year       *int           `json:"year,omitempty"`
+	Title      string           `json:"title"`
+	Year       *int             `json:"year,omitempty"`
 	MediaKind  plugin.MediaKind `json:"mediaKind"`
-	Season     *int           `json:"season,omitempty"`
-	Episode    *int           `json:"episode,omitempty"`
-	IndexerIDs []int64        `json:"indexerIds,omitempty"`
+	Season     *int             `json:"season,omitempty"`
+	Episode    *int             `json:"episode,omitempty"`
+	IndexerIDs []int64          `json:"indexerIds,omitempty"`
 }
 
 func (h *AutomationHandlers) searchIndexers(w http.ResponseWriter, r *http.Request) {

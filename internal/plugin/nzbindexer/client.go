@@ -48,7 +48,7 @@ func NewClient(cfg Config, apiKey string, protocol Protocol) (*Client, error) {
 }
 
 type capsResponse struct {
-	XMLName xml.Name `xml:"caps"`
+	XMLName    xml.Name `xml:"caps"`
 	Categories struct {
 		Category []struct {
 			ID   string `xml:"id,attr"`
