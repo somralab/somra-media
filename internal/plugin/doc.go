@@ -5,6 +5,6 @@
 // optional and legally separable from the core product.
 //
 // Contract versioning: bump [ContractVersion] when breaking interface or DTO
-// changes require adapters to recompile. The registry (Sprint 09 A2) should
-// call [ValidateContract] before accepting a plugin.
+// changes require adapters to recompile. [Manager.RegisterFactory] and
+// [Manager.LoadEnabled] call [ValidateContract] before accepting a plugin.
 package plugin
