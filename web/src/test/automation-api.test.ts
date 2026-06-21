@@ -41,7 +41,9 @@ describe('automation endpoints', () => {
       .mockResolvedValueOnce(jsonResponse(200, { monitors: [{ id: 1, title: 'Show' }] }))
       .mockResolvedValueOnce(jsonResponse(200, { id: 1, title: 'x', status: 'queued' }))
       .mockResolvedValueOnce(jsonResponse(200, { id: 1, name: 'default' }))
-      .mockResolvedValueOnce(jsonResponse(200, { id: 1, title: 'Show' })) as unknown as typeof fetch;
+      .mockResolvedValueOnce(
+        jsonResponse(200, { id: 1, title: 'Show' }),
+      ) as unknown as typeof fetch;
 
     const downloads = await listAutomationDownloads();
     expect(downloads.downloads).toHaveLength(1);
@@ -56,7 +58,9 @@ describe('automation endpoints', () => {
     await getQualityProfile(1);
     await getAutomationMonitor(1);
 
-    const calls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls.map((c) => String(c[0]));
+    const calls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls.map((c) =>
+      String(c[0]),
+    );
     expect(calls.some((u) => u.includes('/automation/downloads'))).toBe(true);
     expect(calls.some((u) => u.includes('/automation/quality-profiles'))).toBe(true);
     expect(calls.some((u) => u.includes('/automation/monitors'))).toBe(true);

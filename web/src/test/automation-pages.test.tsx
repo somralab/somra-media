@@ -80,7 +80,11 @@ vi.mock('@/api/hooks/useAutomation', () => ({
   useDeleteAutomationMonitor: () => ({ mutate: vi.fn(), isPending: false }),
 }));
 
-function renderAt(path: string, element: ReactElement, routePath: string): ReturnType<typeof render> {
+function renderAt(
+  path: string,
+  element: ReactElement,
+  routePath: string,
+): ReturnType<typeof render> {
   return render(
     <TestProviders>
       <MemoryRouter initialEntries={[path]}>
@@ -165,7 +169,11 @@ describe('Automation pages', () => {
   });
 
   it('renders monitors list and form', () => {
-    renderAt('/settings/automation/monitors', <AutomationMonitorsPage />, '/settings/automation/monitors');
+    renderAt(
+      '/settings/automation/monitors',
+      <AutomationMonitorsPage />,
+      '/settings/automation/monitors',
+    );
     expect(screen.getByRole('heading', { name: /series monitors/i })).toBeInTheDocument();
     expect(screen.getByText('Demo Show')).toBeInTheDocument();
 
