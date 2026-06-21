@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/google/uuid"
@@ -242,6 +243,13 @@ func TestAutomationRepo_Monitors(t *testing.T) {
 	require.False(t, got.Enabled)
 
 	require.NoError(t, repo.UpdateMonitorProgress(ctx, id, 1, 3))
+	got, err = repo.GetMonitorByID(ctx, id)
+	require.NoError(t, err)
+	require.NotNil(t, got.LastCheckedAt)
+
+	allWithCheck, err := repo.ListMonitors(ctx)
+	require.NoError(t, err)
+	require.NotEmpty(t, allWithCheck)
 
 	reqRepo := NewRequestRepo(d.Querier())
 	requestID, err := reqRepo.Create(ctx, Request{
@@ -271,4 +279,144 @@ func TestAutomationRepo_Monitors(t *testing.T) {
 	require.NoError(t, repo.DeleteMonitor(ctx, id))
 	_, err = repo.GetMonitorByID(ctx, id)
 	require.ErrorIs(t, err, ErrAutomationMonitorNotFound)
+}
+
+func TestAutomationRepo_UpdateQualityProfileBranches(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	repo := NewAutomationRepo(d.Querier())
+	profile, err := repo.GetDefaultQualityProfile(ctx)
+	require.NoError(t, err)
+
+	isDefault := true
+	require.NoError(t, repo.UpdateQualityProfile(ctx, profile.ID, profile.Name, profile.Spec, &isDefault))
+
+	isDefaultFalse := false
+	require.NoError(t, repo.UpdateQualityProfile(ctx, profile.ID, "default-patched", profile.Spec, &isDefaultFalse))
+
+	require.NoError(t, repo.UpdateQualityProfile(ctx, profile.ID, "default-patched-2", profile.Spec, nil))
+
+	require.Error(t, repo.UpdateQualityProfile(ctx, profile.ID, "   ", profile.Spec, nil))
+	require.ErrorIs(t, repo.UpdateQualityProfile(ctx, 999999, "missing", "{}", nil), ErrQualityProfileNotFound)
+
+	otherID, err := repo.CreateQualityProfile(ctx, "other-profile", "{}", false)
+	require.NoError(t, err)
+	thirdID, err := repo.CreateQualityProfile(ctx, "third-profile", "{}", false)
+	require.NoError(t, err)
+	require.ErrorIs(t, repo.UpdateQualityProfile(ctx, thirdID, "other-profile", "{}", nil), ErrQualityProfileDuplicate)
+	_ = otherID
+}
+
+func TestAutomationRepo_PatchMonitorBranches(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	users := NewUserRepo(d.Querier())
+	userID := uuid.NewString()
+	_, err := users.Create(ctx, userID, "patch-user", "hash", []string{"user"})
+	require.NoError(t, err)
+
+	repo := NewAutomationRepo(d.Querier())
+	id, err := repo.CreateMonitor(ctx, AutomationMonitor{
+		UserID:     userID,
+		Title:      "Patch Show",
+		Provider:   "tmdb",
+		ExternalID: "patch-1",
+		Enabled:    true,
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, repo.PatchMonitor(ctx, id, nil, nil, nil))
+
+	newTitle := "Patch Show Renamed"
+	newProfile := "default"
+	require.NoError(t, repo.PatchMonitor(ctx, id, &newTitle, &newProfile, nil))
+
+	empty := "   "
+	require.Error(t, repo.PatchMonitor(ctx, id, &empty, nil, nil))
+	require.ErrorIs(t, repo.PatchMonitor(ctx, 999999, &newTitle, nil, nil), ErrAutomationMonitorNotFound)
+}
+
+func TestAutomationRepo_ListEnabledMonitorsDefaultLimit(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	repo := NewAutomationRepo(d.Querier())
+	rows, err := repo.ListEnabledMonitors(ctx, 0)
+	require.NoError(t, err)
+	require.Empty(t, rows)
+}
+
+func TestAutomationRepo_GetQualityProfileByIDNotFound(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	repo := NewAutomationRepo(d.Querier())
+	_, err := repo.GetQualityProfileByID(ctx, 999999)
+	require.ErrorIs(t, err, ErrQualityProfileNotFound)
+}
+
+func TestAutomationRepo_DeleteMonitorNotFound(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	repo := NewAutomationRepo(d.Querier())
+	require.ErrorIs(t, repo.DeleteMonitor(ctx, 999999), ErrAutomationMonitorNotFound)
+}
+
+func TestAutomationRepo_CreateMonitorValidation(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	repo := NewAutomationRepo(d.Querier())
+	_, err := repo.CreateMonitor(ctx, AutomationMonitor{})
+	require.Error(t, err)
+}
+
+func TestAutomationRepo_ListMonitorsMultiple(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	users := NewUserRepo(d.Querier())
+	userID := uuid.NewString()
+	_, err := users.Create(ctx, userID, "list-user", "hash", []string{"user"})
+	require.NoError(t, err)
+
+	repo := NewAutomationRepo(d.Querier())
+	for i := range 2 {
+		_, err = repo.CreateMonitor(ctx, AutomationMonitor{
+			UserID:     userID,
+			Title:      fmt.Sprintf("Show %d", i),
+			Provider:   "tmdb",
+			ExternalID: fmt.Sprintf("list-%d", i),
+			Enabled:    true,
+		})
+		require.NoError(t, err)
+	}
+
+	rows, err := repo.ListMonitors(ctx)
+	require.NoError(t, err)
+	require.Len(t, rows, 2)
+
+	enabled, err := repo.ListEnabledMonitors(ctx, 0)
+	require.NoError(t, err)
+	require.Len(t, enabled, 2)
+}
+
+func TestAutomationRepo_ListEnabledMonitorsClosedDB(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	repo := NewAutomationRepo(d.Querier())
+	require.NoError(t, d.Close())
+
+	_, err := repo.ListEnabledMonitors(ctx, 10)
+	require.Error(t, err)
 }
