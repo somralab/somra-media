@@ -11,9 +11,9 @@ import {
 
 export interface PluginInstanceFormProps {
   pluginType: PluginType;
-  instance?: PluginInstance;
-  onSaved?: () => void;
-  onCancel?: () => void;
+  instance?: PluginInstance | undefined;
+  onSaved?: (() => void) | undefined;
+  onCancel?: (() => void) | undefined;
 }
 
 export function PluginInstanceForm({
