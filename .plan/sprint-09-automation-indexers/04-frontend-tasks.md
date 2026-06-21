@@ -14,15 +14,15 @@
 ## Epics and Tasks
 
 ### Epic A: Plugin management
-- [ ] A1 — Indexer add/configure/test interface | Acceptance: connection test in UI.
-- [ ] A2 — Download client add/configure interface | Acceptance: status visible.
+- [x] A1 — Indexer add/configure/test interface | Acceptance: connection test in UI.
+- [x] A2 — Download client add/configure interface | Acceptance: status visible.
 
 ### Epic B: Quality profiles
-- [ ] B1 — Quality profile create/edit interface | Acceptance: tied to backend profile.
+- [x] B1 — Quality profile create/edit interface | Acceptance: tied to backend profile.
 
 ### Epic C: Automation monitoring
-- [ ] C1 — Active downloads/queue + progress view | Acceptance: real-time.
-- [ ] C2 — Watchlist/monitor management | Acceptance: series tracking managed.
+- [x] C1 — Active downloads/queue + progress view | Acceptance: real-time.
+- [x] C2 — Watchlist/monitor management | Acceptance: series tracking managed.
 
 ## Acceptance Criteria (Sprint Output)
 - User manages indexer/download client and profiles from UI; monitors automation.

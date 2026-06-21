@@ -239,6 +239,20 @@ export default function SettingsPage(): ReactNode {
             </Card>
           ) : null}
 
+          {isAdmin ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('categories.automation')}</CardTitle>
+                <CardDescription>{t('automation.description')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link to="/settings/automation" className="text-sm text-primary hover:underline">
+                  {t('automation.manageLink')}
+                </Link>
+              </CardContent>
+            </Card>
+          ) : null}
+
           <Card>
             <CardHeader>
               <CardTitle>{t('categories.users')}</CardTitle>

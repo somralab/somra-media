@@ -255,3 +255,45 @@ other = "Kalite profili oluşturulamadı."
 
 ["automation.quality_profiles.create.invalid"]
 other = "Geçersiz kalite profili isteği."
+
+["automation.quality_profiles.get.failed"]
+other = "Kalite profili alınamadı."
+
+["automation.quality_profiles.id.invalid"]
+other = "Geçersiz kalite profili kimliği."
+
+["automation.quality_profiles.not_found"]
+other = "Kalite profili bulunamadı."
+
+["automation.quality_profiles.update.failed"]
+other = "Kalite profili güncellenemedi."
+
+["automation.quality_profiles.update.invalid"]
+other = "Geçersiz kalite profili güncellemesi."
+
+["automation.monitors.list.failed"]
+other = "Dizi monitörleri listelenemedi."
+
+["automation.monitors.create.failed"]
+other = "Dizi monitörü oluşturulamadı."
+
+["automation.monitors.create.invalid"]
+other = "Geçersiz dizi monitörü isteği."
+
+["automation.monitors.get.failed"]
+other = "Dizi monitörü alınamadı."
+
+["automation.monitors.id.invalid"]
+other = "Geçersiz dizi monitörü kimliği."
+
+["automation.monitors.not_found"]
+other = "Dizi monitörü bulunamadı."
+
+["automation.monitors.update.failed"]
+other = "Dizi monitörü güncellenemedi."
+
+["automation.monitors.update.invalid"]
+other = "Geçersiz dizi monitörü güncellemesi."
+
+["automation.monitors.delete.failed"]
+other = "Dizi monitörü silinemedi."

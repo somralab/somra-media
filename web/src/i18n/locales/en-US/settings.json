@@ -15,7 +15,8 @@
     "subtitles": "Subtitles",
     "users": "Users",
     "notifications": "Notifications",
-    "requests": "Requests"
+    "requests": "Requests",
+    "automation": "Automation"
   },
   "general": {
     "defaultLocale": {
@@ -88,5 +89,9 @@
   "requests": {
     "manageLink": "Request policies",
     "description": "Set monthly quotas and auto-approve roles for content requests."
+  },
+  "automation": {
+    "manageLink": "Automation settings",
+    "description": "Configure indexers, download clients, quality profiles, and series monitors."
   }
 }

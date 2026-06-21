@@ -15,7 +15,8 @@
     "subtitles": "Altyazılar",
     "users": "Kullanıcılar",
     "notifications": "Bildirimler",
-    "requests": "İstekler"
+    "requests": "İstekler",
+    "automation": "Otomasyon"
   },
   "general": {
     "defaultLocale": {
@@ -88,5 +89,9 @@
   "requests": {
     "manageLink": "İstek politikaları",
     "description": "İçerik istekleri için aylık kotaları ve otomatik onay rollerini ayarlayın."
+  },
+  "automation": {
+    "manageLink": "Otomasyon ayarları",
+    "description": "İndeksleyicileri, indirme istemcilerini, kalite profillerini ve dizi monitörlerini yapılandırın."
   }
 }

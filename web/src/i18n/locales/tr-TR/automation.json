@@ -1,0 +1,116 @@
+{
+  "hub": {
+    "title": "Otomasyon",
+    "subtitle": "İndeksleyicileri, indirme istemcilerini, kalite profillerini ve dizi monitörlerini yönetin.",
+    "indexers": {
+      "title": "İndeksleyiciler",
+      "description": "Otomatik arama için içerik indeksleyicilerini yapılandırın."
+    },
+    "downloadClients": {
+      "title": "İndirme istemcileri",
+      "description": "Torrent ve usenet indirme istemcilerini yapılandırın."
+    },
+    "qualityProfiles": {
+      "title": "Kalite profilleri",
+      "description": "Yakalama tercihleri için sürüm puanlama profilleri tanımlayın."
+    },
+    "downloads": {
+      "title": "Aktif indirmeler",
+      "description": "Devam eden ve son otomasyon indirmelerini izleyin."
+    },
+    "monitors": {
+      "title": "Dizi monitörleri",
+      "description": "Takip edilen TV dizileri için yeni bölümleri otomatik edinin."
+    }
+  },
+  "plugins": {
+    "listTitle": "{{type}} örnekleri",
+    "listSubtitle": "Eklenti örneklerini ekleyin, düzenleyin ve test edin.",
+    "add": "Örnek ekle",
+    "edit": "Örneği düzenle",
+    "empty": "Henüz yapılandırılmış örnek yok.",
+    "name": "Görünen ad",
+    "implementation": "Uygulama",
+    "config": "Yapılandırma (JSON)",
+    "enabled": "Etkin",
+    "disabled": "Devre dışı",
+    "lastTest": "Son test",
+    "neverTested": "Hiç test edilmedi",
+    "test": "Bağlantıyı test et",
+    "testSuccess": "Bağlantı başarılı.",
+    "testFailed": "Bağlantı başarısız.",
+    "delete": "Sil",
+    "deleteConfirm": "Bu örnek silinsin mi?",
+    "save": "Kaydet",
+    "create": "Oluştur",
+    "cancel": "İptal",
+    "status": "Durum",
+    "types": {
+      "indexer": "İndeksleyici",
+      "download_client": "İndirme istemcisi"
+    }
+  },
+  "qualityProfiles": {
+    "title": "Kalite profilleri",
+    "subtitle": "Yakalama puanlama profillerini oluşturun ve düzenleyin.",
+    "add": "Profil ekle",
+    "edit": "Profili düzenle",
+    "empty": "Kalite profili bulunamadı.",
+    "name": "Profil adı",
+    "spec": "Profil spec (JSON)",
+    "isDefault": "Varsayılan profil",
+    "save": "Kaydet",
+    "create": "Oluştur",
+    "deleteNotSupported": "Profil silme bu sürümde kullanılamıyor."
+  },
+  "downloads": {
+    "title": "Otomasyon indirmeleri",
+    "subtitle": "Otomasyondan aktif ve son indirme işleri.",
+    "polling": "5 saniyede bir yenileniyor",
+    "empty": "Henüz indirme yok.",
+    "columns": {
+      "title": "Başlık",
+      "status": "Durum",
+      "progress": "İlerleme",
+      "protocol": "Protokol",
+      "request": "İstek"
+    },
+    "detail": {
+      "title": "İndirme detayları",
+      "savePath": "Kayıt yolu",
+      "clientId": "İstemci indirme kimliği",
+      "back": "İndirmelere dön"
+    },
+    "status": {
+      "queued": "Kuyrukta",
+      "downloading": "İndiriliyor",
+      "paused": "Duraklatıldı",
+      "completed": "Tamamlandı",
+      "failed": "Başarısız"
+    }
+  },
+  "monitors": {
+    "title": "Dizi monitörleri",
+    "subtitle": "Yeni bölüm edinimi için TV dizilerini takip edin.",
+    "add": "Monitör ekle",
+    "edit": "Monitörü düzenle",
+    "empty": "Yapılandırılmış dizi monitörü yok.",
+    "seriesTitle": "Dizi başlığı",
+    "provider": "Metadata sağlayıcı",
+    "externalId": "Harici kimlik",
+    "qualityProfile": "Kalite profili",
+    "enabled": "Etkin",
+    "lastChecked": "Son kontrol",
+    "lastEpisode": "Son takip edilen bölüm",
+    "neverChecked": "Hiç kontrol edilmedi",
+    "save": "Kaydet",
+    "create": "Oluştur",
+    "delete": "Sil",
+    "deleteConfirm": "Bu dizi monitörü kaldırılsın mı?",
+    "note": "Dizi monitörleri kişisel izleme listenizden ayrıdır."
+  },
+  "profilePicker": {
+    "label": "Kalite profili",
+    "none": "Sunucu varsayılanını kullan"
+  }
+}

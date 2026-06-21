@@ -11,14 +11,15 @@ Related: `[project-brief.md](./project-brief.md)` · `[roadmap.md](./roadmap.md)
 
 | Field | Value |
 |---|---|
-| **Sprint** | **09 — Automation & Indexers** |
-| **Status** | **In progress** (Sprints 01–08 complete) |
-| **Milestone target** | **M5** — requests + automation + indexers (Sprint 08 done; Sprint 09 completes M5) |
-| **Folder** | [`sprint-09-automation-indexers/`](./sprint-09-automation-indexers/) |
-| **DoD** | [`definition-of-done.md`](./definition-of-done.md) §1–2 · sprint task acceptance criteria below |
-| **Dependencies** | Sprint 08 request handoff (done) · Sprint 02 library/import · [`architecture.md`](./architecture.md) §6 (plugin isolation) |
+| **Sprint** | **10 — Polish & Open Source** |
+| **Status** | **Planned** (Sprints 01–09 complete) |
+| **Milestone target** | **M6** — polish, security audit prep, open-source release |
+| **Folder** | [`sprint-10-polish-oss-release/`](./sprint-10-polish-oss-release/) |
+| **Dependencies** | Sprint 09 automation (done) · [`definition-of-done.md`](./definition-of-done.md) §1 |
 
-### Sprint 09 task files (implementation order)
+### Sprint 09 task files (complete — see [`sprint-09-automation-indexers/`](./sprint-09-automation-indexers/))
+
+Sprint 09 is **Done**. Active work moves to Sprint 10 (Polish & Open Source) per [`roadmap.md`](./roadmap.md).
 
 | Order | File | Focus |
 |---|---|---|
@@ -44,8 +45,8 @@ When the active sprint changes, update this section only — details stay in [`r
 | 06 | Onboarding & Optimization | M4 (partial) | **Done** |
 | 07 | Hardware Acceleration | M4 | **Done** |
 | 08 | Request Management | M5 (partial) | **Done** |
-| 09 | Automation & Indexers | M5 | **In progress** ← active |
-| 10 | Polish & Open Source | M6 | Planned |
+| 09 | Automation & Indexers | M5 | **Done** |
+| 10 | Polish & Open Source | M6 | **Planned** ← active |
 
 ---
 
