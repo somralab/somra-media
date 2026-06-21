@@ -192,3 +192,83 @@ func TestAutomationRepo_ListDownloadsClosedDB(t *testing.T) {
 	_, err := repo.ListDownloads(ctx, 10)
 	require.Error(t, err)
 }
+
+func TestAutomationRepo_Monitors(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	users := NewUserRepo(d.Querier())
+	userID := uuid.NewString()
+	_, err := users.Create(ctx, userID, "monitor-user", "hash", []string{"user"})
+	require.NoError(t, err)
+
+	repo := NewAutomationRepo(d.Querier())
+	id, err := repo.CreateMonitor(ctx, AutomationMonitor{
+		UserID:     userID,
+		Title:      "Monitor Show",
+		Provider:   "tmdb",
+		ExternalID: "mon-1",
+		Enabled:    true,
+	})
+	require.NoError(t, err)
+	require.Positive(t, id)
+
+	_, err = repo.CreateMonitor(ctx, AutomationMonitor{
+		UserID:     userID,
+		Title:      "Monitor Show 2",
+		Provider:   "tmdb",
+		ExternalID: "mon-1",
+		Enabled:    true,
+	})
+	require.ErrorIs(t, err, ErrAutomationMonitorDuplicate)
+
+	got, err := repo.GetMonitorByID(ctx, id)
+	require.NoError(t, err)
+	require.Equal(t, "Monitor Show", got.Title)
+
+	all, err := repo.ListMonitors(ctx)
+	require.NoError(t, err)
+	require.Len(t, all, 1)
+
+	enabled, err := repo.ListEnabledMonitors(ctx, 10)
+	require.NoError(t, err)
+	require.Len(t, enabled, 1)
+
+	disabled := false
+	require.NoError(t, repo.PatchMonitor(ctx, id, nil, nil, &disabled))
+	got, err = repo.GetMonitorByID(ctx, id)
+	require.NoError(t, err)
+	require.False(t, got.Enabled)
+
+	require.NoError(t, repo.UpdateMonitorProgress(ctx, id, 1, 3))
+
+	reqRepo := NewRequestRepo(d.Querier())
+	requestID, err := reqRepo.Create(ctx, Request{
+		UserID:            userID,
+		MediaKind:         RequestMediaKindTV,
+		Provider:          "tmdb",
+		ExternalID:        "mon-1",
+		Title:             "Monitor Show S01E03",
+		QualityResolution: RequestQualityAny,
+		Status:            RequestStatusApproved,
+	})
+	require.NoError(t, err)
+	require.NoError(t, repo.RecordMonitorEpisode(ctx, id, 1, 3, requestID))
+	exists, err := repo.MonitorEpisodeExists(ctx, id, 1, 3)
+	require.NoError(t, err)
+	require.True(t, exists)
+
+	profileID, err := repo.GetQualityProfileByID(ctx, 1)
+	require.NoError(t, err)
+	require.NotEmpty(t, profileID.Name)
+
+	require.NoError(t, repo.UpdateQualityProfile(ctx, profileID.ID, "default-renamed", profileID.Spec, nil))
+	updated, err := repo.GetQualityProfileByID(ctx, profileID.ID)
+	require.NoError(t, err)
+	require.Equal(t, "default-renamed", updated.Name)
+
+	require.NoError(t, repo.DeleteMonitor(ctx, id))
+	_, err = repo.GetMonitorByID(ctx, id)
+	require.ErrorIs(t, err, ErrAutomationMonitorNotFound)
+}

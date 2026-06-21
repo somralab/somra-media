@@ -256,3 +256,45 @@ other = "Failed to create quality profile."
 
 ["automation.quality_profiles.create.invalid"]
 other = "Invalid quality profile request."
+
+["automation.quality_profiles.get.failed"]
+other = "Failed to get quality profile."
+
+["automation.quality_profiles.id.invalid"]
+other = "Invalid quality profile id."
+
+["automation.quality_profiles.not_found"]
+other = "Quality profile not found."
+
+["automation.quality_profiles.update.failed"]
+other = "Failed to update quality profile."
+
+["automation.quality_profiles.update.invalid"]
+other = "Invalid quality profile update."
+
+["automation.monitors.list.failed"]
+other = "Failed to list series monitors."
+
+["automation.monitors.create.failed"]
+other = "Failed to create series monitor."
+
+["automation.monitors.create.invalid"]
+other = "Invalid series monitor request."
+
+["automation.monitors.get.failed"]
+other = "Failed to get series monitor."
+
+["automation.monitors.id.invalid"]
+other = "Invalid series monitor id."
+
+["automation.monitors.not_found"]
+other = "Series monitor not found."
+
+["automation.monitors.update.failed"]
+other = "Failed to update series monitor."
+
+["automation.monitors.update.invalid"]
+other = "Invalid series monitor update."
+
+["automation.monitors.delete.failed"]
+other = "Failed to delete series monitor."

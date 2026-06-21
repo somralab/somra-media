@@ -9,6 +9,7 @@ import (
 	"github.com/somralab/somra-media/internal/automation/handoff"
 	"github.com/somralab/somra-media/internal/automation/importsvc"
 	indexersearch "github.com/somralab/somra-media/internal/automation/indexer"
+	"github.com/somralab/somra-media/internal/automation/seriesmonitor"
 	"github.com/somralab/somra-media/internal/automation/worker"
 	"github.com/somralab/somra-media/internal/jobs"
 	"github.com/somralab/somra-media/internal/platform/db"
@@ -56,7 +57,13 @@ func WireAutomation(c *Components, lib *LibraryBundle, plugins *PluginsBundle, r
 	}
 
 	if c.Scheduler != nil {
-		scheduleAutomationJobs(c, processor, monitor)
+		seriesScanner := &seriesmonitor.Scanner{
+			AutoRepo: autoRepo,
+			Requests: reqRepo,
+			Search:   searchSvc,
+			Logger:   c.Logger,
+		}
+		scheduleAutomationJobs(c, processor, monitor, seriesScanner)
 	}
 
 	if req != nil && req.Requests != nil {
@@ -72,7 +79,7 @@ func WireAutomation(c *Components, lib *LibraryBundle, plugins *PluginsBundle, r
 	}, nil
 }
 
-func scheduleAutomationJobs(c *Components, processor *worker.Processor, monitor *download.Monitor) {
+func scheduleAutomationJobs(c *Components, processor *worker.Processor, monitor *download.Monitor, seriesScanner *seriesmonitor.Scanner) {
 	if c == nil || c.Scheduler == nil {
 		return
 	}
@@ -82,6 +89,11 @@ func scheduleAutomationJobs(c *Components, processor *worker.Processor, monitor 
 	_, _ = c.Scheduler.Schedule("0 */1 * * * *", "automation-download-monitor", jobs.JobFunc(func(ctx context.Context) error {
 		return monitor.Poll(ctx)
 	}))
+	if seriesScanner != nil {
+		_, _ = c.Scheduler.Schedule("0 0 */15 * * *", "automation-series-monitor", jobs.JobFunc(func(ctx context.Context) error {
+			return seriesScanner.ScanEnabledMonitors(ctx)
+		}))
+	}
 	if c.Logger != nil {
 		c.Logger.Info("automation jobs scheduled")
 	}

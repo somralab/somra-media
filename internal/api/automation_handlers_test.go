@@ -139,3 +139,51 @@ func TestAutomationHandlers_CreateProfileInvalid(t *testing.T) {
 	h.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusBadRequest, rec.Code)
 }
+
+func TestAutomationHandlers_QualityProfileGetAndPatch(t *testing.T) {
+	h, _, token, _ := newAutomationTestRouter(t)
+	req := authRequest(http.MethodGet, "/api/v1/automation/quality-profiles/1", token, nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	patchBody := []byte(`{"name":"default-updated","spec":"{}"}`)
+	req = authRequest(http.MethodPatch, "/api/v1/automation/quality-profiles/1", token, patchBody)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestAutomationHandlers_MonitorsCRUD(t *testing.T) {
+	h, _, token, _ := newAutomationTestRouter(t)
+	createBody := []byte(`{"title":"Demo Series","externalId":"tv-123","provider":"tmdb","qualityProfile":"default"}`)
+	req := authRequest(http.MethodPost, "/api/v1/automation/monitors", token, createBody)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusCreated, rec.Code)
+
+	var created map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &created))
+	id := int64(created["id"].(float64))
+
+	req = authRequest(http.MethodGet, "/api/v1/automation/monitors", token, nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	req = authRequest(http.MethodGet, "/api/v1/automation/monitors/"+strconv.FormatInt(id, 10), token, nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	patchBody := []byte(`{"enabled":false}`)
+	req = authRequest(http.MethodPatch, "/api/v1/automation/monitors/"+strconv.FormatInt(id, 10), token, patchBody)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	req = authRequest(http.MethodDelete, "/api/v1/automation/monitors/"+strconv.FormatInt(id, 10), token, nil)
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusNoContent, rec.Code)
+}

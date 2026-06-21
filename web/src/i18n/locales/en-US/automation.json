@@ -1,0 +1,116 @@
+{
+  "hub": {
+    "title": "Automation",
+    "subtitle": "Manage indexers, download clients, quality profiles, and series monitors.",
+    "indexers": {
+      "title": "Indexers",
+      "description": "Configure content indexers for automated search."
+    },
+    "downloadClients": {
+      "title": "Download clients",
+      "description": "Configure torrent and usenet download clients."
+    },
+    "qualityProfiles": {
+      "title": "Quality profiles",
+      "description": "Define release scoring preferences for grabs."
+    },
+    "downloads": {
+      "title": "Active downloads",
+      "description": "Monitor in-progress and recent automation downloads."
+    },
+    "monitors": {
+      "title": "Series monitors",
+      "description": "Automatically acquire new episodes for tracked TV series."
+    }
+  },
+  "plugins": {
+    "listTitle": "{{type}} instances",
+    "listSubtitle": "Add, edit, and test plugin instances.",
+    "add": "Add instance",
+    "edit": "Edit instance",
+    "empty": "No instances configured yet.",
+    "name": "Display name",
+    "implementation": "Implementation",
+    "config": "Configuration (JSON)",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "lastTest": "Last test",
+    "neverTested": "Never tested",
+    "test": "Test connection",
+    "testSuccess": "Connection successful.",
+    "testFailed": "Connection failed.",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this instance?",
+    "save": "Save",
+    "create": "Create",
+    "cancel": "Cancel",
+    "status": "Status",
+    "types": {
+      "indexer": "Indexer",
+      "download_client": "Download client"
+    }
+  },
+  "qualityProfiles": {
+    "title": "Quality profiles",
+    "subtitle": "Create and edit grab scoring profiles.",
+    "add": "Add profile",
+    "edit": "Edit profile",
+    "empty": "No quality profiles found.",
+    "name": "Profile name",
+    "spec": "Profile spec (JSON)",
+    "isDefault": "Default profile",
+    "save": "Save",
+    "create": "Create",
+    "deleteNotSupported": "Profile deletion is not available in this release."
+  },
+  "downloads": {
+    "title": "Automation downloads",
+    "subtitle": "Active and recent download jobs from automation.",
+    "polling": "Polling every 5 seconds",
+    "empty": "No downloads yet.",
+    "columns": {
+      "title": "Title",
+      "status": "Status",
+      "progress": "Progress",
+      "protocol": "Protocol",
+      "request": "Request"
+    },
+    "detail": {
+      "title": "Download details",
+      "savePath": "Save path",
+      "clientId": "Client download ID",
+      "back": "Back to downloads"
+    },
+    "status": {
+      "queued": "Queued",
+      "downloading": "Downloading",
+      "paused": "Paused",
+      "completed": "Completed",
+      "failed": "Failed"
+    }
+  },
+  "monitors": {
+    "title": "Series monitors",
+    "subtitle": "Track TV series for automatic new-episode acquisition.",
+    "add": "Add monitor",
+    "edit": "Edit monitor",
+    "empty": "No series monitors configured.",
+    "seriesTitle": "Series title",
+    "provider": "Metadata provider",
+    "externalId": "External ID",
+    "qualityProfile": "Quality profile",
+    "enabled": "Enabled",
+    "lastChecked": "Last checked",
+    "lastEpisode": "Last episode tracked",
+    "neverChecked": "Never checked",
+    "save": "Save",
+    "create": "Create",
+    "delete": "Delete",
+    "deleteConfirm": "Remove this series monitor?",
+    "note": "Series monitors are separate from your personal watchlist."
+  },
+  "profilePicker": {
+    "label": "Quality profile",
+    "none": "Use server default"
+  }
+}

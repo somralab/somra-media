@@ -17,6 +17,7 @@ import enSettings from './locales/en-US/settings.json';
 import enSubtitles from './locales/en-US/subtitles.json';
 import enRequests from './locales/en-US/requests.json';
 import enNotifications from './locales/en-US/notifications.json';
+import enAutomation from './locales/en-US/automation.json';
 import trCommon from './locales/tr-TR/common.json';
 import trStatus from './locales/tr-TR/status.json';
 import trLibrary from './locales/tr-TR/library.json';
@@ -32,6 +33,7 @@ import trSettings from './locales/tr-TR/settings.json';
 import trSubtitles from './locales/tr-TR/subtitles.json';
 import trRequests from './locales/tr-TR/requests.json';
 import trNotifications from './locales/tr-TR/notifications.json';
+import trAutomation from './locales/tr-TR/automation.json';
 
 export const SUPPORTED_LOCALES = ['en-US', 'tr-TR'] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
@@ -54,6 +56,7 @@ export const NAMESPACES = [
   'subtitles',
   'requests',
   'notifications',
+  'automation',
 ] as const;
 
 export const resources = {
@@ -73,6 +76,7 @@ export const resources = {
     subtitles: enSubtitles,
     requests: enRequests,
     notifications: enNotifications,
+    automation: enAutomation,
   },
   'tr-TR': {
     common: trCommon,
@@ -90,6 +94,7 @@ export const resources = {
     subtitles: trSubtitles,
     requests: trRequests,
     notifications: trNotifications,
+    automation: trAutomation,
   },
 } as const;
 

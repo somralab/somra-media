@@ -27,6 +27,18 @@ const RequestDiscoverPage = lazy(() => import('@/pages/RequestDiscoverPage'));
 const MyRequestsPage = lazy(() => import('@/pages/MyRequestsPage'));
 const AdminRequestsPage = lazy(() => import('@/pages/AdminRequestsPage'));
 const NotificationSettingsPage = lazy(() => import('@/pages/NotificationSettingsPage'));
+const AutomationHubPage = lazy(() => import('@/pages/automation/AutomationHubPage'));
+const IndexersPage = lazy(() =>
+  import('@/pages/automation/PluginInstancesPage').then((m) => ({ default: m.default })),
+);
+const DownloadClientsPage = lazy(() =>
+  import('@/pages/automation/PluginInstancesPage').then((m) => ({
+    default: m.DownloadClientsPage,
+  })),
+);
+const QualityProfilesPage = lazy(() => import('@/pages/automation/QualityProfilesPage'));
+const AutomationDownloadsPage = lazy(() => import('@/pages/automation/AutomationDownloadsPage'));
+const AutomationMonitorsPage = lazy(() => import('@/pages/automation/AutomationMonitorsPage'));
 
 function NavItem({ to, label }: { to: string; label: string }): ReactNode {
   return (
@@ -228,6 +240,126 @@ export default function App(): ReactNode {
               element={
                 <ProtectedRoute>
                   <NotificationSettingsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AutomationHubPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/indexers"
+              element={
+                <ProtectedRoute adminOnly>
+                  <IndexersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/indexers/new"
+              element={
+                <ProtectedRoute adminOnly>
+                  <IndexersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/indexers/:id"
+              element={
+                <ProtectedRoute adminOnly>
+                  <IndexersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/download-clients"
+              element={
+                <ProtectedRoute adminOnly>
+                  <DownloadClientsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/download-clients/new"
+              element={
+                <ProtectedRoute adminOnly>
+                  <DownloadClientsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/download-clients/:id"
+              element={
+                <ProtectedRoute adminOnly>
+                  <DownloadClientsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/quality-profiles"
+              element={
+                <ProtectedRoute adminOnly>
+                  <QualityProfilesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/quality-profiles/new"
+              element={
+                <ProtectedRoute adminOnly>
+                  <QualityProfilesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/quality-profiles/:id"
+              element={
+                <ProtectedRoute adminOnly>
+                  <QualityProfilesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/monitors"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AutomationMonitorsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/monitors/new"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AutomationMonitorsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/automation/monitors/:id"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AutomationMonitorsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/automation/downloads"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AutomationDownloadsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/automation/downloads/:id"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AutomationDownloadsPage />
                 </ProtectedRoute>
               }
             />

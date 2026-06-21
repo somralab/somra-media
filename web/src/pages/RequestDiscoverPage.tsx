@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { RequestsNav } from '@/components/requests/RequestsNav';
 import { QualitySelector } from '@/components/requests/QualitySelector';
+import { QualityProfilePicker } from '@/components/automation/QualityProfilePicker';
+import { useQualityProfiles } from '@/api/hooks/useAutomation';
 import {
   Modal,
   ModalContent,
@@ -28,6 +30,9 @@ export default function RequestDiscoverPage(): ReactNode {
   const [kindFilter, setKindFilter] = useState<RequestMediaKind | ''>('');
   const [selected, setSelected] = useState<RequestDiscoverResult | null>(null);
   const [quality, setQuality] = useState<RequestQualityResolution>('1080p');
+  const [qualityProfile, setQualityProfile] = useState('');
+
+  const profilesQuery = useQualityProfiles(selected !== null);
 
   const discoverQuery = useDiscover(
     submittedQuery,
@@ -51,6 +56,7 @@ export default function RequestDiscoverPage(): ReactNode {
         title: selected.title,
         ...(selected.posterUrl ? { posterUrl: selected.posterUrl } : {}),
         qualityResolution: quality,
+        ...(qualityProfile ? { qualityProfile } : {}),
       },
       {
         onSuccess: () => {
@@ -132,6 +138,7 @@ export default function RequestDiscoverPage(): ReactNode {
                 onClick={() => {
                   setSelected(item);
                   setQuality('1080p');
+                  setQualityProfile('');
                 }}
               >
                 {t('discover.requestButton')}
@@ -152,6 +159,12 @@ export default function RequestDiscoverPage(): ReactNode {
           <QualitySelector
             value={quality}
             onChange={setQuality}
+            disabled={createMutation.isPending}
+          />
+          <QualityProfilePicker
+            profiles={profilesQuery.data?.profiles ?? []}
+            value={qualityProfile}
+            onChange={setQualityProfile}
             disabled={createMutation.isPending}
           />
           <div className="mt-4 flex justify-end gap-2">

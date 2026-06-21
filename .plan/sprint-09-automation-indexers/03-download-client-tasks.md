@@ -23,7 +23,7 @@
 
 ### Epic C: Import & watchlists
 - [x] C1 — Import completed download to library (rename/move + trigger scan) | Acceptance: media appears in library.
-- [ ] C2 — Watchlist/monitor (automatic episode tracking for series) | Acceptance: new episodes searched automatically.
+- [x] C2 — Watchlist/monitor (automatic episode tracking for series) | Acceptance: new episodes searched automatically.
 - [x] C3 — Request → approval → automatic acquisition end-to-end flow (integration with Sprint 08) | Acceptance: approved request completed automatically.
 
 ## Acceptance Criteria (Sprint Output)

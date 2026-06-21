@@ -1609,6 +1609,140 @@ paths:
                     type: integer
                     format: int64
 
+  /automation/quality-profiles/{profileId}:
+    parameters:
+      - name: profileId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [automation]
+      summary: Get quality profile (admin)
+      operationId: getQualityProfile
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Quality profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QualityProfile"
+        "404":
+          description: Not found
+    patch:
+      tags: [automation]
+      summary: Update quality profile (admin)
+      operationId: patchQualityProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QualityProfilePatch"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QualityProfile"
+
+  /automation/monitors:
+    get:
+      tags: [automation]
+      summary: List series monitors (admin)
+      operationId: listAutomationMonitors
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Monitor list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  monitors:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AutomationMonitor"
+    post:
+      tags: [automation]
+      summary: Create series monitor (admin)
+      operationId: createAutomationMonitor
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AutomationMonitorInput"
+      responses:
+        "201":
+          description: Created monitor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutomationMonitor"
+
+  /automation/monitors/{monitorId}:
+    parameters:
+      - name: monitorId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [automation]
+      summary: Get series monitor (admin)
+      operationId: getAutomationMonitor
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Monitor row
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutomationMonitor"
+        "404":
+          description: Not found
+    patch:
+      tags: [automation]
+      summary: Update series monitor (admin)
+      operationId: patchAutomationMonitor
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AutomationMonitorPatch"
+      responses:
+        "200":
+          description: Updated monitor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutomationMonitor"
+    delete:
+      tags: [automation]
+      summary: Delete series monitor (admin)
+      operationId: deleteAutomationMonitor
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Deleted
+
 components:
   securitySchemes:
     bearerAuth:
@@ -2869,6 +3003,74 @@ components:
         spec:
           type: string
         isDefault:
+          type: boolean
+
+    QualityProfilePatch:
+      type: object
+      properties:
+        name:
+          type: string
+        spec:
+          type: string
+        isDefault:
+          type: boolean
+
+    AutomationMonitor:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: string
+        title:
+          type: string
+        provider:
+          type: string
+        externalId:
+          type: string
+        qualityProfile:
+          type: string
+        enabled:
+          type: boolean
+        lastSeason:
+          type: integer
+        lastEpisode:
+          type: integer
+        lastCheckedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AutomationMonitorInput:
+      type: object
+      required: [title, externalId]
+      properties:
+        title:
+          type: string
+        provider:
+          type: string
+        externalId:
+          type: string
+        qualityProfile:
+          type: string
+        enabled:
+          type: boolean
+
+    AutomationMonitorPatch:
+      type: object
+      properties:
+        title:
+          type: string
+        qualityProfile:
+          type: string
+        enabled:
           type: boolean
 
   parameters:

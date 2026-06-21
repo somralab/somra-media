@@ -1117,6 +1117,65 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/automation/quality-profiles/{profileId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: number;
+            };
+            cookie?: never;
+        };
+        /** Get quality profile (admin) */
+        get: operations["getQualityProfile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update quality profile (admin) */
+        patch: operations["patchQualityProfile"];
+        trace?: never;
+    };
+    "/automation/monitors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List series monitors (admin) */
+        get: operations["listAutomationMonitors"];
+        put?: never;
+        /** Create series monitor (admin) */
+        post: operations["createAutomationMonitor"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/automation/monitors/{monitorId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                monitorId: number;
+            };
+            cookie?: never;
+        };
+        /** Get series monitor (admin) */
+        get: operations["getAutomationMonitor"];
+        put?: never;
+        post?: never;
+        /** Delete series monitor (admin) */
+        delete: operations["deleteAutomationMonitor"];
+        options?: never;
+        head?: never;
+        /** Update series monitor (admin) */
+        patch: operations["patchAutomationMonitor"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1787,6 +1846,41 @@ export interface components {
             name: string;
             spec?: string;
             isDefault?: boolean;
+        };
+        QualityProfilePatch: {
+            name?: string;
+            spec?: string;
+            isDefault?: boolean;
+        };
+        AutomationMonitor: {
+            /** Format: int64 */
+            id?: number;
+            userId?: string;
+            title?: string;
+            provider?: string;
+            externalId?: string;
+            qualityProfile?: string;
+            enabled?: boolean;
+            lastSeason?: number;
+            lastEpisode?: number;
+            /** Format: date-time */
+            lastCheckedAt?: string | null;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        AutomationMonitorInput: {
+            title: string;
+            provider?: string;
+            externalId: string;
+            qualityProfile?: string;
+            enabled?: boolean;
+        };
+        AutomationMonitorPatch: {
+            title?: string;
+            qualityProfile?: string;
+            enabled?: boolean;
         };
     };
     responses: never;
@@ -3605,6 +3699,182 @@ export interface operations {
                         /** Format: int64 */
                         id?: number;
                     };
+                };
+            };
+        };
+    };
+    getQualityProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Quality profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QualityProfile"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    patchQualityProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QualityProfilePatch"];
+            };
+        };
+        responses: {
+            /** @description Updated profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QualityProfile"];
+                };
+            };
+        };
+    };
+    listAutomationMonitors: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Monitor list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        monitors?: components["schemas"]["AutomationMonitor"][];
+                    };
+                };
+            };
+        };
+    };
+    createAutomationMonitor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AutomationMonitorInput"];
+            };
+        };
+        responses: {
+            /** @description Created monitor */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomationMonitor"];
+                };
+            };
+        };
+    };
+    getAutomationMonitor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                monitorId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Monitor row */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomationMonitor"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteAutomationMonitor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                monitorId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    patchAutomationMonitor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                monitorId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AutomationMonitorPatch"];
+            };
+        };
+        responses: {
+            /** @description Updated monitor */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomationMonitor"];
                 };
             };
         };
