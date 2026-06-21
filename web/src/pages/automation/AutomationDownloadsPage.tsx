@@ -107,7 +107,9 @@ export default function AutomationDownloadsPage(): ReactNode {
                     </Link>
                   </td>
                   <td className="py-2">
-                    {t(`downloads.status.${download.status ?? 'queued'}` as 'downloads.status.queued')}
+                    {t(
+                      `downloads.status.${download.status ?? 'queued'}` as 'downloads.status.queued',
+                    )}
                   </td>
                   <td className="py-2">{formatProgress(download.progress)}</td>
                   <td className="py-2">{download.protocol}</td>

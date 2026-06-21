@@ -48,10 +48,7 @@ export default function QualityProfilesPage(): ReactNode {
         );
         return;
       }
-      createMutation.mutate(
-        { name, spec, isDefault },
-        { onSuccess: () => void navigate(BASE) },
-      );
+      createMutation.mutate({ name, spec, isDefault }, { onSuccess: () => void navigate(BASE) });
     };
 
     return (

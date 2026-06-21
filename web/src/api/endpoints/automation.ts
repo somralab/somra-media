@@ -36,7 +36,10 @@ export function listQualityProfiles(signal?: AbortSignal): Promise<{ profiles: Q
   );
 }
 
-export function getQualityProfile(profileId: number, signal?: AbortSignal): Promise<QualityProfile> {
+export function getQualityProfile(
+  profileId: number,
+  signal?: AbortSignal,
+): Promise<QualityProfile> {
   return apiClient.fetch<QualityProfile>(
     `/automation/quality-profiles/${profileId}`,
     signal !== undefined ? { signal } : {},

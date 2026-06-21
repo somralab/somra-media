@@ -88,7 +88,11 @@ export default function AutomationMonitorsPage(): ReactNode {
                 </label>
                 <label className="block space-y-1 text-sm">
                   <span>{t('monitors.externalId')}</span>
-                  <Input value={externalId} onChange={(e) => setExternalId(e.target.value)} required />
+                  <Input
+                    value={externalId}
+                    onChange={(e) => setExternalId(e.target.value)}
+                    required
+                  />
                 </label>
               </>
             ) : null}

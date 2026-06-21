@@ -33,9 +33,7 @@ export function PluginInstancesPage({ pluginType, basePath }: PluginInstancesPag
           <Link to={basePath} className="text-sm text-primary hover:underline">
             ← {typeLabel}
           </Link>
-          <h1 className="text-2xl font-semibold">
-            {isNew ? t('plugins.add') : t('plugins.edit')}
-          </h1>
+          <h1 className="text-2xl font-semibold">{isNew ? t('plugins.add') : t('plugins.edit')}</h1>
         </header>
         <Card className="p-4">
           {instanceId > 0 && instanceQuery.isLoading ? (

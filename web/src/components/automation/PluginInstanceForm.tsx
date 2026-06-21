@@ -28,8 +28,7 @@ export function PluginInstanceForm({
   const patchMutation = usePatchPluginInstance();
 
   const implementations = useMemo(
-    () =>
-      (catalogQuery.data?.catalog ?? []).filter((entry) => entry.pluginType === pluginType),
+    () => (catalogQuery.data?.catalog ?? []).filter((entry) => entry.pluginType === pluginType),
     [catalogQuery.data, pluginType],
   );
 
@@ -37,9 +36,7 @@ export function PluginInstanceForm({
   const [implementation, setImplementation] = useState(
     instance?.implementation ?? implementations[0]?.implementation ?? '',
   );
-  const [configText, setConfigText] = useState(
-    JSON.stringify(instance?.config ?? {}, null, 2),
-  );
+  const [configText, setConfigText] = useState(JSON.stringify(instance?.config ?? {}, null, 2));
   const [enabled, setEnabled] = useState(instance?.enabled ?? true);
   const [error, setError] = useState<string | null>(null);
 
@@ -122,7 +119,7 @@ export function PluginInstanceForm({
       </label>
 
       {error ? (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-destructive text-sm" role="alert">
           {error}
         </p>
       ) : null}

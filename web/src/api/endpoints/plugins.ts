@@ -8,21 +8,28 @@ export type PluginInstancePatch = components['schemas']['PluginInstancePatch'];
 export type PluginTestResult = components['schemas']['PluginTestResult'];
 export type PluginType = components['schemas']['PluginType'];
 
-export function listPluginCatalog(signal?: AbortSignal): Promise<{ catalog: PluginCatalogEntry[] }> {
+export function listPluginCatalog(
+  signal?: AbortSignal,
+): Promise<{ catalog: PluginCatalogEntry[] }> {
   return apiClient.fetch<{ catalog: PluginCatalogEntry[] }>(
     '/plugins/catalog',
     signal !== undefined ? { signal } : {},
   );
 }
 
-export function listPluginInstances(signal?: AbortSignal): Promise<{ instances: PluginInstance[] }> {
+export function listPluginInstances(
+  signal?: AbortSignal,
+): Promise<{ instances: PluginInstance[] }> {
   return apiClient.fetch<{ instances: PluginInstance[] }>(
     '/plugins/instances',
     signal !== undefined ? { signal } : {},
   );
 }
 
-export function getPluginInstance(instanceId: number, signal?: AbortSignal): Promise<PluginInstance> {
+export function getPluginInstance(
+  instanceId: number,
+  signal?: AbortSignal,
+): Promise<PluginInstance> {
   return apiClient.fetch<PluginInstance>(
     `/plugins/instances/${instanceId}`,
     signal !== undefined ? { signal } : {},
