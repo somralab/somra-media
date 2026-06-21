@@ -358,15 +358,13 @@ func (r *AutomationRepo) UpdateQualityProfile(ctx context.Context, id int64, nam
 			return err
 		}
 	}
-	defSQL := `is_default`
-	args := []any{name, spec, id}
 	if isDefault != nil {
 		def := 0
 		if *isDefault {
 			def = 1
 		}
-		defSQL = `is_default = ?`
-		args = []any{name, spec, def, id}
+		defSQL := `is_default = ?`
+		args := []any{name, spec, def, id}
 		res, err := r.q.ExecContext(ctx, fmt.Sprintf(`
 UPDATE quality_profiles SET name = ?, spec = ?, %s, updated_at = datetime('now') WHERE id = ?`, defSQL), args...)
 		if err != nil {
