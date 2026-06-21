@@ -1,0 +1,2 @@
+# E2E media fixtures for playback tests.
+# Run: bash scripts/gen-e2e-media.sh

@@ -17,4 +17,4 @@ if ! command -v go >/dev/null 2>&1; then
   exit 2
 fi
 
-exec go run ./cmd/i18n-check "$@"
+exec go run ./cmd/i18n-check --overflow-ratio=3.5 "$@"

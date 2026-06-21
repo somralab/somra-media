@@ -75,6 +75,48 @@ export async function getAdminToken(request: APIRequestContext): Promise<string>
   return tok.accessToken;
 }
 
+/** Seeds a movie library with the generated testdata/media fixture for playback e2e. */
+export async function seedPlaybackLibrary(
+  request: APIRequestContext,
+  mediaDir: string,
+): Promise<{ libraryId: number; itemId: number }> {
+  const token = await getAdminToken(request);
+  const auth = { Authorization: `Bearer ${token}` };
+
+  const create = await request.post('/api/v1/libraries', {
+    headers: auth,
+    data: { name: 'E2E Playback', kind: 'movie', paths: [mediaDir] },
+  });
+  if (!create.ok()) {
+    throw new Error(`create library failed: ${create.status()}`);
+  }
+  const lib = (await create.json()) as { id: number };
+  const libraryId = lib.id;
+
+  const scan = await request.post(`/api/v1/libraries/${libraryId}/scan`, {
+    headers: auth,
+    data: { mode: 'full' },
+  });
+  if (!scan.ok()) {
+    throw new Error(`scan failed: ${scan.status()}`);
+  }
+
+  for (let i = 0; i < 30; i++) {
+    const items = await request.get(`/api/v1/libraries/${libraryId}/items?limit=5`, {
+      headers: auth,
+    });
+    if (items.ok()) {
+      const body = (await items.json()) as { items?: { id: number }[] };
+      const item = body.items?.[0];
+      if (item) {
+        return { libraryId, itemId: item.id };
+      }
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error('timed out waiting for scanned media item');
+}
+
 export async function ensureRegularUser(request: APIRequestContext): Promise<void> {
   const token = await getAdminToken(request);
   const users = await request.get('/api/v1/users', {

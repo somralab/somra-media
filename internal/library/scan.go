@@ -44,20 +44,22 @@ type FileProber interface {
 
 // Scanner orchestrates library file scans.
 type Scanner struct {
-	logger    *slog.Logger
-	db        *db.DB
-	prober    FileProber
-	progress  ProgressPublisher
-	hashFiles bool
+	logger        *slog.Logger
+	db            *db.DB
+	prober        FileProber
+	progress      ProgressPublisher
+	hashFiles     bool
+	progressBatch int
 }
 
 // ScannerConfig configures a Scanner.
 type ScannerConfig struct {
-	Logger    *slog.Logger
-	DB        *db.DB
-	Prober    FileProber
-	Progress  ProgressPublisher
-	HashFiles bool
+	Logger        *slog.Logger
+	DB            *db.DB
+	Prober        FileProber
+	Progress      ProgressPublisher
+	HashFiles     bool
+	ProgressBatch int
 }
 
 // NewScanner builds a Scanner.
@@ -71,12 +73,17 @@ func NewScanner(cfg ScannerConfig) *Scanner {
 	if cfg.Progress == nil {
 		cfg.Progress = NoopProgressPublisher{}
 	}
+	batch := cfg.ProgressBatch
+	if batch <= 0 {
+		batch = defaultScanProgressBatch
+	}
 	return &Scanner{
-		logger:    cfg.Logger,
-		db:        cfg.DB,
-		prober:    cfg.Prober,
-		progress:  cfg.Progress,
-		hashFiles: cfg.HashFiles,
+		logger:        cfg.Logger,
+		db:            cfg.DB,
+		prober:        cfg.Prober,
+		progress:      cfg.Progress,
+		hashFiles:     cfg.HashFiles,
+		progressBatch: batch,
 	}
 }
 
@@ -121,8 +128,21 @@ func (s *Scanner) run(ctx context.Context, libraryID int64, scanType db.ScanType
 	_ = scanRepo.UpdateProgress(ctx, runID, total, 0)
 
 	done := 0
+	lastFlush := 0
+	flushProgress := func(force bool) {
+		if !force && done-lastFlush < s.progressBatch && done != total {
+			return
+		}
+		lastFlush = done
+		_ = scanRepo.UpdateProgress(ctx, runID, total, done)
+		s.publish(ctx, ProgressEvent{
+			LibraryID: libraryID, ScanRunID: runID,
+			FilesTotal: total, FilesDone: done, Status: "running",
+		})
+	}
 	for _, path := range paths {
 		if err := ctx.Err(); err != nil {
+			flushProgress(true)
 			_ = scanRepo.Finish(ctx, runID, db.ScanCancelled, err.Error())
 			return err
 		}
@@ -134,6 +154,7 @@ func (s *Scanner) run(ctx context.Context, libraryID int64, scanType db.ScanType
 			}
 			if skip {
 				done++
+				flushProgress(false)
 				continue
 			}
 		}
@@ -142,11 +163,7 @@ func (s *Scanner) run(ctx context.Context, libraryID int64, scanType db.ScanType
 			s.logger.Warn("scan file failed", slog.String("path", path), slog.Any("error", err))
 		}
 		done++
-		_ = scanRepo.UpdateProgress(ctx, runID, total, done)
-		s.publish(ctx, ProgressEvent{
-			LibraryID: libraryID, ScanRunID: runID,
-			FilesTotal: total, FilesDone: done, Status: "running",
-		})
+		flushProgress(false)
 	}
 
 	_ = scanRepo.Finish(ctx, runID, db.ScanSucceeded, "")

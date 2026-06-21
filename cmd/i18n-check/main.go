@@ -31,6 +31,7 @@ func main() {
 	backendDir := flag.String("backend-dir", "internal/platform/i18n/locales", "directory of backend active.*.toml bundles")
 	frontendDir := flag.String("frontend-dir", "web/src/i18n/locales", "directory of frontend locale subdirectories")
 	source := flag.String("source", defaultSourceLocale, "source / fallback locale that defines the canonical key set")
+	overflowRatio := flag.Float64("overflow-ratio", 1.5, "max allowed translation length ratio vs source (0 disables)")
 	flag.Parse()
 
 	ok := true
@@ -43,6 +44,17 @@ func main() {
 	if err := checkFrontend(*frontendDir, *source); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		ok = false
+	}
+
+	if *overflowRatio > 0 {
+		if err := checkOverflow(*frontendDir, *source, "tr-TR", *overflowRatio); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			ok = false
+		}
+		if err := checkOverflowBackend(*backendDir, *source, "tr-TR", *overflowRatio); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			ok = false
+		}
 	}
 
 	if !ok {
@@ -261,4 +273,136 @@ func sortedKeys[V any](m map[string]V) []string {
 	}
 	sort.Strings(keys)
 	return keys
+}
+
+// checkOverflow flags translations whose rune length exceeds ratio × source length.
+// This approximates pseudo-locale (en-XA) overflow detection for UI layout.
+func checkOverflow(dir, source, target string, ratio float64) error {
+	srcVals, err := loadJSONLocaleValues(filepath.Join(dir, source))
+	if err != nil {
+		return fmt.Errorf("overflow frontend source: %w", err)
+	}
+	tgtVals, err := loadJSONLocaleValues(filepath.Join(dir, target))
+	if err != nil {
+		return fmt.Errorf("overflow frontend target: %w", err)
+	}
+	var problems []string
+	for key, src := range srcVals {
+		tgt, ok := tgtVals[key]
+		if !ok {
+			continue
+		}
+		srcLen := len([]rune(src))
+		tgtLen := len([]rune(tgt))
+		if srcLen == 0 {
+			continue
+		}
+		if float64(tgtLen) > ratio*float64(srcLen) {
+			problems = append(problems, fmt.Sprintf("  %s: source=%d target=%d (ratio %.2f)", key, srcLen, tgtLen, float64(tgtLen)/float64(srcLen)))
+		}
+	}
+	if len(problems) > 0 {
+		sort.Strings(problems)
+		return fmt.Errorf("frontend overflow check [%s] vs [%s] (max ratio %.1f):\n%s", target, source, ratio, strings.Join(problems, "\n"))
+	}
+	return nil
+}
+
+func checkOverflowBackend(dir, source, target string, ratio float64) error {
+	srcPath := filepath.Join(dir, "active."+source+".toml")
+	tgtPath := filepath.Join(dir, "active."+target+".toml")
+	srcVals, err := loadTOMLValues(srcPath)
+	if err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			return nil
+		}
+		return fmt.Errorf("overflow backend source: %w", err)
+	}
+	tgtVals, err := loadTOMLValues(tgtPath)
+	if err != nil {
+		return fmt.Errorf("overflow backend target: %w", err)
+	}
+	var problems []string
+	for key, src := range srcVals {
+		tgt, ok := tgtVals[key]
+		if !ok {
+			continue
+		}
+		srcLen := len([]rune(src))
+		tgtLen := len([]rune(tgt))
+		if srcLen == 0 {
+			continue
+		}
+		if float64(tgtLen) > ratio*float64(srcLen) {
+			problems = append(problems, fmt.Sprintf("  %s: source=%d target=%d", key, srcLen, tgtLen))
+		}
+	}
+	if len(problems) > 0 {
+		sort.Strings(problems)
+		return fmt.Errorf("backend overflow check [%s] vs [%s] (max ratio %.1f):\n%s", target, source, ratio, strings.Join(problems, "\n"))
+	}
+	return nil
+}
+
+func loadJSONLocaleValues(dir string) (map[string]string, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+	out := map[string]string{}
+	for _, e := range entries {
+		if e.IsDir() || !strings.HasSuffix(e.Name(), ".json") {
+			continue
+		}
+		ns := strings.TrimSuffix(e.Name(), ".json")
+		raw, err := os.ReadFile(filepath.Join(dir, e.Name()))
+		if err != nil {
+			return nil, err
+		}
+		var doc map[string]any
+		if err := json.Unmarshal(raw, &doc); err != nil {
+			return nil, err
+		}
+		flattenValues(doc, ns, out)
+	}
+	return out, nil
+}
+
+func flattenValues(in any, prefix string, out map[string]string) {
+	switch v := in.(type) {
+	case map[string]any:
+		for k, child := range v {
+			next := prefix
+			if next == "" {
+				next = k
+			} else {
+				next = next + "." + k
+			}
+			flattenValues(child, next, out)
+		}
+	case string:
+		out[prefix] = v
+	default:
+		out[prefix] = fmt.Sprint(v)
+	}
+}
+
+func loadTOMLValues(path string) (map[string]string, error) {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var doc map[string]any
+	if err := toml.Unmarshal(raw, &doc); err != nil {
+		return nil, err
+	}
+	out := map[string]string{}
+	for id, val := range doc {
+		if m, ok := val.(map[string]any); ok {
+			if other, ok := m["other"].(string); ok {
+				out[id] = other
+			}
+		}
+	}
+	return out, nil
 }

@@ -14,6 +14,16 @@ func TestValidateRootPath_RejectsTraversal(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestValidateRootPath_RejectsDotDotSegment(t *testing.T) {
+	_, err := ValidateRootPath("foo/../bar")
+	assert.Error(t, err)
+}
+
+func TestValidateRootPath_RejectsEmpty(t *testing.T) {
+	_, err := ValidateRootPath("   ")
+	assert.Error(t, err)
+}
+
 func TestValidateRootPath_AcceptsDirectory(t *testing.T) {
 	dir := t.TempDir()
 	got, err := ValidateRootPath(dir)

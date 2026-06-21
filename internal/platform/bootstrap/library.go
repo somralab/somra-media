@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/somralab/somra-media/internal/api"
@@ -24,10 +25,11 @@ type LibraryBundle struct {
 func WireLibrary(c *Components) *LibraryBundle {
 	bus := api.NewEventBus()
 	scanner := library.NewScanner(library.ScannerConfig{
-		Logger:   c.Logger,
-		DB:       c.DB,
-		Prober:   library.NewProber(""),
-		Progress: api.ScanProgressPublisher{Bus: bus},
+		Logger:        c.Logger,
+		DB:            c.DB,
+		Prober:        library.NewProber(""),
+		Progress:      api.ScanProgressPublisher{Bus: bus},
+		ProgressBatch: library.ScanProgressBatchFromEnv(),
 	})
 	svc := library.NewService(library.ServiceConfig{
 		Logger:  c.Logger,
@@ -46,10 +48,14 @@ func WireLibrary(c *Components) *LibraryBundle {
 		reg.Register(metadata.TestProvider{})
 	}
 
+	metaInterval := 250 * time.Millisecond
+	if runtime.NumCPU() <= 4 {
+		metaInterval = 500 * time.Millisecond
+	}
 	metaSvc := &metadata.Service{
 		DB:       &metadata.DBStore{DB: c.DB},
 		Registry: reg,
-		Matcher:  &metadata.Matcher{Registry: reg, Limiter: metadata.NewRateLimiter(250 * time.Millisecond)},
+		Matcher:  &metadata.Matcher{Registry: reg, Limiter: metadata.NewRateLimiter(metaInterval)},
 	}
 
 	_, _ = c.Scheduler.Schedule("0 0 3 * * *", "metadata-refresh", metadataRefreshJob(c.Logger, svc, metaSvc))

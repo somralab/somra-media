@@ -1,0 +1,58 @@
+# Somra — production docker-compose example.
+#
+# Prerequisites:
+#   cp deploy/.env.production.example deploy/.env.production
+#   edit deploy/.env.production — set SOMRA_JWT_SECRET (≥32 chars)
+#   mkdir -p deploy/data deploy/cache deploy/media
+#
+# Start:
+#   docker compose -f deploy/docker-compose.production.yml up -d
+#
+# One-line equivalent (after editing secrets):
+#   docker run -d --name somra -p 8080:8080 \
+#     -e SOMRA_JWT_SECRET='replace-with-32-plus-character-secret' \
+#     -v $(pwd)/deploy/data:/data \
+#     -v $(pwd)/deploy/cache:/cache \
+#     -v $(pwd)/deploy/media:/media:ro \
+#     ghcr.io/somralab/somra-media:1.0.0
+#
+# Backup/restore: docs/backup-restore.md
+# TLS / CORS: docs/deployment-security.md
+
+services:
+  somra:
+    image: ghcr.io/somralab/somra-media:1.0.0
+    container_name: somra
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    ports:
+      - "8080:8080"
+    environment:
+      SOMRA_HTTP_ADDR: ":8080"
+      SOMRA_DATA_DIR: /data
+      SOMRA_CACHE_DIR: /cache
+      SOMRA_WEB_DIR: /web/static
+      SOMRA_LOG_LEVEL: info
+      SOMRA_LOG_FORMAT: json
+      SOMRA_AUTH_SECURE_COOKIE: "false"
+    volumes:
+      - ./data:/data
+      - ./cache:/cache
+      - ./media:/media:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: 8G
+        reservations:
+          cpus: "1.0"
+          memory: 2G
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "curl -fsS --max-time 4 http://127.0.0.1:8080/api/v1/health || exit 1"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s

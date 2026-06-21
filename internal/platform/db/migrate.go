@@ -145,19 +145,60 @@ func IntegrityCheck(ctx context.Context, d *DB) (string, error) {
 // the highest goose version present. It uses goose's own helpers so any
 // future naming-rule changes upstream are reflected automatically.
 func latestEmbeddedVersion() (int64, error) {
+	versions, err := ListEmbeddedVersions()
+	if err != nil {
+		return 0, err
+	}
+	if len(versions) == 0 {
+		return 0, fmt.Errorf("read embedded migrations: no migrations found")
+	}
+	return versions[len(versions)-1], nil
+}
+
+// ListEmbeddedVersions returns sorted goose version numbers from the
+// embedded migration FS. Callers use this for upgrade tests that stop at
+// the penultimate schema revision.
+func ListEmbeddedVersions() ([]int64, error) {
 	entries, err := migrations.FS.ReadDir(".")
 	if err != nil {
-		return 0, fmt.Errorf("read embedded migrations: %w", err)
+		return nil, fmt.Errorf("read embedded migrations: %w", err)
 	}
-	var max int64
+	var versions []int64
 	for _, e := range entries {
 		v, err := goose.NumericComponent(e.Name())
 		if err != nil {
-			return 0, fmt.Errorf("parse migration name %q: %w", e.Name(), err)
+			return nil, fmt.Errorf("parse migration name %q: %w", e.Name(), err)
 		}
-		if v > max {
-			max = v
+		versions = append(versions, v)
+	}
+	sortVersions(versions)
+	return versions, nil
+}
+
+func sortVersions(v []int64) {
+	for i := 0; i < len(v); i++ {
+		for j := i + 1; j < len(v); j++ {
+			if v[j] < v[i] {
+				v[i], v[j] = v[j], v[i]
+			}
 		}
 	}
-	return max, nil
+}
+
+// MigrateUpTo applies embedded migrations through version inclusive. When
+// version is zero, no migrations run. When version is already applied,
+// goose returns without error.
+func MigrateUpTo(ctx context.Context, d *DB, version int64, logger *slog.Logger) error {
+	if d == nil || d.sqlDB == nil {
+		return fmt.Errorf("db migrate: nil database handle")
+	}
+	if err := configureGoose(logger); err != nil {
+		return err
+	}
+	gooseMu.Lock()
+	defer gooseMu.Unlock()
+	if err := goose.UpToContext(ctx, d.sqlDB, ".", version); err != nil {
+		return fmt.Errorf("db migrate up to %d: %w", version, err)
+	}
+	return nil
 }

@@ -35,7 +35,8 @@ ACQ_TAGS      := -tags acquisition
 .PHONY: help dev dev-backend dev-frontend build build-go build-acquisition build-web \
         test test-go test-acquisition test-web lint lint-go lint-web \
         migrate coverage coverage-go coverage-web coverage-gate \
-        i18n-check docker docker-acquisition docker-multiarch openapi-types e2e clean
+        i18n-check docker docker-acquisition docker-multiarch openapi-types docs-api e2e \
+        profile bundle-check soak-test clean
 
 ## help: show this list
 help:
@@ -141,6 +142,10 @@ coverage-gate: coverage
 i18n-check:
 	bash scripts/i18n-check.sh
 
+## e2e-fixture: generate playback test media via ffmpeg
+e2e-fixture:
+	bash scripts/gen-e2e-media.sh
+
 ## docker: build the container image for the local architecture (core)
 docker:
 	docker buildx build \
@@ -179,10 +184,26 @@ docker-multiarch:
 openapi-types:
 	bash scripts/gen-openapi-types.sh
 
-## e2e: install playwright browsers and run the Sprint 01 smoke spec
-e2e:
+## docs-api: generate static Redoc HTML from the OpenAPI spec
+docs-api:
+	bash scripts/gen-api-docs.sh
+
+## e2e: install playwright browsers and run e2e specs
+e2e: e2e-fixture build-web
 	$(PNPM) --dir $(WEB_DIR) exec playwright install --with-deps chromium
 	$(PNPM) --dir $(WEB_DIR) exec playwright test
+
+## profile: capture Go CPU/memory profiles for hot packages (Sprint 10 A1)
+profile:
+	bash scripts/profile.sh
+
+## bundle-check: enforce frontend gzip bundle budget after build-web (Sprint 10 C1)
+bundle-check: build-web
+	bash scripts/bundle-budget.sh
+
+## soak-test: run shortened server soak against local binary (Sprint 10 D1)
+soak-test: build-go
+	bash scripts/soak-test.sh
 
 ## clean: remove build/test artefacts
 clean:

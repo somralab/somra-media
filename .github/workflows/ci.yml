@@ -71,9 +71,36 @@ jobs:
       - name: locale parity
         run: bash scripts/i18n-check.sh
 
+  sca:
+    name: sca
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.4.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+      - name: govulncheck
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+      - name: pnpm install
+        run: pnpm --dir web install --frozen-lockfile
+      - name: pnpm audit (critical)
+        run: pnpm --dir web audit --audit-level=critical
+
   unit-test:
     name: unit-test
-    needs: i18n-check
+    needs: [i18n-check, sca]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -204,6 +231,9 @@ jobs:
         id: pw-install
         continue-on-error: true
         run: pnpm --dir web exec playwright install --with-deps chromium
+      - name: generate e2e media fixture
+        if: steps.pw-install.outcome == 'success'
+        run: bash scripts/gen-e2e-media.sh
       - name: run e2e tests
         if: steps.pw-install.outcome == 'success'
         env:
@@ -250,6 +280,8 @@ jobs:
             type=raw,value=dev,enable={{is_default_branch}}
             type=sha,prefix=sha-
             type=ref,event=tag
+            type=semver,pattern={{version}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-') }}
             type=ref,event=pr
       - name: build (PR — single arch, no push)
         if: github.event_name == 'pull_request'

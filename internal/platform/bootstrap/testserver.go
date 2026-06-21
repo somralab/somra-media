@@ -15,6 +15,7 @@ import (
 	"github.com/somralab/somra-media/internal/api"
 	"github.com/somralab/somra-media/internal/platform/config"
 	"github.com/somralab/somra-media/internal/platform/db"
+	"github.com/somralab/somra-media/internal/platform/diagnostics"
 	i18npkg "github.com/somralab/somra-media/internal/platform/i18n"
 	"github.com/somralab/somra-media/internal/settings"
 )
@@ -58,6 +59,11 @@ func NewTestServer(t *testing.T) *TestServer {
 	subtitlesBundle := WireSubtitles(c, cfg, settingsBundle.Settings, c.Logger)
 	pluginsBundle, err := WirePlugins(c, cfg.Auth.JWTSecret)
 	require.NoError(t, err)
+	if streamBundle != nil && streamBundle.Service != nil {
+		c.Diagnostics.Register(diagnostics.NewDiskSpaceProvider(cfg.Data.Dir))
+		c.Diagnostics.Register(diagnostics.NewFFmpegProvider(cfg.Streaming.FFmpegBin, cfg.Streaming.FFprobeBin))
+		c.Diagnostics.Register(diagnostics.NewTranscodeProvider(streamBundle.Service.Metrics()))
+	}
 
 	localeFn := func(r *http.Request) string {
 		if loc, ok := api.AcceptLanguageFromContext(r.Context()); ok && loc != "" {

@@ -1,0 +1,37 @@
+[changelog]
+header = "# Changelog\n"
+trim = true
+
+[git]
+conventional_commits = true
+filter_commits = false
+
+[templates]
+body = """
+{% if version -%}
+## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else -%}
+## [Unreleased]
+{% endif -%}
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | upper_first }}
+{% for commit in commits -%}
+- {% if commit.scope %}**{{ commit.scope }}:** {% endif %}{{ commit.message | upper_first }} ({{ commit.id | truncate(length=7, end="") }})
+{% endfor %}
+{% endfor %}
+"""
+
+[commit_parsers]
+{ message = "^feat", group = "Features" },
+{ message = "^fix", group = "Bug Fixes" },
+{ message = "^perf", group = "Performance" },
+{ message = "^docs", group = "Documentation" },
+{ message = "^refactor", group = "Refactoring" },
+{ message = "^test", group = "Testing" },
+{ message = "^build", group = "Build" },
+{ message = "^ci", group = "CI" },
+{ message = "^chore", group = "Chore" },
+
+[bump]
+features_always_bump_minor = true
+breaking_always_bump_major = true
