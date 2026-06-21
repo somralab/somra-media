@@ -1,12 +1,12 @@
 ---
-description: Somra branch adlandırma ve commit kuralları (Conventional Commits + DCO)
+description: Branch naming and commit rules (Conventional Commits + DCO)
 alwaysApply: true
 ---
 
-# Branch & Commit Kuralları
+# Branch & Commit Rules
 
-## Branch adlandırma
-Biçim: `<type>/<kısa-açıklama-kebab>` (gerekirse issue/sprint eki).
+## Branch naming
+Format: `<type>/<short-description-kebab>` (append issue/sprint if needed).
 
 ```
 feat/library-scan
@@ -14,27 +14,27 @@ fix/transcode-session-leak
 chore/ci-coverage-gate
 docs/i18n-guide
 ```
-- `main` korumalı; doğrudan push yok, force-push yok.
-- Tip seti: `feat`, `fix`, `chore`, `refactor`, `test`, `docs`, `perf`, `build`, `ci`.
+- `main` is protected; no direct pushes, no force-pushes.
+- Type set: `feat`, `fix`, `chore`, `refactor`, `test`, `docs`, `perf`, `build`, `ci`.
 
-## Commit mesajları (Conventional Commits)
-Biçim: `<type>(<scope>): <konu>` — İngilizce, emir kipi, küçük harf, nokta yok.
+## Commit messages (Conventional Commits)
+Format: `<type>(<scope>): <subject>` — English, imperative mood, lowercase, no period.
 
 ```
 feat(library): add incremental scan with fs watcher
 fix(auth): revoke refresh token on logout
 test(streaming): cover transcode decision engine
 ```
-- Küçük, odaklı commit. Konu satırı ≤ ~72 karakter; "neden"i gövdede açıkla.
+- Small, focused commits. Subject line ≤ ~72 chars; explain the "why" in the body.
 
-## DCO sign-off (zorunlu)
-Her commit imzalı olmalı (CLA yok, DCO var):
+## DCO sign-off (required)
+Every commit must be signed (no CLA, DCO only):
 
 ```bash
 git commit -s -m "feat(metadata): add tmdb provider"
 ```
-- `-s`, `Signed-off-by:` satırını ekler. İmzasız commit CI'da reddedilir.
+- `-s` adds the `Signed-off-by:` line. Unsigned commits are rejected in CI.
 
-## Genel
-- Sırları/`.env` benzeri kimlik dosyalarını **commit etme**.
-- Hooks'u atlama (`--no-verify` vb.) yok; `git config` değiştirme.
+## General
+- Do **not commit** secrets / `.env`-like credential files.
+- No bypassing hooks (`--no-verify` etc.); do not modify `git config`.

@@ -1,20 +1,20 @@
 ---
-description: Somra kod yazma standartları (Go + React/TS, i18n, test/coverage)
+description: Code writing standards (Go + React/TS, i18n, test/coverage)
 alwaysApply: true
 ---
 
-# Kod Yazma Standartları
+# Code Writing Standards
 
-Kaynak kod, yorum ve commit mesajları **İngilizce**. Detay: [`AGENTS.md`](../../AGENTS.md),
+Source code, comments and commit messages must be **English**. See: [`AGENTS.md`](../../AGENTS.md),
 [`.plan/definition-of-done.md`](../../.plan/definition-of-done.md), [`.plan/tech-stack.md`](../../.plan/tech-stack.md).
 
-## Genel
-- Kararlı teknolojiyi değiştirme (chi, modernc.org/sqlite, goose, TanStack Query, Tailwind...). Değişiklik = Tech Lead onayı + doküman güncellemesi.
-- Modül sınırlarına uy ([`.plan/architecture.md`](../../.plan/architecture.md) §3). Build CGO'suz kalmalı.
-- Yorum yalnızca niyet/ödünleşim/kısıt açıklar; ne yaptığını anlatan yorum yazma.
+## General
+- Do not change established technology (chi, modernc.org/sqlite, goose, TanStack Query, Tailwind...). Changes require Tech Lead approval + doc update.
+- Respect module boundaries ([`.plan/architecture.md`](../../.plan/architecture.md) §3). Build must remain CGO-free.
+- Comments explain only intent/tradeoffs/constraints; do not write comments that describe what the code does.
 
 ## Go
-- `gofmt`/`goimports` + `golangci-lint` temiz. Hataları `%w` ile sarmala, `context.Context` taşı, global durumdan kaçın.
+- Must pass `gofmt`/`goimports` + `golangci-lint`. Wrap errors with `%w`, pass `context.Context`, avoid global state.
 
 ```go
 // ❌ BAD
@@ -24,17 +24,17 @@ if err != nil { return fmt.Errorf("scan library %q: %w", lib.ID, err) }
 ```
 
 ## React / TypeScript
-- `strict` mod, tipli API katmanı (OpenAPI'den üretilir), bileşen/hook ayrımı, erişilebilirlik. ESLint + Prettier temiz.
+- `strict` mode, typed API layer (generated from OpenAPI), component/hook separation, accessibility. Must pass ESLint + Prettier.
 
-## i18n (bağlayıcı)
-- Kullanıcıya görünen metin **asla** hardcoded olmaz; `domain.context.key` ile çözülür. Her özellik `en-US` + `tr-TR` ile gelir.
+## i18n (mandatory)
+- User-facing text is **never** hardcoded; resolve via `domain.context.key`. Every feature ships with `en-US` + `tr-TR`.
 
 ```tsx
 // ❌ BAD
-<button>Kaydet</button>
+<button>Save</button>
 // ✅ GOOD
 <button>{t('common.actions.save')}</button>
 ```
 
 ## Test & coverage
-- İş mantığı için birim test zorunlu. Eşikler: çekirdek ≥%80, kritik modüller ≥%90, frontend bileşen ≥%70, kritik akışlarda e2e. Bitirmeden `make lint test i18n-check coverage` yeşil olmalı.
+- Unit tests required for business logic. Thresholds: core ≥80%, critical modules ≥90%, frontend components ≥70%, e2e for critical flows. `make lint test i18n-check coverage` must pass green before finishing.
