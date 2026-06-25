@@ -12,8 +12,8 @@ Related: `[project-brief.md](./project-brief.md)` · `[roadmap.md](./roadmap.md)
 | Field | Value |
 |---|---|
 | **Sprint** | **10 — Polish & Open Source** |
-| **Status** | **In progress** (Sprints 01–09 complete) |
-| **Milestone target** | **M6** — performance, docs, security audit, OSS 1.0 release |
+| **Status** | **Planned** (Sprints 01–09 complete) |
+| **Milestone target** | **M6** — polish, security audit prep, open-source release |
 | **Folder** | [`sprint-10-polish-oss-release/`](./sprint-10-polish-oss-release/) |
 | **Dependencies** | Sprint 09 automation (done) · [`definition-of-done.md`](./definition-of-done.md) §1 |
 
@@ -46,7 +46,7 @@ When the active sprint changes, update this section only — details stay in [`r
 | 07 | Hardware Acceleration | M4 | **Done** |
 | 08 | Request Management | M5 (partial) | **Done** |
 | 09 | Automation & Indexers | M5 | **Done** |
-| 10 | Polish & Open Source | M6 | **In progress** ← active |
+| 10 | Polish & Open Source | M6 | **Planned** ← active |
 
 ---
 
@@ -97,8 +97,8 @@ Full definitions: `[roadmap.md](./roadmap.md)` §3.
 | **M2** | 02–03 | Login + scanned library with metadata | **Done** |
 | **M3** | 04–05 | Browser playback incl. transcode — first alpha | **Done** |
 | **M4** | 06–07 | Zero-config setup + HW acceleration — beta candidate | **Done** |
-| **M5** | 08–09 | Requests + automation + indexers | **Done** |
-| **M6** | 10 | OSS release — 1.0 | **In progress** ← active |
+| **M5** | 08–09 | Requests + automation + indexers | **In progress** (Sprint 09 active) |
+| **M6** | 10 | OSS release — 1.0 | Planned |
 
 
 ---
