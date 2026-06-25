@@ -95,6 +95,27 @@ func TestPinnedClient_BlocksLocalhostHostname(t *testing.T) {
 	require.Error(t, err)
 }
 
+func TestPinnedClient_BlocksMetadataIP(t *testing.T) {
+	c, err := NewPinnedClient("http://example.com", 0)
+	require.NoError(t, err)
+	_, err = c.Get(context.Background(), "http://169.254.169.254/latest/meta-data/", nil)
+	require.Error(t, err)
+}
+
+func TestPinnedClient_BlocksPrivateRFC1918(t *testing.T) {
+	c, err := NewPinnedClient("http://example.com", 0)
+	require.NoError(t, err)
+	_, err = c.Get(context.Background(), "http://10.0.0.1/", nil)
+	require.Error(t, err)
+}
+
+func TestPinnedClient_BlocksFileScheme(t *testing.T) {
+	c, err := NewPinnedClient("http://example.com", 0)
+	require.NoError(t, err)
+	_, err = c.Get(context.Background(), "file:///etc/passwd", nil)
+	require.Error(t, err)
+}
+
 func TestPinnedClient_RedirectSchemeMismatch(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "https://"+r.Host+r.URL.Path, http.StatusFound)

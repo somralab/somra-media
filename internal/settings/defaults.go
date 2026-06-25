@@ -35,7 +35,10 @@ func RecommendDefaultsWithProfile(cpuCores int, locale string, profile SystemPro
 	if profile.RecommendedAccelerator != "" {
 		def.HWMode = HWModeAuto
 		def.RecommendedAccelerator = profile.RecommendedAccelerator
-		def.MaxHWTranscodes = 2
+		def.MaxHWTranscodes = 1
+		if cpuCores >= 6 {
+			def.MaxHWTranscodes = 2
+		}
 		if cpuCores >= 8 {
 			def.MaxHWTranscodes = 3
 		}

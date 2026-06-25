@@ -18,6 +18,7 @@ import (
 	"github.com/somralab/somra-media/internal/platform/bootstrap"
 	"github.com/somralab/somra-media/internal/platform/config"
 	"github.com/somralab/somra-media/internal/platform/db"
+	"github.com/somralab/somra-media/internal/platform/diagnostics"
 	i18npkg "github.com/somralab/somra-media/internal/platform/i18n"
 	platformlog "github.com/somralab/somra-media/internal/platform/log"
 	"github.com/somralab/somra-media/internal/settings"
@@ -92,6 +93,11 @@ func run() error {
 	}
 	settingsBundle := bootstrap.WireSettings(components, authBundle.Service)
 	streamBundle := bootstrap.WireStreaming(components, cfg, logger)
+	if streamBundle != nil && streamBundle.Service != nil {
+		components.Diagnostics.Register(diagnostics.NewDiskSpaceProvider(cfg.Data.Dir))
+		components.Diagnostics.Register(diagnostics.NewFFmpegProvider(cfg.Streaming.FFmpegBin, cfg.Streaming.FFprobeBin))
+		components.Diagnostics.Register(diagnostics.NewTranscodeProvider(streamBundle.Service.Metrics()))
+	}
 	subtitlesBundle := bootstrap.WireSubtitles(components, cfg, settingsBundle.Settings, logger)
 
 	pluginsBundle, err := bootstrap.WirePlugins(components, cfg.Auth.JWTSecret)

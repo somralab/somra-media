@@ -1,0 +1,44 @@
+# deploy/weblate/docker-compose.yml — self-hosted Weblate MVP for Somra translations.
+#
+# Quick start:
+#   cd deploy/weblate && cp .env.example .env && docker compose up -d
+# See docs/developer/translating.md for git sync workflow.
+
+services:
+  weblate:
+    image: weblate/weblate:latest
+    container_name: somra-weblate
+    restart: unless-stopped
+    depends_on:
+      - weblate-db
+      - weblate-redis
+    ports:
+      - "${WEBLATE_HTTP_PORT:-8081}:8080"
+    environment:
+      WEBLATE_SITE_DOMAIN: ${WEBLATE_SITE_DOMAIN:-localhost:8081}
+      WEBLATE_ADMIN_PASSWORD: ${WEBLATE_ADMIN_PASSWORD:-admin}
+      POSTGRES_PASSWORD: ${WEBLATE_DB_PASSWORD:-weblate}
+      POSTGRES_USER: weblate
+      POSTGRES_DB: weblate
+      POSTGRES_HOST: weblate-db
+      REDIS_HOST: weblate-redis
+    volumes:
+      - weblate-data:/app/data
+
+  weblate-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${WEBLATE_DB_PASSWORD:-weblate}
+      POSTGRES_USER: weblate
+      POSTGRES_DB: weblate
+    volumes:
+      - weblate-db:/var/lib/postgresql/data
+
+  weblate-redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+volumes:
+  weblate-data:
+  weblate-db:

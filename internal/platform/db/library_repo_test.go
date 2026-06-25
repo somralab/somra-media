@@ -207,12 +207,13 @@ func TestMediaRepo_UpsertArtworkReplace(t *testing.T) {
 	require.NoError(t, mediaRepo.UpsertArtwork(ctx, itemID, "poster", "https://example.com/b.jpg", "/local/b.jpg"))
 }
 
-func openTestDB(t *testing.T) *DB {
-	t.Helper()
+func openTestDB(tb testing.TB) *DB {
+	tb.Helper()
 	cfg := Default()
-	cfg.DataDir = t.TempDir()
+	cfg.DataDir = tb.TempDir()
 	ctx := context.Background()
 	d, err := Initialize(ctx, cfg, nil)
-	require.NoError(t, err)
+	require.NoError(tb, err)
+	tb.Cleanup(func() { _ = d.Close() })
 	return d
 }

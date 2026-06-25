@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"context"
 	"fmt"
+	"runtime"
 
 	"github.com/somralab/somra-media/internal/api"
 	"github.com/somralab/somra-media/internal/automation/download"
@@ -83,10 +84,14 @@ func scheduleAutomationJobs(c *Components, processor *worker.Processor, monitor 
 	if c == nil || c.Scheduler == nil {
 		return
 	}
-	_, _ = c.Scheduler.Schedule("0 */1 * * * *", "automation-handoff", jobs.JobFunc(func(ctx context.Context) error {
+	pollCron := "0 */1 * * * *"
+	if runtime.NumCPU() <= 4 {
+		pollCron = "0 */2 * * * *"
+	}
+	_, _ = c.Scheduler.Schedule(pollCron, "automation-handoff", jobs.JobFunc(func(ctx context.Context) error {
 		return processor.ProcessPending(ctx)
 	}))
-	_, _ = c.Scheduler.Schedule("0 */1 * * * *", "automation-download-monitor", jobs.JobFunc(func(ctx context.Context) error {
+	_, _ = c.Scheduler.Schedule(pollCron, "automation-download-monitor", jobs.JobFunc(func(ctx context.Context) error {
 		return monitor.Poll(ctx)
 	}))
 	if seriesScanner != nil {

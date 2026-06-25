@@ -68,19 +68,37 @@ Every sprint-task issue must reference a `.plan/` file path and epic/task ID (e.
 - Follow the PR template (see the repository PR template / the
   [`pr-and-code-review`](./.cursor/rules/pr-and-code-review.mdc) cursor rule).
 - All CI gates must be green:
-  `lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build`.
+  `lint → i18n-check → sca → unit-test → integration-test → coverage-gate → build → e2e → image-build`.
 - The Definition of Done lives at
   [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) §1.
+
+## Architecture & module boundaries
+
+Before changing backend packages or cross-cutting behaviour, read:
+
+- [`docs/developer/architecture.md`](./docs/developer/architecture.md) — contributor summary
+- [`.plan/architecture.md`](./.plan/architecture.md) — authoritative module map (update here first)
+- [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) — binding completion criteria
+
+Acquisition/indexer work must follow [`docs/developer/plugin-development.md`](./docs/developer/plugin-development.md).
+Translation contributions: [`docs/developer/translating.md`](./docs/developer/translating.md).
 
 ## Code style & tests
 
 - See [`AGENTS.md`](./AGENTS.md) for code style and testing requirements
   (Go and TypeScript/React).
+- Architecture overview: [`docs/developer/architecture.md`](./docs/developer/architecture.md).
 - Business logic requires unit tests; coverage thresholds are enforced
   by CI (core ≥ 80 %, critical modules ≥ 90 %, frontend components
   ≥ 70 %).
 - Every feature ships its `en-US` **and** `tr-TR` translation keys —
   otherwise it is not "Done".
+
+## Code of conduct
+
+This project follows the [Contributor Covenant](./CODE_OF_CONDUCT.md). By participating
+you agree to uphold it. Report concerns to **conduct@somralab.org** or repository
+maintainers via GitHub.
 
 ## License
 

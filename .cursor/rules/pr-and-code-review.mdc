@@ -1,41 +1,41 @@
 ---
-description: Somra PR açma ve code review standartları
+description: PR creation and code review standards
 alwaysApply: true
 ---
 
 # PR & Code Review
 
-## PR açarken
-- **Küçük ve odaklı** tut (tek mantıksal değişiklik). Büyük işi parçala.
-- Açıklamada ilgili görevi ve **kabul kriterini** referansla ([`.plan/`](../../.plan/) sprint dosyaları).
-- Şablon:
+## Opening a PR
+- Keep it **small and focused** (one logical change). Break up large work.
+- Reference the relevant task and **acceptance criteria** in the description ([`.plan/`](../../.plan/) sprint files).
+- Template:
 
 ```md
-## Ne / Neden
-<değişiklik ve gerekçe>
+## What / Why
+<change and rationale>
 
-## İlgili görev
-.plan/sprint-XX-.../NN-...-tasks.md → <epik/görev>
+## Related task
+.plan/sprint-XX-.../NN-...-tasks.md → <epic/task>
 
-## Test
-<unit/integration/e2e + coverage notu>
+## Testing
+<unit/integration/e2e + coverage note>
 
-## Kontrol
-- [ ] DoD karşılandı  - [ ] i18n (en-US + tr-TR)  - [ ] CI yeşil
+## Checklist
+- [ ] DoD met  - [ ] i18n (en-US + tr-TR)  - [ ] CI green
 ```
 
-## Birleştirme (merge) ön koşulları
-- Tüm CI kapıları yeşil: `lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build`.
-- En az **1 onay**; mimariyi etkileyen değişiklikte **Tech Lead onayı** zorunlu.
-- [`.plan/definition-of-done.md`](../../.plan/definition-of-done.md) §1 karşılanmış olmalı.
+## Merge prerequisites
+- All CI gates green: `lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build`.
+- At least **1 approval**; changes affecting architecture require **Tech Lead approval**.
+- [`.plan/definition-of-done.md`](../../.plan/definition-of-done.md) §1 must be satisfied.
 
-## Reviewer kontrol listesi
-- Kapsam: değişiklik brief'e/sprint hedefine uygun mu? (kapsam dışına çıkmıyor mu — [`.plan/project-brief.md`](../../.plan/project-brief.md) §7)
-- Doğruluk + test yeterliliği (eşikler: çekirdek ≥%80, kritik ≥%90).
-- i18n: hardcoded metin yok, iki dil tam.
-- Güvenlik: girdi doğrulama, yetki kontrolü, sır sızıntısı yok, path traversal/SSRF.
-- Kod stili ([`code-standards.mdc`](./code-standards.mdc)) ve modül sınırları.
+## Reviewer checklist
+- Scope: does the change match the brief/sprint goal? (no scope creep — [`.plan/project-brief.md`](../../.plan/project-brief.md) §7)
+- Correctness + test adequacy (thresholds: core ≥80%, critical ≥90%).
+- i18n: no hardcoded text, both locales complete.
+- Security: input validation, authorization, no secret leakage, no path traversal/SSRF.
+- Code style ([`code-standards.mdc`](./code-standards.mdc)) and module boundaries.
 
-## Davranış
-- Yapıcı, somut geri bildirim; "nit:" ile küçük öneriyi işaretle.
-- Reddedilen/başarısız CI'da **amend değil yeni commit**; review sonrası zorla geçme yok.
+## Etiquette
+- Constructive, concrete feedback; prefix minor suggestions with "nit:".
+- On rejected/failed CI, add a **new commit** (no amend); no force-push after review.

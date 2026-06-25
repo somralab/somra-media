@@ -55,11 +55,7 @@ func New(logger *slog.Logger) (*Components, error) {
 	}
 
 	sched := jobs.New(logger)
-	queue := jobs.NewMemoryQueue(jobs.MemoryQueueConfig{
-		Workers: 2,
-		Buffer:  16,
-		Logger:  logger,
-	})
+	queue := jobs.NewMemoryQueue(jobs.MemoryQueueConfigFromEnv(logger))
 	heartbeat := jobs.NewHeartbeat(logger)
 
 	registry := diagnostics.NewRegistry()
