@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -83,15 +84,24 @@ func (c Config) Path() (string, error) {
 	return abs, nil
 }
 
-// DSN returns the connection string passed to the modernc.org/sqlite driver.
-// PRAGMAs are intentionally not encoded in the DSN because we apply them
-// explicitly in Open so misconfiguration surfaces as a clear error.
+// DSN returns the connection string passed to the modernc.org/sqlite driver:
+// a file: URI carrying the PRAGMAs as `_pragma` parameters so the driver
+// applies them on every pooled connection. The path is percent-encoded
+// because SQLite parses it as a URI; a raw '#', '?' or '%' in the data dir
+// would otherwise truncate the path or fail to open.
 func (c Config) DSN() (string, error) {
 	p, err := c.Path()
 	if err != nil {
 		return "", err
 	}
-	return "file:" + p, nil
+	p = filepath.ToSlash(p)
+	if !strings.HasPrefix(p, "/") {
+		// Windows drive paths need a leading slash: file:///C:/data/somra.db.
+		p = "/" + p
+	}
+	q := url.Values{"_pragma": pragmas}
+	u := url.URL{Scheme: "file", Path: p, RawQuery: q.Encode()}
+	return u.String(), nil
 }
 
 // EnsureDataDir creates the data directory if it does not already exist.
