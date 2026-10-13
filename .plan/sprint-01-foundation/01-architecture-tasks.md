@@ -1,7 +1,7 @@
 # Sprint 01 — Architecture Tasks
 
 > **Sprint goal:** A running skeleton service, clear module boundaries, API contract, and
-> CI/CD foundation. By the end of this sprint, `docker run` yields an empty but running Somra core (M1).
+> local quality gates. By the end of this sprint, `docker run` yields an empty but running Somra core (M1).
 >
 > **Related:** [`../project-brief.md`](../project-brief.md) · [`../architecture.md`](../architecture.md) · [`../tech-stack.md`](../tech-stack.md) · [`../definition-of-done.md`](../definition-of-done.md) · [`../i18n-localization.md`](../i18n-localization.md)
 

@@ -13,9 +13,7 @@
 #     platform/i18n, platform/diagnostics)
 #   - Frontend statements                 >= 70
 #
-# Emits a human-readable summary and, when running under GitHub Actions,
-# appends the same summary to $GITHUB_STEP_SUMMARY. Exits non-zero when any
-# threshold is unmet.
+# Emits a human-readable summary. Exits non-zero when any threshold is unmet.
 
 set -euo pipefail
 
@@ -49,16 +47,8 @@ EXCLUDED_PACKAGES=(
   "github.com/somralab/somra-media/internal/automation/automationtest"
 )
 
-summary_file=""
-if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
-  summary_file="$GITHUB_STEP_SUMMARY"
-fi
-
 emit() {
   printf '%s\n' "$1"
-  if [[ -n "$summary_file" ]]; then
-    printf '%s\n' "$1" >> "$summary_file"
-  fi
 }
 
 failed=0
@@ -80,46 +70,23 @@ check_go() {
   emit "| Package | Coverage | Threshold | Status |"
   emit "|---|---|---|---|"
 
-  # Per-package coverage from go tool cover -func. The "total:" line at the
-  # end is the aggregate; per-file lines come before it and we aggregate
-  # them back to package level by stripping the file suffix.
-  local func_out
-  func_out=$(go tool cover -func="$GO_COVER")
-
-  declare -A pkg_covered=()
-  declare -A pkg_total=()
-
-  # go tool cover -func prints lines like:
-  #   github.com/x/y/file.go:12:  Func    50.0%
-  # We need to aggregate per package. Easier path: re-run go tool cover -func
-  # and re-parse coverage profile blocks per package. For accuracy we parse
-  # the raw profile directly.
-
-  # Parse coverprofile blocks: mode line + entries of the form
+  # Aggregate coverprofile blocks per package. Entries have the form
   #   <file>:<startLine>.<startCol>,<endLine>.<endCol> <numStmts> <count>
-  while IFS= read -r line; do
-    case "$line" in
-      mode:*) continue ;;
-      "") continue ;;
-    esac
-    local left rest stmts count file pkg
-    left="${line%% *}"            # file:range
-    rest="${line#* }"             # numStmts count
-    stmts="${rest%% *}"
-    count="${rest##* }"
-    file="${left%%:*}"
-    pkg="$(dirname "$file")"
-    pkg_total["$pkg"]=$(( ${pkg_total[$pkg]:-0} + stmts ))
-    if [[ "$count" != "0" ]]; then
-      pkg_covered["$pkg"]=$(( ${pkg_covered[$pkg]:-0} + stmts ))
-    fi
-  done < "$GO_COVER"
+  # Done in awk rather than bash associative arrays so the gate also runs on
+  # macOS's stock bash 3.2 (there is no CI; this runs on developer machines).
+  local per_pkg
+  per_pkg=$(awk '
+    /^mode:/ || NF == 0 { next }
+    {
+      file = $1; sub(/:.*/, "", file)
+      pkg = file; sub(/\/[^\/]*$/, "", pkg)
+      total[pkg] += $2
+      if ($3 != "0") covered[pkg] += $2
+    }
+    END { for (p in total) printf "%s %d %d\n", p, covered[p], total[p] }
+  ' "$GO_COVER" | sort)
 
   local total_stmts=0 total_cov=0
-  for pkg in "${!pkg_total[@]}"; do
-    total_stmts=$(( total_stmts + pkg_total[$pkg] ))
-    total_cov=$(( total_cov + ${pkg_covered[$pkg]:-0} ))
-  done
 
   is_critical() {
     local pkg="$1"
@@ -137,11 +104,11 @@ check_go() {
     return 1
   }
 
-  local sorted
-  sorted=$(printf '%s\n' "${!pkg_total[@]}" | sort)
-
-  while IFS= read -r pkg; do
-    local stmts=${pkg_total[$pkg]} cov=${pkg_covered[$pkg]:-0} threshold status pct
+  local pkg cov stmts threshold status pct
+  while read -r pkg cov stmts; do
+    if [[ -z "$pkg" ]]; then continue; fi
+    total_stmts=$(( total_stmts + stmts ))
+    total_cov=$(( total_cov + cov ))
     if (( stmts == 0 )); then continue; fi
     if is_excluded "$pkg"; then
       pct=$(awk -v c="$cov" -v s="$stmts" 'BEGIN{printf "%.1f", (s==0?100:c*100/s)}')
@@ -154,7 +121,7 @@ check_go() {
     ok=$(awk -v p="$pct" -v t="$threshold" 'BEGIN{print (p+0 >= t+0) ? 1 : 0}')
     if [[ "$ok" == "1" ]]; then status="✅"; else status="❌"; failed=1; fi
     emit "| ${pkg#github.com/somralab/somra-media/} | ${pct}% | ${threshold}% | ${status} |"
-  done <<< "$sorted"
+  done <<< "$per_pkg"
 
   local total_pct
   total_pct=$(awk -v c="$total_cov" -v s="$total_stmts" 'BEGIN{printf "%.1f", (s==0?100:c*100/s)}')

@@ -9,13 +9,14 @@
 - DevOps/Platform (primary), Tech Lead
 
 ## Dependencies
-- All sprints; CI/CD (Sprint 01).
+- All sprints; Docker build + `make` gates (Sprint 01). No CI/CD: every release step below runs
+  locally ([`../project-brief.md`](../project-brief.md) §4).
 
 ## Epics and Tasks
 
 ### Epic A: Release publishing
-- [ ] A1 — Automatic versioning (SemVer) + changelog generation | Acceptance: tagged release published.
-- [ ] A2 — Multi-arch image publishing (registry) + `latest`/version tags | Acceptance: users can pull.
+- [ ] A1 — SemVer tag + changelog generated locally with git-cliff (`.git-cliff.toml`) | Acceptance: tagged release published.
+- [ ] A2 — Multi-arch image pushed to the registry by hand (`make docker-multiarch`) + `latest`/version tags | Acceptance: users can pull.
 
 ### Epic B: Upgrade & persistence
 - [ ] B1 — Upgrade/migration path validation (old version to new) | Acceptance: upgrade without data loss.

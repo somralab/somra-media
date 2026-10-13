@@ -63,8 +63,9 @@ severity levels used in triage and release gates.
 
 ## Dependency Scanning
 
-CI runs `govulncheck ./...` and `pnpm audit --audit-level=high` on every PR.
-Critical findings block merge until remediated or accepted with documented risk.
+`make sca` (part of the local `make check` gate) runs `govulncheck ./...` and
+`pnpm audit --audit-level=critical` before every merge. Critical findings block merge until
+remediated or accepted with documented risk.
 
 ## Plugin Security
 

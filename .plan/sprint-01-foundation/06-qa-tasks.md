@@ -9,7 +9,7 @@
 - QA (primary), all developers (test writing)
 
 ## Dependencies
-- CI pipeline ([`05-devops-tasks.md`](./05-devops-tasks.md) Epic B).
+- Quality gates ([`05-devops-tasks.md`](./05-devops-tasks.md) Epic B).
 
 ## Epics and Tasks
 

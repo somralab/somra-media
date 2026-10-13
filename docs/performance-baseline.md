@@ -77,8 +77,8 @@ Run `ANALYZE=1 pnpm --dir web run build` for `dist/stats.html` treemap.
 
 ## Deferred
 
-- Full **10k** library benchmark in default CI (`SOMRA_LARGE_LIB_SIZE=10000` locally).
-- **4–8 h** soak on reference 4c/8GB hardware (script ready; not run in CI).
+- Full **10k** library benchmark in the default test run (`SOMRA_LARGE_LIB_SIZE=10000` locally).
+- **4–8 h** soak on reference 4c/8GB hardware (script ready; run manually).
 - Transcode **start latency** SW/HW benchmarks (needs fixture media + ffmpeg).
 - Admin-gated runtime `pprof` HTTP endpoint.
-- Bundle budget wired into `.github/workflows/ci.yml` (DevOps stream).
+- Bundle budget wired into `make check` (Sprint 13 D3).

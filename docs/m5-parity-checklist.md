@@ -20,7 +20,7 @@ Sprint 08 (requests) + Sprint 09 (automation & indexers) complete the M5 milesto
 - [x] Series monitors CRUD + scanner job (API + UI)
 - [x] Frontend automation hub, indexers, download clients, downloads, monitors
 
-## CI gates
+## Gates
 
 - [x] lint → i18n-check → unit-test → integration-test → coverage-gate → build
 - [x] Integration: `go test -tags=integration ./internal/platform/bootstrap/...`

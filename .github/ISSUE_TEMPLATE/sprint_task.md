@@ -35,7 +35,7 @@ Per [`.plan/definition-of-done.md`](https://github.com/somralab/somra-media/blob
 - [ ] Unit tests (integration where relevant); coverage thresholds met
 - [ ] `make lint` clean
 - [ ] i18n: en-US + tr-TR keys (if user-facing)
-- [ ] CI green
+- [ ] `make check` green
 - [ ] Code review approval
 
 ## Notes

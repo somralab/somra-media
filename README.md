@@ -20,8 +20,8 @@ Requests, automation and indexers are **on hold**. Verified module-by-module sta
 
 ## Run Somra (end users)
 
-> **No image has been published yet.** There is no `v*` tag, so the release workflow has never
-> run and `ghcr.io/somralab/somra-media:1.0.0` does not exist. Until the first release, build
+> **No image has been published yet.** There is no `v*` tag, so
+> `ghcr.io/somralab/somra-media:1.0.0` does not exist. Until the first release, build
 > from source with Docker Compose (see [Develop locally](#develop-locally)).
 
 Once a release is published, the command will be:
@@ -84,6 +84,7 @@ For contributors building from source:
 
 ```bash
 make help            # list all targets
+make check           # full pre-merge gate (no CI — runs locally)
 make dev             # backend + frontend dev servers concurrently
 make build           # backend (CGO=0) + frontend bundle
 make test            # Go unit tests + Vitest
@@ -122,13 +123,10 @@ Decided technologies — see [`.plan/tech-stack.md`](./.plan/tech-stack.md).
 
 ---
 
-## CI gates
+## Merge gates (local — no CI/CD)
 
-Every PR: `lint → i18n-check → sca → unit-test → integration-test → coverage-gate → build → e2e → image-build`.
-
-> **`main` is currently red.** Since 2026-06-21, `integration-test` and `coverage-gate` fail on
-> CI, so `build`, `e2e` and `image-build` have not run. Integration tests pass locally on macOS,
-> so the failure is environment-specific; re-run CI to capture logs (the old logs have expired).
+Somra has no CI/CD by decision. Every PR must pass `make check` locally:
+`lint → i18n-check → sca → coverage-gate → test-integration → test-acquisition → build`.
 
 Coverage thresholds (DoD §4.1): core Go ≥ 80 %, critical modules ≥ 90 %, frontend ≥ 70 %.
 Details: [`.plan/definition-of-done.md`](./.plan/definition-of-done.md).

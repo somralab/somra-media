@@ -11,7 +11,7 @@ Related: [`00-index.md`](./00-index.md) · [`project-brief.md`](./project-brief.
 
 | Sprint | Name | Main Output (Milestone) | Folder |
 |---|---|---|---|
-| 01 | Foundation & Architecture | Running skeleton service + CI/CD + Docker image skeleton + API contract | [`sprint-01-foundation/`](./sprint-01-foundation/) |
+| 01 | Foundation & Architecture | Running skeleton service + local quality gates + Docker image skeleton + API contract | [`sprint-01-foundation/`](./sprint-01-foundation/) |
 | 02 | Library & Metadata | Media scanning + enriched metadata + file watching | [`sprint-02-library-metadata/`](./sprint-02-library-metadata/) |
 | 03 | Auth & Users | Multi-user + RBAC + profiles + parental controls + watch state | [`sprint-03-auth-users/`](./sprint-03-auth-users/) |
 | 04 | Streaming & Transcode | Direct play + software transcode + HLS/DASH + subtitles | [`sprint-04-streaming-transcode/`](./sprint-04-streaming-transcode/) |

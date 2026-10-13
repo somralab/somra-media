@@ -18,12 +18,12 @@ issue/sprint reference).
 ```
 feat/library-scan
 fix/transcode-session-leak
-chore/ci-coverage-gate
+chore/coverage-gate-thresholds
 docs/i18n-guide
 ```
 
 Allowed types: `feat`, `fix`, `chore`, `refactor`, `test`, `docs`, `perf`,
-`build`, `ci`. `main` is protected — no direct pushes, no force-pushes.
+`build`. `main` is protected — no direct pushes, no force-pushes.
 
 ## Commit messages — Conventional Commits
 
@@ -49,7 +49,7 @@ git commit -s -m "feat(metadata): add tmdb provider"
 ```
 
 `-s` appends a `Signed-off-by:` trailer. Commits without sign-off are
-rejected by CI.
+not merged (checked in review).
 
 ## Issues & task tracking
 
@@ -67,8 +67,10 @@ Every sprint-task issue must reference a `.plan/` file path and epic/task ID (e.
 - Reference the related GitHub Issue and [`.plan/`](./.plan/) task acceptance criteria.
 - Follow the PR template (see the repository PR template / the
   [`pr-and-code-review`](./.cursor/rules/pr-and-code-review.mdc) cursor rule).
-- All CI gates must be green:
-  `lint → i18n-check → sca → unit-test → integration-test → coverage-gate → build → e2e → image-build`.
+- `make check` must pass locally. The project has **no CI/CD** and does not accept pipeline
+  configs (`.github/workflows/` etc.):
+  `lint → i18n-check → sca → coverage-gate → test-integration → test-acquisition → build`.
+  Also run `make e2e` for critical flows and `make docker` for `deploy/` changes.
 - The Definition of Done lives at
   [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) §1.
 

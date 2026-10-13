@@ -2,7 +2,6 @@ import { defineConfig, devices } from '@playwright/test';
 
 const port = Number(process.env.SOMRA_E2E_PORT ?? 8080);
 const baseURL = process.env.SOMRA_E2E_BASE_URL ?? `http://127.0.0.1:${port}`;
-const ci = Boolean(process.env.CI);
 
 const repoRoot = new URL('..', import.meta.url).pathname;
 
@@ -21,13 +20,13 @@ export default defineConfig({
   timeout: 30_000,
   expect: { timeout: 5_000 },
   fullyParallel: false,
-  retries: ci ? 2 : 0,
+  retries: 0,
   workers: 1,
-  reporter: ci ? [['list'], ['github']] : [['list']],
+  reporter: [['list']],
   use: {
     baseURL,
-    trace: ci ? 'retain-on-failure' : 'off',
-    video: ci ? 'retain-on-failure' : 'off',
+    trace: 'off',
+    video: 'off',
     screenshot: 'only-on-failure',
   },
   projects: [
@@ -40,7 +39,7 @@ export default defineConfig({
     command: process.env.SOMRA_E2E_BACKEND_CMD ?? `go run ./cmd/somra`,
     cwd: repoRoot,
     url: `${baseURL}/api/v1/health`,
-    reuseExistingServer: !ci,
+    reuseExistingServer: true,
     timeout: 120_000,
     env: sharedEnv,
     stdout: 'pipe',

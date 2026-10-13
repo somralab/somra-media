@@ -11,11 +11,11 @@ Format: `<type>/<short-description-kebab>` (append issue/sprint if needed).
 ```
 feat/library-scan
 fix/transcode-session-leak
-chore/ci-coverage-gate
+chore/coverage-gate-thresholds
 docs/i18n-guide
 ```
 - `main` is protected; no direct pushes, no force-pushes.
-- Type set: `feat`, `fix`, `chore`, `refactor`, `test`, `docs`, `perf`, `build`, `ci`.
+- Type set: `feat`, `fix`, `chore`, `refactor`, `test`, `docs`, `perf`, `build`.
 
 ## Commit messages (Conventional Commits)
 Format: `<type>(<scope>): <subject>` — English, imperative mood, lowercase, no period.
