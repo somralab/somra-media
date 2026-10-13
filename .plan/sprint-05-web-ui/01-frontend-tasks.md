@@ -15,10 +15,10 @@
 
 ### Epic A: Home page & discovery
 - [x] A1 — Home page: "continue watching", "recently added", recommendation shelves | Acceptance: user-specific shelves.
-- [x] A2 — Library view (grid/list, poster, lazy load, virtual list) | Acceptance: large library is smooth.
+- [ ] A2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Library view (grid/list, poster, lazy load, virtual list) | Acceptance: large library is smooth.
 
 ### Epic B: Detail pages
-- [x] B1 — Movie/series/season/episode detail pages (metadata, cast, images) | Acceptance: rich presentation.
+- [ ] B1 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Movie/series/season/episode detail pages (metadata, cast, images) | Acceptance: rich presentation.
 - [x] B2 — "Play" / "continue" / favorite / watchlist actions | Acceptance: connected to backend.
 
 ### Epic C: Search & filter

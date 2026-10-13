@@ -15,7 +15,7 @@
 
 ### Epic A: Functional
 - [x] A1 — HW transcode correctness (video/audio quality) | Acceptance: output is acceptable.
-- [x] A2 — Automatic selection and HW→SW fallback test | Acceptance: seamless transition.
+- [ ] A2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Automatic selection and HW→SW fallback test | Acceptance: seamless transition.
 
 ### Epic B: Performance
 - [x] B1 — CPU vs HW comparison (resources/concurrent sessions) | Acceptance: significant gain reported.

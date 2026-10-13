@@ -19,12 +19,12 @@
 
 ### Epic B: File scanning engine
 - [x] B1 — Full scan job: file discovery, supported format filter | Acceptance: stable on large folders, reports progress.
-- [x] B2 — Incremental scan (changed items only) | Acceptance: change detection works.
-- [x] B3 — Technical metadata via ffprobe (codec, resolution, duration, audio/subtitle tracks) | Acceptance: correct parse, verified with test data.
-- [x] B4 — Pre-parsing from filename/folder structure (title, year, season/episode) | Acceptance: common naming patterns resolved.
+- [ ] B2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Incremental scan (changed items only) | Acceptance: change detection works.
+- [ ] B3 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Technical metadata via ffprobe (codec, resolution, duration, audio/subtitle tracks) | Acceptance: correct parse, verified with test data.
+- [ ] B4 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Pre-parsing from filename/folder structure (title, year, season/episode) | Acceptance: common naming patterns resolved.
 
 ### Epic C: File watching
-- [x] C1 — Filesystem watcher (add/delete/move) | Acceptance: incremental scan triggered on change.
+- [ ] C1 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Filesystem watcher (add/delete/move) | Acceptance: incremental scan triggered on change.
 - [x] C2 — Debounce/batch processing | Acceptance: system does not choke on bulk changes.
 
 ## Acceptance Criteria (Sprint Output)

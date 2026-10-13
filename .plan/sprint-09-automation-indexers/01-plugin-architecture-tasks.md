@@ -1,5 +1,9 @@
 # Sprint 09 — Plugin Architecture Tasks
 
+> **Status (2026-10-13): ON HOLD.** Skeleton only: the default build registers stub plugins; real
+> adapters (`-tags acquisition`) are mostly untested. No new work until M5.5 is done.
+> See [`../current-state.md`](../current-state.md).
+
 > **Sprint goal:** Plugin framework that **isolates content acquisition capabilities** (indexer +
 > download client) from the core. Critical for legal risk isolation.
 >

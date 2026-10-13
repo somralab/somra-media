@@ -15,14 +15,14 @@
 
 ### Epic A: Brand & visual identity
 - [x] A1 — somra logo, color palette, typography | Acceptance: brand guide (mini).
-- [x] A2 — Iconography and visual language | Acceptance: consistent set.
+- [ ] A2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Iconography and visual language | Acceptance: consistent set.
 
 ### Epic B: Flow designs
 - [x] B1 — Home page, library, detail, player screen designs | Acceptance: approved mockups.
 - [x] B2 — Search/filter and empty/error states | Acceptance: all states designed.
 
 ### Epic C: Design system maturation
-- [x] C1 — Extend component library (shelf, card, player controls) | Acceptance: aligned with frontend.
+- [ ] C1 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Extend component library (shelf, card, player controls) | Acceptance: aligned with frontend.
 - [x] C2 — Accessibility guide (contrast, keyboard, ARIA) | Acceptance: basic WCAG compliance.
 
 ### Epic D: Dynamic theme design

@@ -125,3 +125,4 @@ document must be updated first and a new sprint/effort planned:
 | Date | Change | Owner |
 |---|---|---|
 | (creation) | Initial brief created | — |
+| 2026-10-13 | Audit ([`current-state.md`](./current-state.md)): Sprints 02/04/05/07 reopened (26 tasks). Inserted Sprints 11–13 (M5.5: playback & data foundation, Netflix-like UI with Somra's own identity, performance) before Sprint 10. Sprints 08–09 (requests, automation, indexers) **on hold** — scope (§6) unchanged, not cut. | Mustafa ÖZTÜRK |

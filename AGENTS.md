@@ -20,8 +20,14 @@ single Docker install, built from scratch.
 - **Goal:** Replace the fragmented stack (Jellyfin/Plex + Sonarr/Radarr + Prowlarr + Bazarr +
   Overseerr + download clients) with one unified product. Philosophy: **minimum
   configuration, maximum optimization**.
-- **Status:** Sprints 01–08 complete. **Active sprint:** 09 — Automation & Indexers.
-  See [`.plan/00-index.md`](./.plan/00-index.md) for the current dashboard and task order.
+- **Status:** Pre-release alpha. Sprints 01–09 implemented (several parts shallow or stubbed);
+  Sprint 10 (1.0 release) **paused**. **Active sprint:** 11 — Playback & Data Foundation.
+  Requests / automation / indexers are **on hold**: fix only what breaks the build or tests;
+  no new features there. Read [`.plan/current-state.md`](./.plan/current-state.md) before
+  trusting any "done" checkbox, then [`.plan/00-index.md`](./.plan/00-index.md) for task order.
+- **Refactor rule (gradual):** when you touch a domain, move its business logic out of
+  `internal/platform/db` into the owning module, and replace `*coverage*` / `*_extra_test.go`
+  padding tests in that area with behaviour tests. No big-bang rewrites.
 - **License:** **AGPL-3.0** with **DCO** sign-off (no CLA). Any dependency must be
   AGPL-3.0-compatible.
 

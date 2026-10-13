@@ -1,5 +1,9 @@
 # Sprint 10 — Performance & Hardening Tasks
 
+> **Status (2026-10-13): PAUSED.** Docs/tooling work landed (issues closed 2026-06-25), but no
+> release was tagged. Epics A–D below are delivered by Sprint 13; this sprint resumes after
+> M5.5 for the audit, release checklist and first `v*` tag. See [`../00-index.md`](../00-index.md).
+
 > **Sprint goal:** Harden the entire system for performance, stability, and resource efficiency.
 > Quality bar for M6 (1.0).
 >
