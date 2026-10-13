@@ -2,11 +2,13 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -51,6 +53,107 @@ func TestOpen_AppliesPragmasAndPings(t *testing.T) {
 	var cache int
 	require.NoError(t, d.SQL().QueryRowContext(ctx, "PRAGMA cache_size").Scan(&cache))
 	require.Equal(t, -65536, cache)
+}
+
+func TestOpen_AppliesPragmasOnEveryPooledConnection(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+
+	d, err := Open(ctx, newTestConfig(t))
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = d.Close() })
+
+	// Holding every connection at once forces the pool to dial distinct
+	// physical connections instead of reusing the one Open warmed up.
+	conns := make([]*sql.Conn, maxOpenConns)
+	for i := range conns {
+		conns[i], err = d.SQL().Conn(ctx)
+		require.NoError(t, err)
+	}
+	t.Cleanup(func() {
+		for _, c := range conns {
+			_ = c.Close()
+		}
+	})
+
+	want := map[string]string{
+		"journal_mode": "wal",
+		"synchronous":  "1",
+		"foreign_keys": "1",
+		"busy_timeout": "5000",
+		"temp_store":   "2",
+		"cache_size":   "-65536",
+	}
+	for i, c := range conns {
+		for name, value := range want {
+			var got string
+			require.NoError(t, c.QueryRowContext(ctx, "PRAGMA "+name).Scan(&got))
+			require.Equal(t, value, strings.ToLower(got), "connection %d: PRAGMA %s", i, name)
+		}
+	}
+}
+
+func TestOpen_SecondConnectionWaitsForWriteLock(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+
+	d, err := Open(ctx, newTestConfig(t))
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = d.Close() })
+
+	_, err = d.SQL().ExecContext(ctx, "CREATE TABLE t (v INTEGER)")
+	require.NoError(t, err)
+
+	holder, err := d.SQL().Conn(ctx)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = holder.Close() })
+	writer, err := d.SQL().Conn(ctx)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = writer.Close() })
+
+	_, err = holder.ExecContext(ctx, "BEGIN IMMEDIATE")
+	require.NoError(t, err)
+	_, err = holder.ExecContext(ctx, "INSERT INTO t (v) VALUES (1)")
+	require.NoError(t, err)
+
+	done := make(chan error, 1)
+	go func() {
+		_, err := writer.ExecContext(ctx, "INSERT INTO t (v) VALUES (2)")
+		done <- err
+	}()
+
+	time.Sleep(200 * time.Millisecond)
+	_, err = holder.ExecContext(ctx, "COMMIT")
+	require.NoError(t, err)
+
+	select {
+	case err := <-done:
+		require.NoError(t, err, "a second connection must wait on busy_timeout, not fail with SQLITE_BUSY")
+	case <-time.After(5 * time.Second):
+		t.Fatal("second writer did not finish after the lock was released")
+	}
+
+	var n int
+	require.NoError(t, d.SQL().QueryRowContext(ctx, "SELECT count(*) FROM t").Scan(&n))
+	require.Equal(t, 2, n)
+}
+
+func TestOpen_PathWithURIReservedCharacters(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+
+	cfg := Config{DataDir: filepath.Join(t.TempDir(), "my media #1 ?100%"), DBFile: "x.db"}
+	d, err := Open(ctx, cfg)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = d.Close() })
+
+	_, err = d.SQL().ExecContext(ctx, "CREATE TABLE t (v INTEGER)")
+	require.NoError(t, err)
+
+	p, err := cfg.Path()
+	require.NoError(t, err)
+	_, err = os.Stat(p)
+	require.NoError(t, err, "database file must be created at the configured path, not a truncated one")
 }
 
 func TestOpen_CreatesDataDir(t *testing.T) {
