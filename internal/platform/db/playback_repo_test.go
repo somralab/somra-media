@@ -171,6 +171,65 @@ func TestPlaybackRepo_CreateValidation(t *testing.T) {
 	require.ErrorIs(t, repo.UpdateStatus(ctx, "missing", PlaybackFailed, "boom"), ErrPlaybackSessionNotFound)
 }
 
+func TestPlaybackRepo_EndedSessionKeepsItsStatus(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	lib, err := NewLibraryRepo(d.Querier()).Create(ctx, "Movies", LibraryKindMovie, []string{t.TempDir()}, false)
+	require.NoError(t, err)
+	mediaRepo := NewMediaRepo(d.Querier())
+	itemID, err := mediaRepo.CreateItem(ctx, lib.ID, LibraryKindMovie, "Film", nil)
+	require.NoError(t, err)
+	fileID, err := mediaRepo.UpsertFile(ctx, MediaFile{LibraryID: lib.ID, MediaItemID: &itemID, Path: "/m/film.mkv", FileName: "film.mkv"})
+	require.NoError(t, err)
+	user, err := NewUserRepo(d.Querier()).Create(ctx, uuid.NewString(), "ender", "hash", []string{"user"})
+	require.NoError(t, err)
+	repo := NewPlaybackRepo(d.Querier())
+
+	newSession := func() string {
+		id := uuid.NewString()
+		require.NoError(t, repo.Create(ctx, PlaybackSession{
+			ID: id, UserID: user.ID, MediaItemID: itemID, MediaFileID: fileID,
+			Mode: PlaybackTranscode, Status: PlaybackActive, ExpiresAt: time.Now().UTC().Add(time.Hour),
+		}))
+		return id
+	}
+	get := func(id string) PlaybackSession {
+		s, err := repo.GetByID(ctx, id)
+		require.NoError(t, err)
+		return s
+	}
+
+	// The reaper expires a session, then its ffmpeg exits with an error and
+	// the packaging goroutine reports failure. The session must stay expired.
+	reaped := newSession()
+	require.NoError(t, repo.UpdateStatus(ctx, reaped, PlaybackExpired, "idle_timeout"))
+	require.NoError(t, repo.UpdateStatus(ctx, reaped, PlaybackFailed, "ffmpeg exited"))
+	assert.Equal(t, PlaybackExpired, get(reaped).Status)
+	assert.Equal(t, "idle_timeout", get(reaped).ErrorMessage)
+
+	// A late "manifest ready" must not revive a session the user stopped.
+	stopped := newSession()
+	require.NoError(t, repo.Stop(ctx, stopped))
+	require.NoError(t, repo.UpdateStatus(ctx, stopped, PlaybackActive, ""))
+	assert.Equal(t, PlaybackStopped, get(stopped).Status)
+
+	// Stopping a session that already failed keeps the failure visible.
+	failed := newSession()
+	require.NoError(t, repo.UpdateStatus(ctx, failed, PlaybackFailed, "unreadable source"))
+	require.NoError(t, repo.Stop(ctx, failed))
+	assert.Equal(t, PlaybackFailed, get(failed).Status)
+	assert.Equal(t, "unreadable source", get(failed).ErrorMessage)
+
+	// Live sessions still move between non-terminal states and can end.
+	live := newSession()
+	require.NoError(t, repo.UpdateStatus(ctx, live, PlaybackQueued, ""))
+	require.NoError(t, repo.UpdateStatus(ctx, live, PlaybackActive, ""))
+	require.NoError(t, repo.UpdateStatus(ctx, live, PlaybackFailed, "boom"))
+	assert.Equal(t, PlaybackFailed, get(live).Status)
+}
+
 func TestRequestRepo_ListWithStatusFilter(t *testing.T) {
 	ctx := context.Background()
 	d := openTestDB(t)
