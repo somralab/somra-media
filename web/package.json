@@ -79,6 +79,9 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
-    ]
+    ],
+    "overrides": {
+      "tinypool": "^2.1.2"
+    }
   }
 }
