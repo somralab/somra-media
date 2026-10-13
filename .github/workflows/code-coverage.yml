@@ -1,0 +1,32 @@
+- name: Go Coverage
+  # You may pin to the exact commit or the version.
+  # uses: gwatts/go-coverage-action@2845595538a59d63d1bf55f109c14e104c6f7cb3
+  uses: gwatts/go-coverage-action@v2.0.0
+  with:
+    # github token
+    token: # optional, default is ${{ github.token }}
+    # URL of final uploaded report.  e.g. https://reports.example.com/{{ $github.sha }}/cover.html
+    report-url: # optional
+    # Working directory.  Defaults to project root
+    working-directory: # optional, default is 
+    # File or pathname for the resulting html coverage report
+    report-filename: # optional, default is go-coverage.html
+    # Parameter to pass to go tests -covermode argument.  Either count, set or atomic
+    cover-mode: # optional, default is count
+    # Parameter to pass to go tests -coverpkg argument. Leave empty to omit flag
+    cover-pkg: # optional, default is 
+    # Additional build arguments to pass to go test
+    test-args: # optional, default is []
+    # Package names to test, passed to go test - Multiple arguments should be separated by newlines
+    test-pkgs: # optional, default is ./...
+    # Fail the build if the coverage drops below supplied percentage
+    coverage-threshold: # optional, default is 0
+    # Fail the build if coverage drops below coverage-threshold.  One of "always", "never" or "only_pull_requests"
+    fail-coverage: # optional, default is only_pull_requests
+    # Adds a comment to the PR with coverage information if true. If false will only add an action summary report
+    add-comment: # optional, default is true
+    # One or more regular expressions matching filenames to exclude from coverage statistics (e.g. for generated Go files)
+    ignore-pattern: # optional, default is 
+    # The refname to use for the git notes. Defaults to gocoverage
+    notes-ref: # optional, default is gocoverage
+          
