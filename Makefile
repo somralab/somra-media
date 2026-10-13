@@ -16,6 +16,11 @@ WEB_DIST    := $(WEB_DIR)/dist
 WEB_COVER   := $(WEB_DIR)/coverage/coverage-summary.json
 OPENAPI     := api/openapi.yaml
 
+# corepack resolves the pnpm version from the package.json in the working
+# directory, and only web/package.json pins it, so web commands run from web/
+# instead of `pnpm --dir web` from the repo root.
+WEB_PNPM    = cd $(WEB_DIR) && $(PNPM)
+
 IMAGE       ?= ghcr.io/somralab/somra-media
 TAG         ?= dev
 VERSION     ?= $(shell git describe --tags --always 2>/dev/null || echo dev)
@@ -52,8 +57,8 @@ dev:
 	set -a; [ -f .env ] && . ./.env; set +a; \
 	echo ">> $(GO) run ./cmd/somra (background)"; \
 	$(GO) run ./cmd/somra & \
-	echo ">> $(PNPM) --dir $(WEB_DIR) run dev"; \
-	$(PNPM) --dir $(WEB_DIR) run dev & \
+	echo ">> $(WEB_PNPM) run dev"; \
+	$(WEB_PNPM) run dev & \
 	wait
 
 ## dev-backend: run only the Go backend
@@ -63,7 +68,7 @@ dev-backend:
 
 ## dev-frontend: run only the Vite dev server
 dev-frontend:
-	$(PNPM) --dir $(WEB_DIR) run dev
+	$(WEB_PNPM) run dev
 
 ## build: build everything (backend + frontend)
 build: build-go build-web
@@ -80,11 +85,11 @@ build-acquisition:
 
 ## web-deps: install frontend dependencies from the lockfile
 web-deps:
-	$(PNPM) --dir $(WEB_DIR) install --frozen-lockfile
+	$(WEB_PNPM) install --frozen-lockfile
 
 ## build-web: produce the SPA static bundle
 build-web: web-deps
-	$(PNPM) --dir $(WEB_DIR) run build
+	$(WEB_PNPM) run build
 
 ## test: run backend + frontend tests
 test: test-go test-web
@@ -103,7 +108,7 @@ test-acquisition:
 
 ## test-web: run frontend tests once
 test-web: web-deps
-	$(PNPM) --dir $(WEB_DIR) test --run
+	$(WEB_PNPM) test --run
 
 ## lint: run all linters (Go + frontend)
 lint: lint-go lint-web
@@ -124,14 +129,14 @@ lint-go:
 
 ## lint-web: run frontend lint + prettier check
 lint-web: web-deps
-	$(PNPM) --dir $(WEB_DIR) run lint
-	$(PNPM) --dir $(WEB_DIR) run format:check
-	$(PNPM) --dir $(WEB_DIR) run typecheck
+	$(WEB_PNPM) run lint
+	$(WEB_PNPM) run format:check
+	$(WEB_PNPM) run typecheck
 
 ## sca: dependency vulnerability scan (govulncheck + pnpm audit, critical)
 sca: web-deps
 	$(GO) run golang.org/x/vuln/cmd/govulncheck@latest ./...
-	$(PNPM) --dir $(WEB_DIR) audit --audit-level=critical
+	$(WEB_PNPM) audit --audit-level=critical
 
 ## migrate: apply database migrations (no-op for now; runs at server startup)
 migrate:
@@ -147,7 +152,7 @@ coverage-go:
 
 ## coverage-web: run frontend tests with coverage (v8, json-summary)
 coverage-web: web-deps
-	$(PNPM) --dir $(WEB_DIR) run test:coverage
+	$(WEB_PNPM) run test:coverage
 
 ## coverage-gate: enforce DoD §4.1 coverage thresholds
 coverage-gate: coverage
@@ -205,8 +210,8 @@ docs-api:
 
 ## e2e: install playwright browsers and run e2e specs
 e2e: e2e-fixture build-web
-	$(PNPM) --dir $(WEB_DIR) exec playwright install --with-deps chromium
-	$(PNPM) --dir $(WEB_DIR) exec playwright test
+	$(WEB_PNPM) exec playwright install --with-deps chromium
+	$(WEB_PNPM) exec playwright test
 
 ## profile: capture Go CPU/memory profiles for hot packages (Sprint 10 A1)
 profile:
