@@ -33,7 +33,7 @@ GO_TAGS       ?=
 ACQ_TAGS      := -tags acquisition
 
 .PHONY: help check dev dev-backend dev-frontend build build-go build-acquisition build-web \
-        test test-go test-acquisition test-integration test-web lint lint-go lint-web sca \
+        test test-go test-acquisition test-integration test-web lint lint-go lint-web sca web-deps \
         migrate coverage coverage-go coverage-web coverage-gate \
         i18n-check docker docker-acquisition docker-multiarch openapi-types docs-api e2e \
         profile bundle-check soak-test clean
@@ -78,9 +78,12 @@ build-acquisition:
 	@mkdir -p $(BIN_DIR)
 	CGO_ENABLED=0 $(GO) build $(ACQ_TAGS) -trimpath -ldflags '$(LDFLAGS)' -o $(BINARY)-acquisition ./cmd/somra
 
-## build-web: produce the SPA static bundle
-build-web:
+## web-deps: install frontend dependencies from the lockfile
+web-deps:
 	$(PNPM) --dir $(WEB_DIR) install --frozen-lockfile
+
+## build-web: produce the SPA static bundle
+build-web: web-deps
 	$(PNPM) --dir $(WEB_DIR) run build
 
 ## test: run backend + frontend tests
@@ -99,7 +102,7 @@ test-acquisition:
 	$(GO) test $(ACQ_TAGS) ./... -count=1
 
 ## test-web: run frontend tests once
-test-web:
+test-web: web-deps
 	$(PNPM) --dir $(WEB_DIR) test --run
 
 ## lint: run all linters (Go + frontend)
@@ -120,15 +123,14 @@ lint-go:
 	fi
 
 ## lint-web: run frontend lint + prettier check
-lint-web:
+lint-web: web-deps
 	$(PNPM) --dir $(WEB_DIR) run lint
 	$(PNPM) --dir $(WEB_DIR) run format:check
 	$(PNPM) --dir $(WEB_DIR) run typecheck
 
 ## sca: dependency vulnerability scan (govulncheck + pnpm audit, critical)
-sca:
+sca: web-deps
 	$(GO) run golang.org/x/vuln/cmd/govulncheck@latest ./...
-	$(PNPM) --dir $(WEB_DIR) install --frozen-lockfile
 	$(PNPM) --dir $(WEB_DIR) audit --audit-level=critical
 
 ## migrate: apply database migrations (no-op for now; runs at server startup)
@@ -144,7 +146,7 @@ coverage-go:
 	$(GO) tool cover -func=$(GO_COVER) | tail -5
 
 ## coverage-web: run frontend tests with coverage (v8, json-summary)
-coverage-web:
+coverage-web: web-deps
 	$(PNPM) --dir $(WEB_DIR) run test:coverage
 
 ## coverage-gate: enforce DoD §4.1 coverage thresholds
