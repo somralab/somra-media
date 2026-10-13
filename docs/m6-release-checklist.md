@@ -18,8 +18,8 @@ Sprint 10 / 1.0 open-source release gate. Sign off when all items are verified.
 - [x] Weblate MVP compose
 
 ### DevOps (03)
-- [x] `release.yml` workflow
-- [x] GHCR `latest` + semver tags on release
+- [ ] Local release procedure (tag + git-cliff changelog + `make docker-multiarch`); `release.yml` removed 2026-10-13, no CI/CD
+- [ ] GHCR `latest` + semver tags pushed by hand on release
 - [x] Upgrade integration test
 - [x] Backup/restore doc
 - [x] Production compose example
@@ -28,7 +28,7 @@ Sprint 10 / 1.0 open-source release gate. Sign off when all items are verified.
 ### Security (04)
 - [x] RBAC matrix integration test
 - [x] SSRF tests
-- [x] SCA CI job (govulncheck + npm audit)
+- [x] SCA gate (`make sca`: govulncheck + pnpm audit)
 - [x] SECURITY.md complete
 
 ### QA (05)
@@ -38,10 +38,10 @@ Sprint 10 / 1.0 open-source release gate. Sign off when all items are verified.
 - [ ] Full sprint DoD checklist regression (manual)
 - [ ] No open critical/high bugs
 
-## CI / release
+## Gates / release
 
-- [ ] `make lint test i18n-check coverage` green locally
-- [ ] All CI jobs green on main
+- [ ] `make check` green on `main`
+- [ ] `make e2e` green
 - [ ] `v1.0.0` tag created
 - [ ] GHCR image `ghcr.io/somralab/somra-media:1.0.0` published
 - [ ] GitHub Release notes published

@@ -26,4 +26,4 @@ Sprint 06 + Sprint 07 complete the M4 beta candidate core.
 - [x] Onboarding wizard with smart HW defaults
 - [x] Settings API for playback/HW configuration
 - [x] At least one HW path implemented with safe fallback
-- [x] CI gates: lint, i18n, test, coverage, build
+- [x] Gates: lint, i18n, test, coverage, build

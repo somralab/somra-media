@@ -134,7 +134,7 @@ ACCEPTANCE:
 - Type generation from OpenAPI to web/src/api/generated/ (or equivalent) works
 - Spec defines health/version endpoints
 
-OUT OF SCOPE: CI workflow (Package 7), Docker (Package 7)
+OUT OF SCOPE: Docker (Package 7)
 
 Commit: chore(foundation): add openapi spec and makefile targets
 DCO sign-off (-s). Do not open PR.
@@ -281,7 +281,7 @@ DCO sign-off (-s). Do not open PR.
 
 ---
 
-## Package 7 — DevOps: Docker + CI/CD
+## Package 7 — DevOps: Docker + make gates
 
 **Branch:** `feat/sprint-01-devops`  
 **Dependency:** Packages 1–6 merged or in mergeable state
@@ -289,27 +289,26 @@ DCO sign-off (-s). Do not open PR.
 ```
 Branch: feat/sprint-01-devops
 
-Sprint 01 Package 7 — Docker + CI/CD + Makefile completion.
+Sprint 01 Package 7 — Docker + Makefile gates. No CI/CD (project-brief §4).
 
 Source: .plan/sprint-01-foundation/05-devops-tasks.md
 
 DO:
 1. deploy/Dockerfile — multi-stage: Go build (CGO_ENABLED=0) + web static + ffmpeg/ffprobe
 2. deploy/docker-compose.yml — volumes: config, media, transcode-cache, data (SQLite)
-3. .github/workflows/ci.yml — gates in order:
-   lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build
-4. golangci-lint config; web ESLint/Prettier CI step
+3. `make check` — local gates in order (never a CI pipeline):
+   lint → i18n-check → sca → coverage-gate → test-integration → test-acquisition → build
+4. golangci-lint config; web ESLint/Prettier via `make lint`
 5. i18n-check script: missing/unused keys, en-US/tr-TR completeness
 6. coverage-gate: Go core ≥80%, FE components ≥70% (reasonable subset for Sprint 01 skeleton)
-7. GHCR image-build skeleton (push on main/tag)
+7. `make docker-multiarch` for manual GHCR push
 8. Complete Makefile targets: make docker, make dev, make i18n-check, make coverage
 
 ACCEPTANCE:
 - docker compose -f deploy/docker-compose.yml up → curl health 200
-- CI workflow YAML valid (verify with act or push)
 - make lint test i18n-check coverage build green
 
-Commit: ci(devops): add docker multi-stage build and github actions pipeline
+Commit: build(devops): add docker multi-stage build and make gates
 DCO sign-off (-s). Do not open PR.
 ```
 

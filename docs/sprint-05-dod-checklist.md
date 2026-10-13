@@ -8,7 +8,7 @@
 - [x] Virtual list: @tanstack/react-virtual in MediaGrid
 - [x] Themes: tokens used on all new screens
 - [x] E2E specs: browse, search, themes
-- [x] CI gates: lint, test, i18n-check, coverage, build
+- [x] Gates: lint, test, i18n-check, coverage, build
 
 ## Demo flow
 

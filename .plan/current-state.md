@@ -13,8 +13,9 @@ Legend: ✅ works · 🟡 partial / shallow · 🔴 broken · ⚪ stub · ⏸ on
 
 ## Summary
 
-- **Builds and all Go tests pass locally**, but **`main` CI is red** since 2026-06-21
-  (`integration-test`, `coverage-gate`), so `build`, `e2e` and `image-build` never ran.
+- **Builds and all Go tests pass locally.** CI was removed on 2026-10-13 (no CI/CD by
+  decision). Before that, `main` CI had been red since 2026-06-21 (`integration-test` and
+  `coverage-gate` failed on Linux only).
 - **No release exists:** no `v*` tag, so no GHCR image.
 - **Playback is not reliable in any mode:**
   - Direct play and native HLS (Safari, recent Chromium) get `401`, because media URLs require
@@ -35,7 +36,7 @@ Legend: ✅ works · 🟡 partial / shallow · 🔴 broken · ⚪ stub · ⏸ on
 | Area | Status | Notes |
 |---|---|---|
 | Build / tests (local) | ✅ | Unit and integration tests pass on macOS. |
-| CI on `main` | 🔴 | `integration-test` + `coverage-gate` fail on Linux; old logs expired. |
+| Merge gates | 🟡 | No CI/CD by decision; `make check` runs the gates locally. The Linux-only `integration-test` + `coverage-gate` failures seen on the old CI are not yet reproduced (Sprint 11 F1). |
 | Release / image | 🔴 | No tag, no published image. |
 | SQLite layer | 🔴 | PRAGMAs (`busy_timeout`, `foreign_keys`, `synchronous`) are applied to **one** of 8 pooled connections (`internal/platform/db/db.go` `applyPragmas`). Observed: `database is locked (SQLITE_BUSY)` on concurrent refresh. |
 | HTTP | 🟡 | No compression; no `Cache-Control` for hashed assets; HTTP/1.1 only. `WriteTimeout` is 0, which is fine for streams. |

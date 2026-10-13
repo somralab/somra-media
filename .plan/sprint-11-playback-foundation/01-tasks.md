@@ -87,9 +87,10 @@
 - [ ] E3 — Episode Play starts the episode. A next-episode endpoint exists | Acceptance:
   S01E02 is returned after S01E01.
 
-### Epic F: CI & honesty
-- [ ] F1 — Make `main` green: re-run CI, fix `integration-test` and `coverage-gate` on Linux
-  | Acceptance: all gates green on `main`.
+### Epic F: Gates & honesty
+- [ ] F1 — Make `make check` green on `main`; reproduce and fix the `integration-test` and
+  `coverage-gate` failures the old CI hit on Linux (no CI/CD — gates run locally)
+  | Acceptance: `make check` green on `main` on macOS and Linux.
 - [ ] F2 — Replace coverage-padding tests in packages touched this sprint with behaviour tests
   (gradual refactor rule in `AGENTS.md`) | Acceptance: no `*coverage*` test files left in
   `internal/streaming`, `internal/library` and `internal/auth`.
@@ -105,7 +106,7 @@
 ## Acceptance Criteria (Sprint Output)
 - Fresh install → wizard → scan a movie library and a TV library → play a 2-hour movie and
   binge two episodes in Chrome, Firefox and Safari. Resume and "Continue watching" behave
-  correctly; rescans keep data intact; CI is green. Every fixed row in
+  correctly; rescans keep data intact; `make check` is green. Every fixed row in
   [`../current-state.md`](../current-state.md) is updated.
 
 ## Risks

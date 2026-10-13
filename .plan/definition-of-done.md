@@ -17,7 +17,7 @@ A task is "Done" when:
 4. Lint/format clean (Go: `golangci-lint`; FE: ESLint + Prettier).
 5. Required documentation/README updates done.
 6. At least 1 code review approval (Tech Lead approval if architectural impact).
-7. CI green on all stages.
+7. `make check` passes locally (§5). There is no CI.
 8. **i18n compliance:** All user-facing text resolved via keys (no hardcoded strings); en-US **and** tr-TR keys added. See [`i18n-localization.md`](./i18n-localization.md) §5.
 
 ## 2. Sprint-Level DoD
@@ -54,18 +54,23 @@ A task is "Done" when:
 | Frontend component tests | **≥ 70%** |
 | Frontend critical flows (login, browsing, playback, setup wizard) | **e2e required** (flow coverage, not percentage) |
 
-- Thresholds are **measured and enforced in CI**; PRs below threshold **cannot merge** (see §5).
+- Thresholds are **measured and enforced by `make coverage-gate`** (part of `make check`); PRs below threshold **cannot merge** (see §5).
 - Critical module list updated with Tech Lead approval when architecture changes.
 - Coverage is a goal, not inflated with meaningless tests; review enforces this.
 
-## 5. CI Gates
+## 5. Merge Gates (local — no CI/CD)
 
-Required green stages for PR merge: `lint` → `i18n-check` → `unit-test` → `integration-test` → `coverage-gate` → `build` → `image-build`.
+The project has **no CI/CD** at any stage (see [`project-brief.md`](./project-brief.md) §4); gates run locally.
+`make check` must pass before a PR is merged: `lint` → `i18n-check` → `sca` → `coverage-gate` → `test-integration` → `test-acquisition` → `build`.
 If any gate is red, merge **must not** happen.
+
+Also required: `make e2e` when a change touches a critical flow (§4.1), and `make docker` when it touches `deploy/` or before a release.
 
 > `i18n-check`: missing/unused translation keys and en-US/tr-TR completeness. See [`i18n-localization.md`](./i18n-localization.md) §6.
 >
-> `coverage-gate`: measures §4.1 thresholds (core ≥80%, critical modules ≥90%, frontend components ≥70%) and produces coverage report; merge blocked below threshold.
+> `coverage-gate`: runs the Go and frontend unit tests, measures §4.1 thresholds (core ≥80%, critical modules ≥90%, frontend components ≥70%) and prints a coverage report; merge blocked below threshold.
+>
+> `sca`: `govulncheck` + `pnpm audit` (critical); merge blocked on findings.
 
 ## 6. Secure Defaults
 

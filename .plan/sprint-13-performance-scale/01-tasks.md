@@ -32,7 +32,7 @@
 
 ### Epic A: Measurement first
 - [ ] A1 — Synthetic library generator (10k movies, 500 shows / 20k episodes, tiny media
-  files) + load script; budgets above checked in CI as a non-blocking report
+  files) + load script; budgets above reported by a `make` target (non-blocking)
   | Acceptance: one command produces a before/after table in `docs/performance-baseline.md`.
 - [ ] A2 — pprof endpoints (admin-only) and a profiling guide | Acceptance: CPU/heap profile
   of a scan and of 4 streams captured.
@@ -65,8 +65,8 @@
   layout shift (CLS < 0.05).
 - [ ] D2 — Prefetch detail data on hover/focus; `placeholderData` for instant transitions
   | Acceptance: detail page renders cached data in < 100 ms.
-- [ ] D3 — Bundle budget enforced in CI (size-limit or equivalent) | Acceptance: CI fails on
-  regression above budget.
+- [ ] D3 — Bundle budget enforced in `make check` (`make bundle-check` or equivalent)
+  | Acceptance: `make check` fails on regression above budget.
 
 ### Epic E: Stability
 - [ ] E1 — Soak: 4 concurrent streams for 2 hours + a background scan on 4c/8GB

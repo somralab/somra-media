@@ -47,14 +47,14 @@ Related: [`architecture.md`](./architecture.md) · [`project-brief.md`](./projec
 | Architectures | amd64 + arm64 (multi-arch build) |
 | Hardware access | GPU passthrough (QSV/NVENC/VAAPI/AMF) — Sprint 07 |
 
-## 4. CI/CD & Quality
+## 4. Build, Quality & Release
 
 | Topic | Choice |
 |---|---|
-| CI | Git-based pipeline (lint + test + build + image) |
+| CI/CD | **None** — no hosted CI/CD and no pipeline config, at any stage. Gates run locally via `make check` ([`definition-of-done.md`](./definition-of-done.md) §5). |
 | Lint | Go: `golangci-lint`; Frontend: ESLint + Prettier |
 | Versioning | Semantic versioning (SemVer) + incremental milestone each sprint |
-| Image publishing | **GitHub Container Registry (GHCR)** (primary) + optional Docker Hub mirror |
+| Image publishing | **GitHub Container Registry (GHCR)** (primary) + optional Docker Hub mirror; pushed by hand (`make docker-multiarch`) |
 | Contribution agreement | **DCO (Developer Certificate of Origin)** — no CLA |
 
 ## 5. External Services / Providers
@@ -89,6 +89,7 @@ Related: [`architecture.md`](./architecture.md) · [`project-brief.md`](./projec
 | Backend i18n | `nicksnyder/go-i18n/v2` + `x/text` |
 | Translation platform | **Weblate** (self-host, OSS, git-integrated) |
 | Image registry | GHCR (primary) |
+| CI/CD | **None** — local `make check` gates only |
 | License / contribution | AGPL-3.0 + DCO |
 
 Details: session/contract/plugins in [`architecture.md`](./architecture.md) §8; i18n in [`i18n-localization.md`](./i18n-localization.md); license in [`project-brief.md`](./project-brief.md) §5.

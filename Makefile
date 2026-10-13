@@ -1,8 +1,8 @@
 # Somra — top-level Makefile
 #
-# This file owns the developer entry-point. CI mirrors most of these targets;
-# anything CI executes directly (scripts/, .github/workflows/ci.yml) is the
-# source of truth for the gate logic — keep them aligned when editing.
+# This file owns the developer entry-point and the merge gates. The project has
+# no CI/CD by decision (.plan/project-brief.md §4): `make check` is the full
+# pre-merge gate and runs locally.
 
 SHELL := /bin/bash
 
@@ -32,8 +32,8 @@ LDFLAGS := -s -w \
 GO_TAGS       ?=
 ACQ_TAGS      := -tags acquisition
 
-.PHONY: help dev dev-backend dev-frontend build build-go build-acquisition build-web \
-        test test-go test-acquisition test-web lint lint-go lint-web \
+.PHONY: help check dev dev-backend dev-frontend build build-go build-acquisition build-web \
+        test test-go test-acquisition test-integration test-web lint lint-go lint-web sca \
         migrate coverage coverage-go coverage-web coverage-gate \
         i18n-check docker docker-acquisition docker-multiarch openapi-types docs-api e2e \
         profile bundle-check soak-test clean
@@ -42,6 +42,9 @@ ACQ_TAGS      := -tags acquisition
 help:
 	@printf "Somra — make targets\n\n"
 	@awk '/^## / {sub(/^## /,""); printf "  %s\n", $$0}' $(MAKEFILE_LIST)
+
+## check: full pre-merge gate — lint, i18n, SCA, unit tests + coverage, integration, acquisition, build
+check: lint i18n-check sca coverage-gate test-integration test-acquisition build
 
 ## dev: run backend + frontend dev servers concurrently
 dev:
@@ -83,9 +86,13 @@ build-web:
 ## test: run backend + frontend tests
 test: test-go test-web
 
-## test-go: run all Go unit tests (CGO-free; no -race — see CI unit-test job)
+## test-go: run all Go unit tests (CGO-free, so no -race)
 test-go:
 	$(GO) test ./... -count=1
+
+## test-integration: run Go integration tests (integration build tag)
+test-integration:
+	$(GO) test -tags=integration ./... -count=1
 
 ## test-acquisition: run Go tests including acquisition-tagged packages
 test-acquisition:
@@ -117,6 +124,12 @@ lint-web:
 	$(PNPM) --dir $(WEB_DIR) run lint
 	$(PNPM) --dir $(WEB_DIR) run format:check
 	$(PNPM) --dir $(WEB_DIR) run typecheck
+
+## sca: dependency vulnerability scan (govulncheck + pnpm audit, critical)
+sca:
+	$(GO) run golang.org/x/vuln/cmd/govulncheck@latest ./...
+	$(PNPM) --dir $(WEB_DIR) install --frozen-lockfile
+	$(PNPM) --dir $(WEB_DIR) audit --audit-level=critical
 
 ## migrate: apply database migrations (no-op for now; runs at server startup)
 migrate:

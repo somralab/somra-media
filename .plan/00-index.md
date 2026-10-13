@@ -117,7 +117,7 @@ Full definitions: `[roadmap.md](./roadmap.md)` §3.
 
 | Sprint | Folder                                                                       | Main output                                    |
 | ------ | ---------------------------------------------------------------------------- | ---------------------------------------------- |
-| 01     | `[sprint-01-foundation/](./sprint-01-foundation/)`                           | Skeleton + CI/CD + Docker + API contract       |
+| 01     | `[sprint-01-foundation/](./sprint-01-foundation/)`                           | Skeleton + Docker + API contract + make gates  |
 | 02     | `[sprint-02-library-metadata/](./sprint-02-library-metadata/)`               | Scanning + metadata + file watching            |
 | 03     | `[sprint-03-auth-users/](./sprint-03-auth-users/)`                           | Multi-user, RBAC, profiles, watch state        |
 | 04     | `[sprint-04-streaming-transcode/](./sprint-04-streaming-transcode/)`         | Direct play, transcode, HLS/DASH               |
@@ -137,7 +137,7 @@ Full definitions: `[roadmap.md](./roadmap.md)` §3.
 ## Execution workflow
 
 ```
-.plan/ task spec  →  GitHub Issue (status, assignee)  →  PR  →  CI gates
+.plan/ task spec  →  GitHub Issue (status, assignee)  →  PR  →  make check (local, no CI)
 notes/ briefing   →  decision finalized  →  update .plan/ or docs/
 ```
 

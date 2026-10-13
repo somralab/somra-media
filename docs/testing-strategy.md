@@ -59,7 +59,7 @@ pnpm --dir web exec playwright install --with-deps chromium   # one-time
 pnpm --dir web exec playwright test                            # e2e smoke
 ```
 
-Go unit tests run without `-race` (CGO-free build via `modernc.org/sqlite`; CI matches).
+Go unit tests run without `-race` (CGO-free build via `modernc.org/sqlite`).
 
 ### Database integrity
 
@@ -67,20 +67,20 @@ Go unit tests run without `-race` (CGO-free build via `modernc.org/sqlite`; CI m
 `ok` for a healthy file. Covered by `TestIntegrityCheck_Ok` in
 `internal/platform/db/migrate_test.go`; surfaced in `/api/v1/health` diagnostics.
 
-`make lint test i18n-check coverage` must all pass before opening a PR — `make lint`
+`make check` must pass before opening a PR — `make lint`
 covers `gofmt`, `golangci-lint`, ESLint + Prettier + `tsc`.
 
-## CI gates
+## Merge gates (local — no CI)
 
-PR merges block on every gate (DoD §5):
+There is no CI/CD. `make check` blocks merges on every gate (DoD §5):
 
 ```
-lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build
+lint → i18n-check → sca → coverage-gate → test-integration → test-acquisition → build
 ```
 
-Sprint 01 adds an `e2e` job between `build` and `image-build` covering the Playwright
-status-page smoke. The job builds the SPA, runs the Go binary with
-`SOMRA_WEB_DIR=web/dist` and points Playwright at `http://127.0.0.1:8080`.
+`make e2e` runs the Playwright suite for critical flows: it generates the fixture media,
+builds the SPA, starts the Go backend with `SOMRA_WEB_DIR=web/dist` and points Playwright at
+`http://127.0.0.1:8080`.
 
 ## Adding tests for new code
 
