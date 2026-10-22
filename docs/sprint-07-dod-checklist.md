@@ -47,7 +47,7 @@
 - [x] `docs/m4-beta-checklist.md` updated
 - [x] Plan sprint task files marked complete
 
-## CI gates
+## Gates
 
 - [x] `make lint`
 - [x] `make test`

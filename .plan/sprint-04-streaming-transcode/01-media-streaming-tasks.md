@@ -18,18 +18,18 @@
 - [x] A2 — Direct play / direct stream / transcode decision engine | Acceptance: unnecessary transcode is avoided.
 
 ### Epic B: Transcode pipeline (software)
-- [x] B1 — ffmpeg process management (start/monitor/terminate, resource limits) | Acceptance: no leftover (zombie) processes.
-- [x] B2 — CMAF (fMP4) segment generation + HLS manifest (primary); DASH manifest optional from the same segments | Acceptance: output playable in browser with hls.js. See [`../tech-stack.md`](../tech-stack.md) §2.
-- [x] B3 — Adaptive bitrate (multiple quality tiers) | Acceptance: tiers are produced, switching works.
+- [ ] B1 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** ffmpeg process management (start/monitor/terminate, resource limits) | Acceptance: no leftover (zombie) processes.
+- [ ] B2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** CMAF (fMP4) segment generation + HLS manifest (primary); DASH manifest optional from the same segments | Acceptance: output playable in browser with hls.js. See [`../tech-stack.md`](../tech-stack.md) §2.
+- [ ] B3 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Adaptive bitrate (multiple quality tiers) | Acceptance: tiers are produced, switching works.
 - [x] B4 — Transcode session management + segment cache/cleanup | Acceptance: disk does not bloat; cleaned up when session closes.
 
 ### Epic C: Audio & subtitles
-- [x] C1 — Audio track/language selection + downmix when needed | Acceptance: multiple audio streams can be selected.
-- [x] C2 — Subtitle handling (embedded extraction, external file, burn-in when needed) | Acceptance: subtitles are displayed.
+- [ ] C1 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Audio track/language selection + downmix when needed | Acceptance: multiple audio streams can be selected.
+- [ ] C2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Subtitle handling (embedded extraction, external file, burn-in when needed) | Acceptance: subtitles are displayed.
 
 ### Epic D: Streaming endpoints
 - [x] D1 — Streaming API endpoints (manifest, segment, session) + authorization control | Acceptance: unauthorized streams are blocked.
-- [x] D2 — Seek and resume support | Acceptance: forward/rewind works.
+- [ ] D2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Seek and resume support | Acceptance: forward/rewind works.
 
 ## Acceptance Criteria (Sprint Output)
 - A media file plays end-to-end in the browser (via direct play or CPU transcode).

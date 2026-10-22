@@ -1,8 +1,8 @@
 # Somra — top-level Makefile
 #
-# This file owns the developer entry-point. CI mirrors most of these targets;
-# anything CI executes directly (scripts/, .github/workflows/ci.yml) is the
-# source of truth for the gate logic — keep them aligned when editing.
+# This file owns the developer entry-point and the merge gates. The project has
+# no CI/CD by decision (.plan/project-brief.md §4): `make check` is the full
+# pre-merge gate and runs locally.
 
 SHELL := /bin/bash
 
@@ -15,6 +15,11 @@ WEB_DIR     := web
 WEB_DIST    := $(WEB_DIR)/dist
 WEB_COVER   := $(WEB_DIR)/coverage/coverage-summary.json
 OPENAPI     := api/openapi.yaml
+
+# corepack resolves the pnpm version from the package.json in the working
+# directory, and only web/package.json pins it, so web commands run from web/
+# instead of `pnpm --dir web` from the repo root.
+WEB_PNPM    = cd $(WEB_DIR) && $(PNPM)
 
 IMAGE       ?= ghcr.io/somralab/somra-media
 TAG         ?= dev
@@ -32,8 +37,8 @@ LDFLAGS := -s -w \
 GO_TAGS       ?=
 ACQ_TAGS      := -tags acquisition
 
-.PHONY: help dev dev-backend dev-frontend build build-go build-acquisition build-web \
-        test test-go test-acquisition test-web lint lint-go lint-web \
+.PHONY: help check dev dev-backend dev-frontend build build-go build-acquisition build-web \
+        test test-go test-acquisition test-integration test-web lint lint-go lint-web sca web-deps \
         migrate coverage coverage-go coverage-web coverage-gate \
         i18n-check docker docker-acquisition docker-multiarch openapi-types docs-api e2e \
         profile bundle-check soak-test clean
@@ -43,14 +48,17 @@ help:
 	@printf "Somra — make targets\n\n"
 	@awk '/^## / {sub(/^## /,""); printf "  %s\n", $$0}' $(MAKEFILE_LIST)
 
+## check: full pre-merge gate — lint, i18n, SCA, unit tests + coverage, integration, acquisition, build
+check: lint i18n-check sca coverage-gate test-integration test-acquisition build
+
 ## dev: run backend + frontend dev servers concurrently
 dev:
 	@trap 'kill 0' EXIT INT TERM; \
 	set -a; [ -f .env ] && . ./.env; set +a; \
 	echo ">> $(GO) run ./cmd/somra (background)"; \
 	$(GO) run ./cmd/somra & \
-	echo ">> $(PNPM) --dir $(WEB_DIR) run dev"; \
-	$(PNPM) --dir $(WEB_DIR) run dev & \
+	echo ">> $(WEB_PNPM) run dev"; \
+	$(WEB_PNPM) run dev & \
 	wait
 
 ## dev-backend: run only the Go backend
@@ -60,7 +68,7 @@ dev-backend:
 
 ## dev-frontend: run only the Vite dev server
 dev-frontend:
-	$(PNPM) --dir $(WEB_DIR) run dev
+	$(WEB_PNPM) run dev
 
 ## build: build everything (backend + frontend)
 build: build-go build-web
@@ -75,25 +83,32 @@ build-acquisition:
 	@mkdir -p $(BIN_DIR)
 	CGO_ENABLED=0 $(GO) build $(ACQ_TAGS) -trimpath -ldflags '$(LDFLAGS)' -o $(BINARY)-acquisition ./cmd/somra
 
+## web-deps: install frontend dependencies from the lockfile
+web-deps:
+	$(WEB_PNPM) install --frozen-lockfile
+
 ## build-web: produce the SPA static bundle
-build-web:
-	$(PNPM) --dir $(WEB_DIR) install --frozen-lockfile
-	$(PNPM) --dir $(WEB_DIR) run build
+build-web: web-deps
+	$(WEB_PNPM) run build
 
 ## test: run backend + frontend tests
 test: test-go test-web
 
-## test-go: run all Go unit tests (CGO-free; no -race — see CI unit-test job)
+## test-go: run all Go unit tests (CGO-free, so no -race)
 test-go:
 	$(GO) test ./... -count=1
+
+## test-integration: run Go integration tests (integration build tag)
+test-integration:
+	$(GO) test -tags=integration ./... -count=1
 
 ## test-acquisition: run Go tests including acquisition-tagged packages
 test-acquisition:
 	$(GO) test $(ACQ_TAGS) ./... -count=1
 
 ## test-web: run frontend tests once
-test-web:
-	$(PNPM) --dir $(WEB_DIR) test --run
+test-web: web-deps
+	$(WEB_PNPM) test --run
 
 ## lint: run all linters (Go + frontend)
 lint: lint-go lint-web
@@ -113,10 +128,15 @@ lint-go:
 	fi
 
 ## lint-web: run frontend lint + prettier check
-lint-web:
-	$(PNPM) --dir $(WEB_DIR) run lint
-	$(PNPM) --dir $(WEB_DIR) run format:check
-	$(PNPM) --dir $(WEB_DIR) run typecheck
+lint-web: web-deps
+	$(WEB_PNPM) run lint
+	$(WEB_PNPM) run format:check
+	$(WEB_PNPM) run typecheck
+
+## sca: dependency vulnerability scan (govulncheck + pnpm audit, critical)
+sca: web-deps
+	$(GO) run golang.org/x/vuln/cmd/govulncheck@latest ./...
+	$(WEB_PNPM) audit --audit-level=critical
 
 ## migrate: apply database migrations (no-op for now; runs at server startup)
 migrate:
@@ -131,8 +151,8 @@ coverage-go:
 	$(GO) tool cover -func=$(GO_COVER) | tail -5
 
 ## coverage-web: run frontend tests with coverage (v8, json-summary)
-coverage-web:
-	$(PNPM) --dir $(WEB_DIR) run test:coverage
+coverage-web: web-deps
+	$(WEB_PNPM) run test:coverage
 
 ## coverage-gate: enforce DoD §4.1 coverage thresholds
 coverage-gate: coverage
@@ -190,8 +210,8 @@ docs-api:
 
 ## e2e: install playwright browsers and run e2e specs
 e2e: e2e-fixture build-web
-	$(PNPM) --dir $(WEB_DIR) exec playwright install --with-deps chromium
-	$(PNPM) --dir $(WEB_DIR) exec playwright test
+	$(WEB_PNPM) exec playwright install --with-deps chromium
+	$(WEB_PNPM) exec playwright test
 
 ## profile: capture Go CPU/memory profiles for hot packages (Sprint 10 A1)
 profile:

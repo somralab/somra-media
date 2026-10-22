@@ -46,7 +46,7 @@ Disciplines are the same at both scales; the difference is parallel capacity and
 
 ### 2.5 DevOps / Platform Engineer — 1 person
 - Single Docker image + `docker compose` deployment, multi-arch (amd64/arm64) build.
-- CI/CD pipeline, release automation, image publishing (registry).
+- Local quality gates (`make check`), release process, image publishing (registry). No CI/CD ([`project-brief.md`](./project-brief.md) §4).
 - Hardware device access (GPU passthrough), observability (log/metrics).
 - **Output owner:** Sprint 01, 07, 10 devops tasks.
 
@@ -87,7 +87,7 @@ Disciplines are the same at both scales; the difference is parallel capacity and
 | Hardware acceleration (GPU) | Media Specialist | DevOps |
 | React / TypeScript | Frontend | — |
 | Video player (HLS/DASH) | Frontend | Media Specialist |
-| Docker / CI-CD | DevOps | Tech Lead |
+| Docker / build & release | DevOps | Tech Lead |
 | Test automation | QA | all developers |
 | Security / RBAC | Backend | Tech Lead |
 | UX / design | UX/UI | Frontend |
@@ -95,7 +95,7 @@ Disciplines are the same at both scales; the difference is parallel capacity and
 ## 5. Recommended Hiring/Onboarding Order
 
 1. **Tech Lead (Go)** — architecture and standards foundation (before Sprint 01).
-2. **Backend #1 + DevOps** — skeleton, CI/CD, data layer.
+2. **Backend #1 + DevOps** — skeleton, build tooling, data layer.
 3. **Frontend #1** — design system and API integration foundation.
 4. **Media/Streaming Specialist** — before Sprint 04.
 5. **Backend #2–#3, Frontend #2, QA** — as parallel capacity grows.

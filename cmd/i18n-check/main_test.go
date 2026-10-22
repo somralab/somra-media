@@ -184,3 +184,154 @@ func TestFlatten_RootLevelLeaf(t *testing.T) {
 	_, ok := out[""]
 	assert.True(t, ok)
 }
+
+func TestCheckOverflow_FlagsTranslationsOverRatio(t *testing.T) {
+	dir := t.TempDir()
+	writeFile(t, filepath.Join(dir, "en-US", "nav.json"), `{"home":"Home","menu":{"settings":"Settings"},"count":3}`)
+	writeFile(t, filepath.Join(dir, "tr-TR", "nav.json"), `{"home":"Ana sayfanıza dönün","menu":{"settings":"Ayarlar"},"count":3}`)
+
+	err := checkOverflow(dir, "en-US", "tr-TR", 2)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "nav.home: source=4 target=19")
+	assert.NotContains(t, err.Error(), "nav.menu.settings")
+	assert.NotContains(t, err.Error(), "nav.count")
+}
+
+func TestCheckOverflow_CountsRunesNotBytes(t *testing.T) {
+	dir := t.TempDir()
+	// "Şişeği" is 6 runes but 9 bytes; a byte count would exceed 1.5 × 5.
+	writeFile(t, filepath.Join(dir, "en-US", "a.json"), `{"k":"Glass"}`)
+	writeFile(t, filepath.Join(dir, "tr-TR", "a.json"), `{"k":"Şişeği"}`)
+
+	require.NoError(t, checkOverflow(dir, "en-US", "tr-TR", 1.5))
+}
+
+func TestCheckOverflow_SkipsEmptySourceAndUntranslatedKeys(t *testing.T) {
+	dir := t.TempDir()
+	writeFile(t, filepath.Join(dir, "en-US", "a.json"), `{"empty":"","only_source":"Hi"}`)
+	writeFile(t, filepath.Join(dir, "de-DE", "a.json"), `{"empty":"Diese Übersetzung ist in der Quelle leer"}`)
+
+	require.NoError(t, checkOverflow(dir, "en-US", "de-DE", 1.5))
+}
+
+func TestCheckOverflow_MissingLocaleDir(t *testing.T) {
+	dir := t.TempDir()
+	writeFile(t, filepath.Join(dir, "en-US", "a.json"), `{"k":"v"}`)
+
+	err := checkOverflow(dir, "en-US", "tr-TR", 1.5)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "overflow frontend target")
+
+	err = checkOverflow(t.TempDir(), "en-US", "tr-TR", 1.5)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "overflow frontend source")
+}
+
+func TestCheckOverflow_InvalidJSON(t *testing.T) {
+	dir := t.TempDir()
+	writeFile(t, filepath.Join(dir, "en-US", "a.json"), `{ not valid`)
+	writeFile(t, filepath.Join(dir, "tr-TR", "a.json"), `{}`)
+
+	require.Error(t, checkOverflow(dir, "en-US", "tr-TR", 1.5))
+}
+
+func TestCheckOverflowBackend_FlagsTranslationsOverRatio(t *testing.T) {
+	dir := t.TempDir()
+	writeFile(t, filepath.Join(dir, "active.en-US.toml"), `["errors.short"]
+other = "Not found"
+
+["errors.ok"]
+other = "Forbidden"
+`)
+	writeFile(t, filepath.Join(dir, "active.tr-TR.toml"), `["errors.short"]
+other = "İstediğiniz kaynak bu sunucuda bulunamadı"
+
+["errors.ok"]
+other = "Yasak"
+`)
+
+	err := checkOverflowBackend(dir, "en-US", "tr-TR", 2)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "errors.short: source=9 target=41")
+	assert.NotContains(t, err.Error(), "errors.ok")
+}
+
+func TestCheckOverflowBackend_IgnoresEntriesWithoutOther(t *testing.T) {
+	dir := t.TempDir()
+	writeFile(t, filepath.Join(dir, "active.en-US.toml"), `["items"]
+one = "item"
+`)
+	writeFile(t, filepath.Join(dir, "active.de-DE.toml"), `["items"]
+one = "ein sehr, sehr langer Elementname"
+`)
+
+	require.NoError(t, checkOverflowBackend(dir, "en-US", "de-DE", 1.5))
+}
+
+func TestCheckOverflowBackend_MissingFiles(t *testing.T) {
+	require.NoError(t, checkOverflowBackend(t.TempDir(), "en-US", "tr-TR", 1.5),
+		"no source bundle means there is nothing to compare")
+
+	dir := t.TempDir()
+	writeFile(t, filepath.Join(dir, "active.en-US.toml"), `["k"]
+other = "v"
+`)
+	err := checkOverflowBackend(dir, "en-US", "tr-TR", 1.5)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "overflow backend target")
+
+	writeFile(t, filepath.Join(dir, "active.en-US.toml"), "not valid = = toml")
+	err = checkOverflowBackend(dir, "en-US", "tr-TR", 1.5)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "overflow backend source")
+}
+
+// newLocaleTree writes a minimal, valid backend + frontend locale layout and
+// returns the two directories.
+func newLocaleTree(t *testing.T, trHome string) (backendDir, frontendDir string) {
+	t.Helper()
+	root := t.TempDir()
+	backendDir = filepath.Join(root, "backend")
+	frontendDir = filepath.Join(root, "frontend")
+	writeFile(t, filepath.Join(backendDir, "active.en-US.toml"), `["k"]
+other = "Home"
+`)
+	writeFile(t, filepath.Join(backendDir, "active.tr-TR.toml"), `["k"]
+other = "Ev"
+`)
+	writeFile(t, filepath.Join(frontendDir, "en-US", "nav.json"), `{"home":"Home"}`)
+	writeFile(t, filepath.Join(frontendDir, "tr-TR", "nav.json"), `{"home":"`+trHome+`"}`)
+	return backendDir, frontendDir
+}
+
+func TestRun_ExitCodes(t *testing.T) {
+	backendDir, frontendDir := newLocaleTree(t, "Ana sayfa")
+	base := []string{"--backend-dir", backendDir, "--frontend-dir", frontendDir}
+
+	var stdout, stderr strings.Builder
+	require.Equal(t, 0, run(append(base, "--overflow-ratio", "3.5"), &stdout, &stderr), stderr.String())
+	assert.Equal(t, "i18n-check: ok\n", stdout.String())
+
+	stdout.Reset()
+	stderr.Reset()
+	require.Equal(t, 1, run(append(base, "--overflow-ratio", "1.5"), &stdout, &stderr))
+	assert.Contains(t, stderr.String(), "frontend overflow check")
+	assert.Empty(t, stdout.String())
+
+	require.Equal(t, 0, run(append(base, "--overflow-ratio", "0"), &stdout, &stderr),
+		"a ratio of 0 disables the overflow check")
+
+	stderr.Reset()
+	require.Equal(t, 2, run([]string{"--no-such-flag"}, &stdout, &stderr))
+	assert.Contains(t, stderr.String(), "no-such-flag")
+}
+
+func TestRun_ReportsKeyMismatch(t *testing.T) {
+	backendDir, frontendDir := newLocaleTree(t, "Ana sayfa")
+	writeFile(t, filepath.Join(frontendDir, "tr-TR", "extra.json"), `{"x":"y"}`)
+
+	var stdout, stderr strings.Builder
+	code := run([]string{"--backend-dir", backendDir, "--frontend-dir", frontendDir, "--overflow-ratio", "0"}, &stdout, &stderr)
+	require.Equal(t, 1, code)
+	assert.Contains(t, stderr.String(), "extra")
+}

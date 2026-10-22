@@ -26,9 +26,9 @@
 - [x] Lockout tests
 - [ ] Playwright login → library e2e (run locally: `make e2e`)
 
-## CI
+## Gates
 - [x] `make test` (Go)
 - [x] `make i18n-check`
 - [x] `make build`
-- [ ] `make lint` (requires golangci-lint in CI)
+- [ ] `make lint` (requires golangci-lint)
 - [ ] `make coverage-gate` (full suite)

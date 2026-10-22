@@ -7,8 +7,11 @@
 > [`.plan/project-brief.md`](./.plan/project-brief.md) for the full vision
 > and scope.
 
-**Status:** Sprints **01–09 complete**. **Active sprint:** **10 — Polish & Open Source**
-(M6 / 1.0 release prep). See [`.plan/00-index.md`](./.plan/00-index.md).
+**Status:** **Pre-release / alpha — not ready for end users.** Sprints 01–09 are implemented,
+but browser playback is unreliable in every mode, rescans duplicate library items, several
+metadata providers are stubs, and no release has been tagged. **Active sprint:** **11 — Playback & Data Foundation**.
+Requests, automation and indexers are **on hold**. Verified module-by-module status:
+[`.plan/current-state.md`](./.plan/current-state.md) · Plan: [`.plan/00-index.md`](./.plan/00-index.md).
 
 **License:** [AGPL-3.0-or-later](./LICENSE) · [Code of Conduct](./CODE_OF_CONDUCT.md) ·
 [Contributing](./CONTRIBUTING.md) (DCO sign-off on every commit).
@@ -17,7 +20,11 @@
 
 ## Run Somra (end users)
 
-Pull the published image and start Somra — no build toolchain required:
+> **No image has been published yet.** There is no `v*` tag, so
+> `ghcr.io/somralab/somra-media:1.0.0` does not exist. Until the first release, build
+> from source with Docker Compose (see [Develop locally](#develop-locally)).
+
+Once a release is published, the command will be:
 
 ```bash
 mkdir -p ~/somra/{config,data,cache,media}
@@ -59,13 +66,15 @@ Summary — full plan: [`.plan/roadmap.md`](./.plan/roadmap.md).
 | Milestone | Sprints | Outcome | Status |
 | --------- | ------- | ------- | ------ |
 | **M1** | 01 | Runnable skeleton via `docker run` | Done |
-| **M2** | 02–03 | Login + scanned library with metadata | Done |
-| **M3** | 04–05 | Browser playback incl. transcode — first alpha | Done |
-| **M4** | 06–07 | Zero-config setup + HW acceleration — beta | Done |
-| **M5** | 08–09 | Requests + automation + indexers | Done |
-| **M6** | 10 | Open source release — **1.0** | In progress |
+| **M2** | 02–03 | Login + scanned library with metadata | Done (TMDB only; other providers are stubs) |
+| **M3** | 04–05 | Browser playback incl. transcode — first alpha | **Partial** — direct play / Safari return 401; transcodes stop after the first segment |
+| **M4** | 06–07 | Zero-config setup + HW acceleration — beta | **Broken** — HW ffmpeg args are invalid; always falls back to CPU |
+| **M5** | 08–09 | Requests + automation + indexers | **On hold** (implemented as skeleton) |
+| **M5.5** | 11–13 | Core experience, Netflix-like UI, performance | **Active** |
+| **M6** | 10 | Open source release — **1.0** | Blocked by M5.5 |
 
-Track execution via [GitHub Issues](https://github.com/somralab/somra-media/issues).
+Details: [`.plan/current-state.md`](./.plan/current-state.md). Track execution via
+[GitHub Issues](https://github.com/somralab/somra-media/issues).
 
 ---
 
@@ -75,6 +84,7 @@ For contributors building from source:
 
 ```bash
 make help            # list all targets
+make check           # full pre-merge gate (no CI — runs locally)
 make dev             # backend + frontend dev servers concurrently
 make build           # backend (CGO=0) + frontend bundle
 make test            # Go unit tests + Vitest
@@ -113,9 +123,10 @@ Decided technologies — see [`.plan/tech-stack.md`](./.plan/tech-stack.md).
 
 ---
 
-## CI gates
+## Merge gates (local — no CI/CD)
 
-Every PR: `lint → i18n-check → sca → unit-test → integration-test → coverage-gate → build → e2e → image-build`.
+Somra has no CI/CD by decision. Every PR must pass `make check` locally:
+`lint → i18n-check → sca → coverage-gate → test-integration → test-acquisition → build`.
 
 Coverage thresholds (DoD §4.1): core Go ≥ 80 %, critical modules ≥ 90 %, frontend ≥ 70 %.
 Details: [`.plan/definition-of-done.md`](./.plan/definition-of-done.md).

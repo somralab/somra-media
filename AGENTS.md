@@ -20,8 +20,14 @@ single Docker install, built from scratch.
 - **Goal:** Replace the fragmented stack (Jellyfin/Plex + Sonarr/Radarr + Prowlarr + Bazarr +
   Overseerr + download clients) with one unified product. Philosophy: **minimum
   configuration, maximum optimization**.
-- **Status:** Sprints 01–08 complete. **Active sprint:** 09 — Automation & Indexers.
-  See [`.plan/00-index.md`](./.plan/00-index.md) for the current dashboard and task order.
+- **Status:** Pre-release alpha. Sprints 01–09 implemented (several parts shallow or stubbed);
+  Sprint 10 (1.0 release) **paused**. **Active sprint:** 11 — Playback & Data Foundation.
+  Requests / automation / indexers are **on hold**: fix only what breaks the build or tests;
+  no new features there. Read [`.plan/current-state.md`](./.plan/current-state.md) before
+  trusting any "done" checkbox, then [`.plan/00-index.md`](./.plan/00-index.md) for task order.
+- **Refactor rule (gradual):** when you touch a domain, move its business logic out of
+  `internal/platform/db` into the owning module, and replace `*coverage*` / `*_extra_test.go`
+  padding tests in that area with behaviour tests. No big-bang rewrites.
 - **License:** **AGPL-3.0** with **DCO** sign-off (no CLA). Any dependency must be
   AGPL-3.0-compatible.
 
@@ -31,7 +37,7 @@ Key references in [`.plan/`](./.plan/):
 - [`.plan/project-brief.md`](./.plan/project-brief.md) — vision, scope (in/out), decisions, governance.
 - [`.plan/architecture.md`](./.plan/architecture.md) — modules, data flow, decided architecture.
 - [`.plan/tech-stack.md`](./.plan/tech-stack.md) — closed technology decisions (§7).
-- [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) — DoD, coding standards, test/coverage, CI gates.
+- [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) — DoD, coding standards, test/coverage, merge gates.
 - [`.plan/i18n-localization.md`](./.plan/i18n-localization.md) — binding i18n rules.
 - [`.plan/roadmap.md`](./.plan/roadmap.md) — sprint/milestone plan.
 
@@ -106,6 +112,7 @@ instructions — the closest file to an edited file wins.
 Prefer the `Makefile` targets (created in Sprint 01). Intended commands:
 
 ```bash
+make check        # full pre-merge gate (there is no CI — see below)
 make dev          # run backend (hot reload) + frontend dev server
 make build        # build Go binary + frontend static assets
 make test         # run all tests (unit + integration)
@@ -135,21 +142,30 @@ Per [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) §4 / §4.1:
 - Unit tests are **mandatory** for business logic and pure functions.
 - Integration tests for boundaries: DB, file scanning, transcode pipeline.
 - E2E tests for critical user flows: login, browsing, playback, setup wizard.
-- **Coverage thresholds (enforced by CI, blocking):**
+- **Coverage thresholds (enforced by `make coverage-gate`, blocking):**
   - Core Go business logic: **≥ 80%** line coverage
   - Critical modules (auth/RBAC, scanning, transcode-decision engine, automation import): **≥ 90%**
   - Frontend component tests: **≥ 70%**; critical flows require **e2e**
 - Run `make test` and `make coverage`; fix all failures and type errors before finishing.
 - Add/update tests for code you change, even if not explicitly asked.
 
-## CI gates (must be green to merge)
+## No CI/CD — local merge gates
+
+The project has **no CI/CD and never will** (decision:
+[`.plan/project-brief.md`](./.plan/project-brief.md) §4). Do **not** add `.github/workflows/`,
+any other hosted pipeline config (GitLab CI, CircleCI, Jenkins, …) or CI-only code paths, and do
+not propose them. `.gitignore` blocks the common pipeline paths.
+
+Every gate runs locally. `make check` must pass before a PR is merged:
 
 ```
-lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build
+lint → i18n-check → sca → coverage-gate → test-integration → test-acquisition → build
 ```
 
-If any gate is red, **do not merge**. `i18n-check` fails on missing/incomplete `en-US`/`tr-TR`
-keys; `coverage-gate` fails below the thresholds above.
+`coverage-gate` runs the Go and web unit tests and fails below the thresholds above;
+`i18n-check` fails on missing/incomplete `en-US`/`tr-TR` keys. Also run `make e2e` when a change
+touches a critical flow (login, browsing, playback, setup wizard) and `make docker` when it
+touches `deploy/`. If any gate is red, **do not merge**.
 
 ## Internationalization (binding)
 
@@ -178,7 +194,7 @@ See [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) §6 and
 
 - Small, focused commits/PRs; reference the related task and acceptance criteria.
 - **Sign off every commit (DCO):** `git commit -s` (adds `Signed-off-by`).
-- PRs must pass all CI gates (above) and meet the DoD before merge; architecture-affecting
+- PRs must pass `make check` (above) and meet the DoD before merge; architecture-affecting
   changes require Tech Lead approval.
 - Do not commit secrets or `.env`-style credential files.
 
@@ -196,18 +212,18 @@ See [`.plan/definition-of-done.md`](./.plan/definition-of-done.md) §6 and
 1. Read [`.plan/00-index.md`](./.plan/00-index.md) then the active sprint folder under [`.plan/`](./.plan/).
 2. Confirm the task is in scope ([`.plan/project-brief.md`](./.plan/project-brief.md)) and identify the owning module ([`.plan/architecture.md`](./.plan/architecture.md) §3).
 3. If a GitHub Issue exists, use it for status; otherwise reference the `.plan/` task file in the PR.
-4. Implement with tests + i18n keys; run `make lint test i18n-check coverage`.
+4. Implement with tests + i18n keys; run `make check`.
 5. Open a focused, DCO-signed PR referencing the issue / task and acceptance criteria.
 
 ## Cursor Cloud specific instructions
 
 Notes for cloud agents (toolchain is pre-installed in the VM snapshot):
 
-- **Sprint 01 is complete** — `go.mod`, `web/package.json`, `Makefile`, CI, and the M1 skeleton exist.
-  Run `make lint test i18n-check coverage build` before finishing substantive changes.
+- **Sprint 01 is complete** — `go.mod`, `web/package.json`, `Makefile`, and the M1 skeleton exist.
+  Run `make check` before finishing substantive changes.
 - **Toolchain:** Go (current stable, `/usr/local/go`), Node 22 + `pnpm` 10, `ffmpeg`/`ffprobe` 6.x,
   `golangci-lint` 2.x, GNU `make`.
 - **Docker is NOT installed** in the default cloud snapshot. It is only needed for `make docker` /
-  image builds — not for `make dev`. Install on demand for image/CI work.
+  image builds — not for `make dev`. Install on demand for image work.
 - **Keep builds CGO-free** (`CGO_ENABLED=0`); the SQLite driver is `modernc.org/sqlite` (pure Go).
 - The startup update script runs `go mod download` and `pnpm install` when manifests exist.

@@ -18,9 +18,9 @@
 - [x] A2 — Capability/supported codec matrix (HW decode/encode) | Acceptance: accurate capability report.
 
 ### Epic B: HW transcode pipeline
-- [x] B1 — ffmpeg HW acceleration parameter generation (per platform) | Acceptance: HW transcode works.
-- [x] B2 — HW decode + (if needed) HW encode full chain | Acceptance: CPU load drops significantly.
-- [x] B3 — HW→SW fallback | Acceptance: falls back to CPU if HW fails; playback is not interrupted.
+- [ ] B1 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** ffmpeg HW acceleration parameter generation (per platform) | Acceptance: HW transcode works.
+- [ ] B2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** HW decode + (if needed) HW encode full chain | Acceptance: CPU load drops significantly.
+- [ ] B3 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** HW→SW fallback | Acceptance: falls back to CPU if HW fails; playback is not interrupted.
 
 ### Epic C: Automatic selection
 - [x] C1 — Optimal path selection engine based on hardware + media | Acceptance: most efficient path is selected automatically.

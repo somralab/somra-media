@@ -14,12 +14,12 @@
 ## Epics and Tasks
 
 ### Epic A: E2E flows
-- [x] A1 — Login → library → detail → playback e2e | Acceptance: critical path passes.
+- [ ] A1 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Login → library → detail → playback e2e | Acceptance: critical path passes.
 - [x] A2 — Search/filter/shelf accuracy | Acceptance: results are consistent.
 
 ### Epic B: Compatibility & accessibility
-- [x] B1 — Responsive/browser test | Acceptance: desktop/mobile browsers.
-- [x] B2 — Accessibility check (keyboard, contrast) | Acceptance: basic WCAG (in all four themes).
+- [ ] B1 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Responsive/browser test | Acceptance: desktop/mobile browsers.
+- [ ] B2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Accessibility check (keyboard, contrast) | Acceptance: basic WCAG (in all four themes).
 - [x] B3 — Theme test: consistency across four themes + theme persistence | Acceptance: theme changes, is remembered, contrast is preserved.
 
 ### Epic C: Alpha acceptance

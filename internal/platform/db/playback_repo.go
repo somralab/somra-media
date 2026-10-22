@@ -134,11 +134,17 @@ func (r *PlaybackRepo) CountActiveTranscodes(ctx context.Context) (int, error) {
 }
 
 // UpdateStatus sets status and optional error message.
+//
+// Stopped, failed and expired are final: once a session has ended, a later
+// update is a no-op. Several goroutines race to report a session's end (the
+// idle reaper, a user stop, the packaging goroutine noticing its ffmpeg
+// exit), and the first one to land must win. The check lives in the UPDATE
+// so it is atomic.
 func (r *PlaybackRepo) UpdateStatus(ctx context.Context, id string, status PlaybackStatus, errMsg string) error {
 	res, err := r.q.ExecContext(ctx, `
 		UPDATE playback_session SET status = ?, error_message = ?, last_access_at = datetime('now')
-		WHERE id = ?
-	`, status, nullStr(errMsg), id)
+		WHERE id = ? AND status NOT IN (?, ?, ?)
+	`, status, nullStr(errMsg), id, PlaybackStopped, PlaybackFailed, PlaybackExpired)
 	if err != nil {
 		return fmt.Errorf("db playback update status %q: %w", id, err)
 	}
@@ -146,8 +152,16 @@ func (r *PlaybackRepo) UpdateStatus(ctx context.Context, id string, status Playb
 	if err != nil {
 		return fmt.Errorf("db playback update status rows: %w", err)
 	}
-	if n == 0 {
+	if n > 0 {
+		return nil
+	}
+	var exists int
+	err = r.q.QueryRowContext(ctx, `SELECT 1 FROM playback_session WHERE id = ?`, id).Scan(&exists)
+	if errors.Is(err, sql.ErrNoRows) {
 		return ErrPlaybackSessionNotFound
+	}
+	if err != nil {
+		return fmt.Errorf("db playback update status lookup %q: %w", id, err)
 	}
 	return nil
 }

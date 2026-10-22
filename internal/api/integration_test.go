@@ -2,8 +2,8 @@
 
 // Package api integration tests exercise the production bootstrap path:
 // config → bootstrap (i18n + scheduler + DB diagnostics) → chi mux. They
-// run under the `integration` build tag so the dedicated CI gate is
-// meaningful instead of a trivial smoke. Plain unit tests stay in the
+// run under the `integration` build tag so the dedicated
+// `make test-integration` gate is meaningful instead of a trivial smoke. Plain unit tests stay in the
 // default suite.
 package api_test
 

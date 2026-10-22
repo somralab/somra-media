@@ -1,5 +1,8 @@
 # Sprint 08 — Backend Tasks (Request Management — Overseerr Functionality)
 
+> **Status (2026-10-13): ON HOLD.** Implemented as a skeleton; no new work until M5.5 is done.
+> Fix only what breaks the build or tests. See [`../current-state.md`](../current-state.md).
+
 > **Sprint goal:** Users create requests for missing content, approval workflow, and
 > request status tracking (Overseerr/Jellyseerr functionality).
 >

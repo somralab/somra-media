@@ -11,7 +11,7 @@ Related: [`00-index.md`](./00-index.md) · [`project-brief.md`](./project-brief.
 
 | Sprint | Name | Main Output (Milestone) | Folder |
 |---|---|---|---|
-| 01 | Foundation & Architecture | Running skeleton service + CI/CD + Docker image skeleton + API contract | [`sprint-01-foundation/`](./sprint-01-foundation/) |
+| 01 | Foundation & Architecture | Running skeleton service + local quality gates + Docker image skeleton + API contract | [`sprint-01-foundation/`](./sprint-01-foundation/) |
 | 02 | Library & Metadata | Media scanning + enriched metadata + file watching | [`sprint-02-library-metadata/`](./sprint-02-library-metadata/) |
 | 03 | Auth & Users | Multi-user + RBAC + profiles + parental controls + watch state | [`sprint-03-auth-users/`](./sprint-03-auth-users/) |
 | 04 | Streaming & Transcode | Direct play + software transcode + HLS/DASH + subtitles | [`sprint-04-streaming-transcode/`](./sprint-04-streaming-transcode/) |
@@ -20,7 +20,15 @@ Related: [`00-index.md`](./00-index.md) · [`project-brief.md`](./project-brief.
 | 07 | Hardware Acceleration | QSV/NVENC/VAAPI/AMF + automatic selection | [`sprint-07-hardware-acceleration/`](./sprint-07-hardware-acceleration/) |
 | 08 | Request Management | Request/approval flow + notifications | [`sprint-08-request-management/`](./sprint-08-request-management/) |
 | 09 | Automation & Indexers | Plugin architecture + indexer (torrent+usenet) + download automation | [`sprint-09-automation-indexers/`](./sprint-09-automation-indexers/) |
-| 10 | Polish & Open Source | Performance + documentation + security audit + OSS release | [`sprint-10-polish-oss-release/`](./sprint-10-polish-oss-release/) |
+| 10 | Polish & Open Source | Performance + documentation + security audit + OSS release (**paused until M5.5**) | [`sprint-10-polish-oss-release/`](./sprint-10-polish-oss-release/) |
+| 11 | Playback & Data Foundation | Playback in all browsers + transcode correctness + data correctness + TV model | [`sprint-11-playback-foundation/`](./sprint-11-playback-foundation/) |
+| 12 | Streaming-App Experience | Netflix-like UI (own identity) + image pipeline + full-screen player | [`sprint-12-streaming-experience/`](./sprint-12-streaming-experience/) |
+| 13 | Performance at Scale | Budgets on 4c/8GB at 10k items: ABR, seek-ahead, pagination, scan speed | [`sprint-13-performance-scale/`](./sprint-13-performance-scale/) |
+
+> **2026-10 re-plan:** the audit in [`current-state.md`](./current-state.md) found that Sprints 02, 04, 05
+> and 07 were closed with core gaps (26 tasks reopened). Sprints 11–13 (milestone **M5.5**) run
+> **before** Sprint 10 resumes. Sprints 08–09 (requests, automation, indexers) are **on hold**.
+> Execution order: 11 → 12 → 13 → 10.
 
 ## 2. Dependency Flow
 
@@ -40,6 +48,10 @@ flowchart LR
   S06 --> S10[10 Polish & OSS]
   S07 --> S10
   S09 --> S10
+  S10 -.paused.-> S11[11 Playback/Data]
+  S11 --> S12[12 Streaming UX]
+  S12 --> S13[13 Performance]
+  S13 --> S10
 ```
 
 ## 3. Milestone Definitions
@@ -49,6 +61,8 @@ flowchart LR
 - **M3 (Sprint 04–05):** End-to-end playback — video watchable in browser including transcode. **First usable alpha.**
 - **M4 (Sprint 06–07):** Zero-config setup + hardware acceleration. **Beta candidate.**
 - **M5 (Sprint 08–09):** Requests + automation + indexer. **Full parity phase entry.**
+- **M5.5 (Sprint 11–13):** Every browser plays reliably, data survives rescans, Netflix-like consumer UI,
+  performance budgets met on home hardware. **Real beta.**
 - **M6 (Sprint 10):** Open source release. **1.0.**
 
 ## 4. Cross-Sprint Rules

@@ -49,6 +49,7 @@ can fine-tune everything from the UI.
 | Timeline | **No hard deadline** | Default sprint cadence is 2 weeks; sprints sized by work packages. |
 | Brand | **somra** | Visual identity in Sprint 05 design tasks. |
 | License | **AGPL-3.0 + DCO (decided)** | See below. |
+| CI/CD | **None (decided 2026-10-13)** | No hosted CI/CD and no pipeline config (`.github/workflows/`, GitLab CI, …) at any stage. Quality gates run locally with `make check`; releases are tagged, built and pushed by hand. |
 
 ## 5. License: AGPL-3.0 + DCO (Decided)
 
@@ -107,7 +108,7 @@ document must be updated first and a new sprint/effort planned:
 - **Integration:** Core functions of the separate tools above are usable from one UI, one identity,
   and one data layer.
 - **Performance:** Runs reasonably on home server hardware (e.g. 4 cores / 8GB RAM).
-- **Open source readiness:** License, contribution guide, security policy, CI/CD, and documentation ready.
+- **Open source readiness:** License, contribution guide, security policy, local quality gates, and documentation ready.
 
 ## 9. Governance Rules (Anti-Drift / Framing)
 
@@ -125,3 +126,5 @@ document must be updated first and a new sprint/effort planned:
 | Date | Change | Owner |
 |---|---|---|
 | (creation) | Initial brief created | — |
+| 2026-10-13 | Audit ([`current-state.md`](./current-state.md)): Sprints 02/04/05/07 reopened (26 tasks). Inserted Sprints 11–13 (M5.5: playback & data foundation, Netflix-like UI with Somra's own identity, performance) before Sprint 10. Sprints 08–09 (requests, automation, indexers) **on hold** — scope (§6) unchanged, not cut. | Mustafa ÖZTÜRK |
+| 2026-10-13 | CI/CD removed for good (§4): deleted `.github/workflows/` (ci, code-coverage, release). Gates run locally via `make check`. | Mustafa ÖZTÜRK |

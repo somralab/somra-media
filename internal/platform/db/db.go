@@ -16,31 +16,40 @@ import (
 // the future.
 const driverName = "sqlite"
 
-// pragmas lists the SQLite PRAGMA statements applied to every new
-// connection. They are evaluated in order on Open so a failure to apply any
-// of them surfaces immediately as a startup error.
+// maxOpenConns caps the pool; see Open for why it is small.
+const maxOpenConns = 8
+
+// pragmas lists the SQLite PRAGMAs, in the driver's `_pragma=name(value)`
+// form, that Config.DSN encodes into the connection string. The driver runs
+// them on every new connection, so connections the pool dials later get the
+// same settings as the first one. PRAGMAs such as busy_timeout and
+// foreign_keys are per-connection; setting them once on the pool is not
+// enough.
 //
 // Rationale per statement:
+//   - busy_timeout=5000: blocks instead of returning SQLITE_BUSY immediately
+//     when another connection holds a lock, smoothing over short writer
+//     contention without the caller having to retry. The driver applies it
+//     first so the remaining PRAGMAs also wait on locks.
 //   - journal_mode=WAL: enables concurrent readers alongside a single writer
 //     which matches Somra's read-heavy workload (browsing, metadata reads).
+//     It is persisted in the database file; repeating it per connection is a
+//     no-op once set.
 //   - synchronous=NORMAL: pairs with WAL to balance durability and write
 //     throughput on consumer hardware. FULL is overkill for a home server.
 //   - foreign_keys=ON: enforces relational integrity; SQLite ships with this
 //     disabled by default which is a footgun.
-//   - busy_timeout=5000: blocks instead of returning SQLITE_BUSY immediately
-//     when another connection holds a lock, smoothing over short writer
-//     contention without the caller having to retry.
 //   - temp_store=MEMORY: keeps transient sort/index data in RAM; the data
 //     dir is the only thing we want persisted to disk.
 //   - cache_size=-65536: negative values are interpreted as KiB; 64 MiB is
 //     a safe default for the small-server profile.
 var pragmas = []string{
-	"PRAGMA journal_mode=WAL",
-	"PRAGMA synchronous=NORMAL",
-	"PRAGMA foreign_keys=ON",
-	"PRAGMA busy_timeout=5000",
-	"PRAGMA temp_store=MEMORY",
-	"PRAGMA cache_size=-65536",
+	"busy_timeout(5000)",
+	"journal_mode(WAL)",
+	"synchronous(NORMAL)",
+	"foreign_keys(ON)",
+	"temp_store(MEMORY)",
+	"cache_size(-65536)",
 }
 
 // DB wraps a *sql.DB so the rest of the application can depend on this
@@ -50,10 +59,10 @@ type DB struct {
 	sqlDB *sql.DB
 }
 
-// Open dials the SQLite database described by cfg, applies the required
-// PRAGMAs and connection pool limits, and returns a ready handle. The
-// PRAGMA queries themselves exercise the connection so a separate ping is
-// not needed.
+// Open dials the SQLite database described by cfg, applies the connection
+// pool limits, and returns a ready handle. The initial ping dials the first
+// connection, so an invalid PRAGMA or unreadable file fails here rather
+// than on the first query.
 //
 // SQLite serialises all writes through a single writer; multiple Go
 // goroutines opening write transactions in parallel will queue, not run
@@ -79,11 +88,11 @@ func Open(ctx context.Context, cfg Config) (*DB, error) {
 		return nil, fmt.Errorf("db open: %w", err)
 	}
 
-	sqlDB.SetMaxOpenConns(8)
+	sqlDB.SetMaxOpenConns(maxOpenConns)
 	sqlDB.SetMaxIdleConns(4)
 	sqlDB.SetConnMaxLifetime(0)
 
-	if err := applyPragmas(ctx, sqlDB); err != nil {
+	if err := sqlDB.PingContext(ctx); err != nil {
 		_ = sqlDB.Close()
 		return nil, fmt.Errorf("db open: %w", err)
 	}
@@ -123,27 +132,4 @@ func (d *DB) JournalMode(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("db journal_mode: %w", err)
 	}
 	return mode, nil
-}
-
-// applyPragmas runs every entry in pragmas against the connection. Because
-// some PRAGMAs (e.g. journal_mode) return a row, we use QueryContext and
-// drain the rows rather than ExecContext.
-func applyPragmas(ctx context.Context, sqlDB *sql.DB) error {
-	for _, p := range pragmas {
-		rows, err := sqlDB.QueryContext(ctx, p)
-		if err != nil {
-			return fmt.Errorf("apply pragma %q: %w", p, err)
-		}
-		for rows.Next() {
-			// drain rows so the connection is returned to the pool
-		}
-		err = rows.Err()
-		if cerr := rows.Close(); cerr != nil && err == nil {
-			err = cerr
-		}
-		if err != nil {
-			return fmt.Errorf("apply pragma %q: %w", p, err)
-		}
-	}
-	return nil
 }

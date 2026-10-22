@@ -17,7 +17,7 @@
 - [x] A2 — Watch progress update (periodic ping) | Acceptance: resume data is updated.
 
 ### Epic B: Session & resource management
-- [x] B1 — Concurrent transcode session limit + queuing | Acceptance: overload is prevented.
+- [ ] B1 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** Concurrent transcode session limit + queuing | Acceptance: overload is prevented.
 - [x] B2 — Idle session termination | Acceptance: no resource leaks.
 
 ### Epic C: Telemetry

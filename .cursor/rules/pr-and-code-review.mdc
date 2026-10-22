@@ -21,11 +21,12 @@ alwaysApply: true
 <unit/integration/e2e + coverage note>
 
 ## Checklist
-- [ ] DoD met  - [ ] i18n (en-US + tr-TR)  - [ ] CI green
+- [ ] DoD met  - [ ] i18n (en-US + tr-TR)  - [ ] `make check` green
 ```
 
 ## Merge prerequisites
-- All CI gates green: `lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build`.
+- `make check` green locally: `lint → i18n-check → sca → coverage-gate → test-integration → test-acquisition → build`.
+- There is **no CI/CD** — never add pipeline configs (`.github/workflows/` etc.).
 - At least **1 approval**; changes affecting architecture require **Tech Lead approval**.
 - [`.plan/definition-of-done.md`](../../.plan/definition-of-done.md) §1 must be satisfied.
 
@@ -38,4 +39,4 @@ alwaysApply: true
 
 ## Etiquette
 - Constructive, concrete feedback; prefix minor suggestions with "nit:".
-- On rejected/failed CI, add a **new commit** (no amend); no force-push after review.
+- On a rejected review or failed gate, add a **new commit** (no amend); no force-push after review.

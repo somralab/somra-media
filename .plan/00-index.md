@@ -9,44 +9,52 @@ Related: `[project-brief.md](./project-brief.md)` · `[roadmap.md](./roadmap.md)
 
 ## Active sprint
 
+> **Read [`current-state.md`](./current-state.md) first.** It records what actually works
+> (audit 2026-10-13). Sprint checkboxes below record what was planned; 26 tasks were reopened.
+
 | Field | Value |
 |---|---|
-| **Sprint** | **10 — Polish & Open Source** |
-| **Status** | **Planned** (Sprints 01–09 complete) |
-| **Milestone target** | **M6** — polish, security audit prep, open-source release |
-| **Folder** | [`sprint-10-polish-oss-release/`](./sprint-10-polish-oss-release/) |
-| **Dependencies** | Sprint 09 automation (done) · [`definition-of-done.md`](./definition-of-done.md) §1 |
+| **Sprint** | **11 — Playback & Data Foundation** |
+| **Status** | **Active** |
+| **Milestone target** | **M5.5** — core experience & performance (Sprints 11–13) |
+| **Folder** | [`sprint-11-playback-foundation/`](./sprint-11-playback-foundation/) |
+| **Dependencies** | Reopened tasks in Sprints 02, 04, 05, 07 · [`definition-of-done.md`](./definition-of-done.md) §1 |
 
-### Sprint 09 task files (complete — see [`sprint-09-automation-indexers/`](./sprint-09-automation-indexers/))
+### Short-term plan (M5.5)
 
-Sprint 09 is **Done**. Active work moves to Sprint 10 (Polish & Open Source) per [`roadmap.md`](./roadmap.md).
+| Order | Sprint | Folder | Focus | Estimate |
+|---|---|---|---|---|
+| 1 | 11 — Playback & Data Foundation | [`sprint-11-playback-foundation/`](./sprint-11-playback-foundation/01-tasks.md) | Playback works in all browsers, transcode lifetime, rescans keep data, TV model, CI green | ~2 weeks |
+| 2 | 12 — Streaming-App Experience | [`sprint-12-streaming-experience/`](./sprint-12-streaming-experience/01-tasks.md) | Netflix-like UI: design system, consumer/admin split, hero + rows, detail, full-screen player, image pipeline | ~3 weeks |
+| 3 | 13 — Performance at Scale | [`sprint-13-performance-scale/`](./sprint-13-performance-scale/01-tasks.md) | Budgets on 4c/8GB: ABR, seek-ahead, keyset pagination, scan speed, image/bundle budgets | ~2 weeks |
+| 4 | 10 — Polish & Open Source (resumed) | [`sprint-10-polish-oss-release/`](./sprint-10-polish-oss-release/) | Security audit, release checklist, first `v*` tag | after M5.5 |
 
-| Order | File | Focus |
-|---|---|---|
-| 1 | [`01-plugin-architecture-tasks.md`](./sprint-09-automation-indexers/01-plugin-architecture-tasks.md) | Plugin contract, lifecycle, isolation |
-| 2 | [`02-indexer-integration-tasks.md`](./sprint-09-automation-indexers/02-indexer-integration-tasks.md) | Torrent/Usenet indexer (Prowlarr-like) |
-| 3 | [`03-download-client-tasks.md`](./sprint-09-automation-indexers/03-download-client-tasks.md) | Download clients + *arr automation |
-| 4 | [`04-frontend-tasks.md`](./sprint-09-automation-indexers/04-frontend-tasks.md) | Plugin/indexer/download UI |
-| 5 | [`05-qa-tasks.md`](./sprint-09-automation-indexers/05-qa-tasks.md) | Regression + end-to-end acquisition flow |
+**On hold:** Sprint 08 (requests) and Sprint 09 (automation / indexers / download clients).
+Scope is unchanged ([`project-brief.md`](./project-brief.md) §6). They resume after M5.5; whether
+they ship before or after the 1.0 release (Sprint 10) is decided at that point.
+While on hold, only fix what breaks the build or tests.
 
 When the active sprint changes, update this section only — details stay in [`roadmap.md`](./roadmap.md).
 
 ---
 
-## Completed sprints
+## Sprint status
 
 | Sprint | Name | Milestone | Status |
 |---|---|---|---|
 | 01 | Foundation & Architecture | M1 | **Done** |
-| 02 | Library & Metadata | M2 (partial) | **Done** |
-| 03 | Auth & Users | M2 | **Done** |
-| 04 | Streaming & Transcode | M3 (partial) | **Done** |
-| 05 | Web UI | M3 | **Done** |
+| 02 | Library & Metadata | M2 (partial) | **Partial** — 8 tasks reopened (TV metadata, images, watcher, parser) |
+| 03 | Auth & Users | M2 | **Done** (refresh race tracked in Sprint 11) |
+| 04 | Streaming & Transcode | M3 (partial) | **Partial** — 7 tasks reopened (transcode lifetime, ABR, tracks, subtitles, seek) |
+| 05 | Web UI | M3 | **Partial** — 7 tasks reopened (grid, episodes, icons, player controls, responsive, a11y) |
 | 06 | Onboarding & Optimization | M4 (partial) | **Done** |
-| 07 | Hardware Acceleration | M4 | **Done** |
-| 08 | Request Management | M5 (partial) | **Done** |
-| 09 | Automation & Indexers | M5 | **Done** |
-| 10 | Polish & Open Source | M6 | **Planned** ← active |
+| 07 | Hardware Acceleration | M4 | **Partial** — 4 tasks reopened (HW ffmpeg args invalid) |
+| 08 | Request Management | M5 (partial) | **On hold** (skeleton implemented) |
+| 09 | Automation & Indexers | M5 | **On hold** (skeleton; default build ships stub plugins) |
+| 10 | Polish & Open Source | M6 | **Paused** — docs/tooling landed; no release tagged; resumes after M5.5 |
+| 11 | Playback & Data Foundation | M5.5 | **Active** |
+| 12 | Streaming-App Experience | M5.5 | Planned |
+| 13 | Performance at Scale | M5.5 | Planned |
 
 ---
 
@@ -95,10 +103,11 @@ Full definitions: `[roadmap.md](./roadmap.md)` §3.
 | --------- | ------- | ------- | ------ |
 | **M1** | 01 | Runnable skeleton via `docker run` | **Done** |
 | **M2** | 02–03 | Login + scanned library with metadata | **Done** |
-| **M3** | 04–05 | Browser playback incl. transcode — first alpha | **Done** |
-| **M4** | 06–07 | Zero-config setup + HW acceleration — beta candidate | **Done** |
-| **M5** | 08–09 | Requests + automation + indexers | **In progress** (Sprint 09 active) |
-| **M6** | 10 | OSS release — 1.0 | Planned |
+| **M3** | 04–05 | Browser playback incl. transcode — first alpha | **Partial** (see current-state) |
+| **M4** | 06–07 | Zero-config setup + HW acceleration — beta candidate | **Partial** (HW broken) |
+| **M5** | 08–09 | Requests + automation + indexers | **On hold** |
+| **M5.5** | 11–13 | Core experience (Netflix-like UI) + performance | **Active** |
+| **M6** | 10 | OSS release — 1.0 | Paused (after M5.5) |
 
 
 ---
@@ -108,7 +117,7 @@ Full definitions: `[roadmap.md](./roadmap.md)` §3.
 
 | Sprint | Folder                                                                       | Main output                                    |
 | ------ | ---------------------------------------------------------------------------- | ---------------------------------------------- |
-| 01     | `[sprint-01-foundation/](./sprint-01-foundation/)`                           | Skeleton + CI/CD + Docker + API contract       |
+| 01     | `[sprint-01-foundation/](./sprint-01-foundation/)`                           | Skeleton + Docker + API contract + make gates  |
 | 02     | `[sprint-02-library-metadata/](./sprint-02-library-metadata/)`               | Scanning + metadata + file watching            |
 | 03     | `[sprint-03-auth-users/](./sprint-03-auth-users/)`                           | Multi-user, RBAC, profiles, watch state        |
 | 04     | `[sprint-04-streaming-transcode/](./sprint-04-streaming-transcode/)`         | Direct play, transcode, HLS/DASH               |
@@ -118,6 +127,9 @@ Full definitions: `[roadmap.md](./roadmap.md)` §3.
 | 08     | `[sprint-08-request-management/](./sprint-08-request-management/)`           | Request/approval + notifications               |
 | 09     | `[sprint-09-automation-indexers/](./sprint-09-automation-indexers/)`         | Plugin architecture + indexers + downloads     |
 | 10     | `[sprint-10-polish-oss-release/](./sprint-10-polish-oss-release/)`           | Performance, docs, security audit, OSS release |
+| 11     | `[sprint-11-playback-foundation/](./sprint-11-playback-foundation/)`         | Playback in all browsers + data correctness    |
+| 12     | `[sprint-12-streaming-experience/](./sprint-12-streaming-experience/)`       | Netflix-like UI + image pipeline               |
+| 13     | `[sprint-13-performance-scale/](./sprint-13-performance-scale/)`             | Performance budgets at 10k-item scale          |
 
 
 ---
@@ -125,7 +137,7 @@ Full definitions: `[roadmap.md](./roadmap.md)` §3.
 ## Execution workflow
 
 ```
-.plan/ task spec  →  GitHub Issue (status, assignee)  →  PR  →  CI gates
+.plan/ task spec  →  GitHub Issue (status, assignee)  →  PR  →  make check (local, no CI)
 notes/ briefing   →  decision finalized  →  update .plan/ or docs/
 ```
 

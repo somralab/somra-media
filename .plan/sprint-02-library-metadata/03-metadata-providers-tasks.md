@@ -15,12 +15,12 @@
 
 ### Epic A: Provider abstraction
 - [x] A1 — Common `MetadataProvider` interface (search, detail, images) | Acceptance: providers pluggable.
-- [x] A2 — API key management + rate limit + cache | Acceptance: limit exceeded prevented, results cached.
+- [ ] A2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** API key management + rate limit + cache | Acceptance: limit exceeded prevented, results cached.
 
 ### Epic B: Provider integrations
-- [x] B1 — TMDB (movie + series) | Acceptance: correct match rate, tested.
-- [x] B2 — TVDB (series) and MusicBrainz (music) basic integration | Acceptance: basic fields fetched.
-- [x] B3 — fanart.tv / image provider (poster/backdrop/logo) | Acceptance: images downloaded and cached.
+- [ ] B1 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** TMDB (movie + series) | Acceptance: correct match rate, tested.
+- [ ] B2 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** TVDB (series) and MusicBrainz (music) basic integration | Acceptance: basic fields fetched.
+- [ ] B3 — **Reopened (audit 2026-10-13, see [`current-state.md`](../current-state.md)):** fanart.tv / image provider (poster/backdrop/logo) | Acceptance: images downloaded and cached.
 
 ### Epic C-lang: Multilingual metadata
 - [x] CL1 — Language parameter in provider queries (user/system locale: en-US/tr-TR) | Acceptance: description/title fetched in preferred language, falls back to en-US if missing. See [`../i18n-localization.md`](../i18n-localization.md) §2.

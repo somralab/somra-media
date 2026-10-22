@@ -23,6 +23,7 @@ Tick the boxes that are satisfied today; leave open items for the sprints that o
 - [ ] **1.6** ≥ 1 code review approval per packet (handled at PR review time; M1 merged via PR #3 — closure fixes in follow-up PR).
 - [x] **1.7** CI pipeline runs all seven gates:
       `lint → i18n-check → unit-test → integration-test → coverage-gate → build → image-build`.
+      _(CI removed 2026-10-13; the same gates now run locally via `make check`.)_
 - [x] **1.8** i18n compliance — see DoD §i18n below.
 
 ## DoD §2 — Sprint-level

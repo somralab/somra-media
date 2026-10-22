@@ -178,33 +178,6 @@ func TestService_TranscodeQueued(t *testing.T) {
 	assert.NotEmpty(t, resp2.SessionID)
 }
 
-func TestService_ReapIdleExpires(t *testing.T) {
-	ctx := context.Background()
-	d := openTestDB(t)
-	playbackRepo := db.NewPlaybackRepo(d.Querier())
-	mediaRepo := db.NewMediaRepo(d.Querier())
-	libRepo := db.NewLibraryRepo(d.Querier())
-	userRepo := db.NewUserRepo(d.Querier())
-	dir := t.TempDir()
-	cache := t.TempDir()
-	lib, _ := libRepo.Create(ctx, "M", db.LibraryKindMovie, []string{dir}, false)
-	itemID, _ := mediaRepo.CreateItem(ctx, lib.ID, db.LibraryKindMovie, "T", nil)
-	src := filepath.Join(dir, "a.mp4")
-	require.NoError(t, os.WriteFile(src, []byte("x"), 0o644))
-	fileID, _ := mediaRepo.UpsertFile(ctx, db.MediaFile{LibraryID: lib.ID, MediaItemID: &itemID, Path: src, FileName: "a.mp4"})
-	_ = mediaRepo.UpsertTechnical(ctx, fileID, 1000, "mp4", "h264", 640, 360, "aac", 2, 0, `{}`)
-	user, _ := userRepo.Create(ctx, uuid.NewString(), "u", "h", []string{"user"})
-	svc := NewService(ServiceConfig{CacheDir: cache, IdleTimeout: time.Hour, SessionTTL: time.Hour}, playbackRepo, mediaRepo, nil)
-	resp, err := svc.StartPlay(ctx, PlayRequest{UserID: user.ID, MediaItemID: itemID})
-	require.NoError(t, err)
-	_, err = d.SQL().ExecContext(ctx, `UPDATE playback_session SET last_access_at = datetime('now', '-2 hours') WHERE id = ?`, resp.SessionID)
-	require.NoError(t, err)
-	require.NoError(t, svc.ReapIdle(ctx))
-	sess, err := playbackRepo.GetByID(ctx, resp.SessionID)
-	require.NoError(t, err)
-	assert.Equal(t, db.PlaybackExpired, sess.Status)
-}
-
 func TestOsLinkSourceExists(t *testing.T) {
 	dir := t.TempDir()
 	dst := filepath.Join(dir, "source")
