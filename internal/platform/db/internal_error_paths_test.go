@@ -99,25 +99,7 @@ func TestMigrateStatus_AfterClose(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestApplyPragmas_BadPragmaProducesError(t *testing.T) {
-	t.Parallel()
-	ctx := context.Background()
-
-	d, err := Open(ctx, newTestConfig(t))
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = d.Close() })
-
-	// Sanity: the helper happily returns on a valid set, and surfaces an
-	// error for an invalid statement. We do not call applyPragmas with the
-	// real pool because that would break the open DB; instead we issue an
-	// invalid PRAGMA through the underlying pool to prove rows.Err behaves.
-	_, err = d.SQL().ExecContext(ctx, "PRAGMA not_a_real_pragma_value = 'bogus' || 1/0")
-	// SQLite tolerates many unknown PRAGMAs (returning empty rows) so we do
-	// not assert on err here; the call must simply not panic.
-	_ = err
-}
-
-func TestOpen_PragmaFailsWithCancelledContext(t *testing.T) {
+func TestOpen_FailsWithCancelledContext(t *testing.T) {
 	t.Parallel()
 
 	ctx, cancel := context.WithCancel(context.Background())

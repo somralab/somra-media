@@ -38,7 +38,7 @@ Legend: ✅ works · 🟡 partial / shallow · 🔴 broken · ⚪ stub · ⏸ on
 | Build / tests (local) | ✅ | Unit and integration tests pass on macOS. |
 | Merge gates | 🟡 | No CI/CD by decision; `make check` runs the gates locally. The Linux-only `integration-test` + `coverage-gate` failures seen on the old CI are not yet reproduced (Sprint 11 F1). |
 | Release / image | 🔴 | No tag, no published image. |
-| SQLite layer | 🔴 | PRAGMAs (`busy_timeout`, `foreign_keys`, `synchronous`) are applied to **one** of 8 pooled connections (`internal/platform/db/db.go` `applyPragmas`). Observed: `database is locked (SQLITE_BUSY)` on concurrent refresh. |
+| SQLite layer | ✅ | PRAGMAs are encoded in the DSN, so the driver applies them on every pooled connection (`internal/platform/db/config.go` `DSN`). Verified by `TestOpen_AppliesPragmasOnEveryPooledConnection` and `TestOpen_SecondConnectionWaitsForWriteLock` (Sprint 11 C1). |
 | HTTP | 🟡 | No compression; no `Cache-Control` for hashed assets; HTTP/1.1 only. `WriteTimeout` is 0, which is fine for streams. |
 | Tests quality | 🟡 | About 23 `*coverage*` / `*_extra_test.go` files exist mainly to hit thresholds. The playback e2e only checks that a `<video>` element is visible. |
 

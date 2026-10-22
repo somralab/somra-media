@@ -54,7 +54,7 @@
   clean (`go test -race`); 10 parallel play requests never leave sessions stuck in `queued`.
 
 ### Epic C: Database & session stability
-- [ ] C1 — Apply PRAGMAs on **every** pooled connection (DSN `_pragma=` parameters)
+- [x] C1 — Apply PRAGMAs on **every** pooled connection (DSN `_pragma=` parameters)
   | Acceptance: a test opens N connections and asserts every PRAGMA value.
 - [ ] C2 — Refresh-token rotation tolerates concurrent refresh (grace window, or single-flight
   on the client) | Acceptance: 20 parallel refreshes → no 500 and no forced logout.
