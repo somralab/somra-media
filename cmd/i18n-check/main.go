@@ -16,6 +16,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -28,39 +29,50 @@ import (
 const defaultSourceLocale = "en-US"
 
 func main() {
-	backendDir := flag.String("backend-dir", "internal/platform/i18n/locales", "directory of backend active.*.toml bundles")
-	frontendDir := flag.String("frontend-dir", "web/src/i18n/locales", "directory of frontend locale subdirectories")
-	source := flag.String("source", defaultSourceLocale, "source / fallback locale that defines the canonical key set")
-	overflowRatio := flag.Float64("overflow-ratio", 1.5, "max allowed translation length ratio vs source (0 disables)")
-	flag.Parse()
+	os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))
+}
+
+// run executes the checks and returns the process exit code: 0 when every
+// check passes, 1 when any check fails, 2 on invalid flags.
+func run(args []string, stdout, stderr io.Writer) int {
+	flags := flag.NewFlagSet("i18n-check", flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	backendDir := flags.String("backend-dir", "internal/platform/i18n/locales", "directory of backend active.*.toml bundles")
+	frontendDir := flags.String("frontend-dir", "web/src/i18n/locales", "directory of frontend locale subdirectories")
+	source := flags.String("source", defaultSourceLocale, "source / fallback locale that defines the canonical key set")
+	overflowRatio := flags.Float64("overflow-ratio", 1.5, "max allowed translation length ratio vs source (0 disables)")
+	if err := flags.Parse(args); err != nil {
+		return 2
+	}
 
 	ok := true
 
 	if err := checkBackend(*backendDir, *source); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		_, _ = fmt.Fprintln(stderr, err)
 		ok = false
 	}
 
 	if err := checkFrontend(*frontendDir, *source); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		_, _ = fmt.Fprintln(stderr, err)
 		ok = false
 	}
 
 	if *overflowRatio > 0 {
 		if err := checkOverflow(*frontendDir, *source, "tr-TR", *overflowRatio); err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			_, _ = fmt.Fprintln(stderr, err)
 			ok = false
 		}
 		if err := checkOverflowBackend(*backendDir, *source, "tr-TR", *overflowRatio); err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			_, _ = fmt.Fprintln(stderr, err)
 			ok = false
 		}
 	}
 
 	if !ok {
-		os.Exit(1)
+		return 1
 	}
-	fmt.Println("i18n-check: ok")
+	_, _ = fmt.Fprintln(stdout, "i18n-check: ok")
+	return 0
 }
 
 // checkBackend validates backend `active.<locale>.toml` files. Each file

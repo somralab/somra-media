@@ -54,3 +54,38 @@ func TestBrowseRepo_ListPaginatedAndDiscover(t *testing.T) {
 }
 
 func intPtr(n int) *int { return &n }
+
+func TestBrowseRepo_GetDetailReturnsArtworkDimensions(t *testing.T) {
+	ctx := context.Background()
+	d := openTestDB(t)
+	t.Cleanup(func() { _ = d.Close() })
+
+	lib, err := NewLibraryRepo(d.Querier()).Create(ctx, "Art", LibraryKindMovie, []string{t.TempDir()}, false)
+	require.NoError(t, err)
+	itemID, err := NewMediaRepo(d.Querier()).CreateItem(ctx, lib.ID, LibraryKindMovie, "Art Film", nil)
+	require.NoError(t, err)
+	_, err = d.SQL().ExecContext(ctx, `
+		INSERT INTO artwork (media_item_id, kind, source_url, local_path, width, height)
+		VALUES (?, 'poster', 'https://example.com/p.jpg', NULL, 500, 750),
+		       (?, 'logo', NULL, '/cache/logo.png', NULL, NULL)
+	`, itemID, itemID)
+	require.NoError(t, err)
+
+	detail, err := NewBrowseRepo(d.Querier()).GetDetail(ctx, itemID, "en-US", "")
+	require.NoError(t, err)
+
+	byKind := map[string]ArtworkImage{}
+	for _, img := range detail.Images {
+		byKind[img.Kind] = img
+	}
+	require.Contains(t, byKind, "poster")
+	require.NotNil(t, byKind["poster"].Width)
+	require.NotNil(t, byKind["poster"].Height)
+	assert.Equal(t, 500, *byKind["poster"].Width)
+	assert.Equal(t, 750, *byKind["poster"].Height)
+
+	require.Contains(t, byKind, "logo")
+	assert.Nil(t, byKind["logo"].Width, "unknown dimensions stay unset rather than 0")
+	assert.Nil(t, byKind["logo"].Height)
+	assert.Equal(t, "/cache/logo.png", byKind["logo"].LocalPath)
+}

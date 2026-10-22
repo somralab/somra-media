@@ -128,3 +128,21 @@ func TestMigrateStatus_BeforeMigrate(t *testing.T) {
 	require.GreaterOrEqual(t, tgt, int64(1))
 	require.GreaterOrEqual(t, cur, int64(0))
 }
+
+func TestInitialize_FailsOnForeignDatabase(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	cfg := Config{DataDir: t.TempDir(), DBFile: "foreign.db"}
+
+	// Another application's database that also has a "settings" table, as
+	// when SOMRA_DATA_DIR points at the wrong volume.
+	d, err := Open(ctx, cfg)
+	require.NoError(t, err)
+	_, err = d.SQL().ExecContext(ctx, "CREATE TABLE settings (id INTEGER PRIMARY KEY, payload BLOB)")
+	require.NoError(t, err)
+	require.NoError(t, d.Close())
+
+	_, err = Initialize(ctx, cfg, nil)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "db migrate up")
+}
